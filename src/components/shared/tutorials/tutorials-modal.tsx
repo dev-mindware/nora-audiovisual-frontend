@@ -64,7 +64,7 @@ export function TutorialsModal() {
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <YoutubeIcon className="w-6 h-6 shrink-0" />
-              <DialogTitle className="text-lg md:text-xl font-bold tracking-tight">
+              <DialogTitle className="text-lg md:text-xl font-semibold tracking-tight">
                 Tutoriais em Vídeo & Playlist
               </DialogTitle>
             </div>

@@ -1,37 +1,25 @@
-import {
-  getPlanFeatureGroups,
-} from "@/constants/plan-features";
-import { Plan } from "@/types";
+import { getPlanFeatureGroups } from "@/constants/plan-features";
+import { Plan, PlanType } from "@/types";
 
 export function getPlanFeatures(plan: Plan): string[] {
-  const { features } = getPlanFeatureGroups(plan.name);
+  const planName = (plan.name as PlanType) || (plan.code as PlanType) || "PROFISSIONAL";
+  const { features } = getPlanFeatureGroups(planName);
 
-  const planLimits = [
-    plan.maxUsers > 0 ? `Até ${plan.maxUsers} utilizadores` : "Utilizadores ilimitados",
-    plan.maxStores > 0 ? `Até ${plan.maxStores} loja(s)` : "Lojas ilimitadas",
-  ];
-
-  const baseBackendFeatures = [
-    plan.features.hasInvoices && "Facturas e documentos ilimitados",
-    plan.features.hasReporting && "Relatórios",
-  ];
-
-  const smartBackendFeatures = [
-    plan.features.hasPrintFormats && "Impressão em A4 e Talão",
-    plan.features.hasStock && "Gestão de stock",
-    plan.features.hasPos && "Ponto de Venda",
-    plan.features.hasAppearance && "Personalização de Aparência",
-  ];
-
-  const proBackendFeatures = [
-    plan.features.hasSuppliers && "Gestão de Fornecedores",
+  const planLimits: (string | false | undefined)[] = [
+    plan.maxUsers > 0 ? `Até ${plan.maxUsers} utilizadores na produtora` : "Utilizadores ilimitados",
+    plan.maxProjects && plan.maxProjects > 0 ? `Até ${plan.maxProjects} projetos em simultâneo` : undefined,
+    plan.maxEquipment && plan.maxEquipment > 0 ? `Até ${plan.maxEquipment} equipamentos no inventário` : undefined,
+    plan.maxStorageGb && plan.maxStorageGb > 0 ? `${plan.maxStorageGb} GB de armazenamento cloud` : undefined,
+    plan.includedAiCredits && plan.includedAiCredits > 0 ? `${plan.includedAiCredits} créditos Nora AI incluídos` : undefined,
   ];
 
   const dynamicFeatures = [
     ...planLimits,
-    ...(plan.name === "Base" ? baseBackendFeatures : []),
-    ...(plan.name === "Smart" ? smartBackendFeatures : []),
-    ...(plan.name === "Pro" ? proBackendFeatures : []),
+    plan.features?.hasClientPortal && "Portal do Cliente com aprovação de copião",
+    plan.features?.hasFrameReview && "Leitor de vídeo com notas e timecode",
+    plan.features?.hasStudioBooking && "Gestão e reservas de palcos e estúdios",
+    plan.features?.hasInvoices && "Emissão fiscal integrada via Mindgest AGT",
+    plan.features?.hasCallSheets && "Exportação e partilha mobile de Call Sheets",
   ].filter((feature): feature is string => Boolean(feature));
 
   return [

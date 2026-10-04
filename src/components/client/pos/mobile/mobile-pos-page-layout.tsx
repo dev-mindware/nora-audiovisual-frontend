@@ -44,7 +44,7 @@ export function MobilePosPageLayout({
               <Icon name="Store" size={18} className="text-primary" />
             </div>
             <h1
-              className="text-lg font-bold truncate max-w-[160px]"
+              className="text-lg font-semibold truncate max-w-[160px]"
               title={currentStore?.name}
             >
               {title || currentStore?.name || "Empresa"}

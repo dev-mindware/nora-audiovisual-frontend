@@ -35,12 +35,12 @@ export interface DataTableProps<T> {
   className?: string;
   emptyMessage?: string;
   route?: string;
-  page: number;
-  total: number;
-  totalPages: number;
-  setPage: (page: number) => void;
-  goToNextPage: () => void;
-  goToPreviousPage: () => void;
+  page?: number;
+  total?: number;
+  totalPages?: number;
+  setPage?: (page: number) => void;
+  goToNextPage?: () => void;
+  goToPreviousPage?: () => void;
 }
 
 export function GenericTable<T extends { id: string }>({
@@ -48,12 +48,12 @@ export function GenericTable<T extends { id: string }>({
   columns,
   className,
   emptyMessage = "Nenhum dado encontrado",
-  page,
-  total,
-  totalPages,
-  setPage,
-  goToNextPage,
-  goToPreviousPage,
+  page = 1,
+  total = data.length,
+  totalPages = 1,
+  setPage = () => { },
+  goToNextPage = () => { },
+  goToPreviousPage = () => { },
   route,
 }: DataTableProps<T>) {
   const router = useRouter();
@@ -73,8 +73,8 @@ export function GenericTable<T extends { id: string }>({
 
   return (
     <div className={cn("w-full space-y-4", className)}>
-      {/* DESKTOP VIEW: Traditional HTML Table in Card Box (Hidden on Mobile) */}
-      <div className="hidden md:block rounded-2xl border border-border/80 bg-card overflow-hidden shadow-xs">
+      {/* DESKTOP VIEW: Traditional HTML Table (Hidden on Mobile) */}
+      <div className="hidden md:block rounded-md border border-border bg-background overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
@@ -138,88 +138,87 @@ export function GenericTable<T extends { id: string }>({
       {/* MOBILE VIEW: Full-Width Apple/Mindgest Card Stack (Hidden on Desktop) */}
       <div className="block md:hidden w-full space-y-3">
         {data.length === 0 ? (
-          <div className="rounded-2xl border border-border/80 bg-card text-center text-muted-foreground py-10 text-sm">
+          <div className="rounded-md border border-border bg-background text-center text-muted-foreground py-10 text-sm">
             {emptyMessage}
           </div>
         ) : (
-            data.map((item, rowIndex) => {
-              // Find header column (first non-action column) and action column
-              const headerCol = columns[0];
-              const actionCol = columns.find(
-                (c) =>
-                  String(c.header).toLowerCase().includes("acção") ||
-                  String(c.header).toLowerCase().includes("ação") ||
-                  String(c.header).toLowerCase().includes("action") ||
-                  String(c.key).toLowerCase() === "action"
-              );
+          data.map((item, rowIndex) => {
+            // Find header column (first non-action column) and action column
+            const headerCol = columns[0];
+            const actionCol = columns.find(
+              (c) =>
+                String(c.header).toLowerCase().includes("acção") ||
+                String(c.header).toLowerCase().includes("ação") ||
+                String(c.header).toLowerCase().includes("action") ||
+                String(c.key).toLowerCase() === "action"
+            );
 
-              // Secondary columns for card body (exclude action column)
-              const bodyCols = columns.slice(1).filter((c) => c !== actionCol);
+            // Secondary columns for card body (exclude action column)
+            const bodyCols = columns.slice(1).filter((c) => c !== actionCol);
 
-              return (
-                <div
-                  key={rowIndex}
-                  onClick={() => handleRowDoubleClick(item)}
-                  className={cn(
-                    "relative rounded-xl border border-border/70 bg-gradient-to-b from-card to-card/90 p-4 shadow-xs transition-all active:scale-[0.98]",
-                    "backdrop-blur-xl border-white/30 dark:border-white/10",
-                    route && "cursor-pointer",
-                    item.id === newId && "ring-2 ring-primary animate-pulse"
-                  )}
-                >
-                  {/* Card Header: Main Title/Key & Action Badge/Button */}
-                  <div className="flex items-start justify-between gap-2 pb-2">
-                    <div className="font-bold text-base text-foreground flex-1 line-clamp-1">
-                      {headerCol?.render
-                        ? headerCol.render(getValue(item, headerCol.key), item)
-                        : getValue(item, headerCol?.key || "")}
-                    </div>
-                    {actionCol && (
-                      <div className="shrink-0">
-                        {actionCol.render
-                          ? actionCol.render(getValue(item, actionCol.key), item)
-                          : getValue(item, actionCol.key)}
-                      </div>
-                    )}
+            return (
+              <div
+                key={rowIndex}
+                onClick={() => handleRowDoubleClick(item)}
+                className={cn(
+                  "relative rounded-md border border-border bg-background p-4 transition-all active:scale-[0.98]",
+                  route && "cursor-pointer",
+                  item.id === newId && "ring-2 ring-primary animate-pulse"
+                )}
+              >
+                {/* Card Header: Main Title/Key & Action Badge/Button */}
+                <div className="flex items-start justify-between gap-2 pb-2">
+                  <div className="font-semibold text-base text-foreground flex-1 line-clamp-1">
+                    {headerCol?.render
+                      ? headerCol.render(getValue(item, headerCol.key), item)
+                      : getValue(item, headerCol?.key || "")}
                   </div>
-
-                  {/* Divider */}
-                  {bodyCols.length > 0 && (
-                    <div className="my-2.5 border-t border-border/50" />
-                  )}
-
-                  {/* Card Body Sub-Grid: 2 Columns Key-Value Pairs */}
-                  {bodyCols.length > 0 && (
-                    <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 text-xs">
-                      {bodyCols.map((col, cIdx) => {
-                        const val = col.render
-                          ? col.render(getValue(item, col.key), item)
-                          : getValue(item, col.key);
-                        if (val === undefined || val === null || val === "")
-                          return null;
-
-                        return (
-                          <div key={cIdx} className="flex flex-col space-y-0.5">
-                            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/80">
-                              {col.header}
-                            </span>
-                            <div className="text-xs font-medium text-foreground truncate">
-                              {val}
-                            </div>
-                          </div>
-                        );
-                      })}
+                  {actionCol && (
+                    <div className="shrink-0">
+                      {actionCol.render
+                        ? actionCol.render(getValue(item, actionCol.key), item)
+                        : getValue(item, actionCol.key)}
                     </div>
                   )}
                 </div>
-              );
-            })
-          )}
-        </div>
+
+                {/* Divider */}
+                {bodyCols.length > 0 && (
+                  <div className="my-2.5 border-t border-border/50" />
+                )}
+
+                {/* Card Body Sub-Grid: 2 Columns Key-Value Pairs */}
+                {bodyCols.length > 0 && (
+                  <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 text-xs">
+                    {bodyCols.map((col, cIdx) => {
+                      const val = col.render
+                        ? col.render(getValue(item, col.key), item)
+                        : getValue(item, col.key);
+                      if (val === undefined || val === null || val === "")
+                        return null;
+
+                      return (
+                        <div key={cIdx} className="flex flex-col space-y-0.5">
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/80">
+                            {col.header}
+                          </span>
+                          <div className="text-xs font-medium text-foreground truncate">
+                            {val}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })
+        )}
+      </div>
 
       {/* PAGINATION FOOTER: Touch-Friendly Responsive Layout */}
       {totalPages > 1 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3.5 rounded-2xl border border-border/80 bg-card shadow-xs text-xs sm:text-sm">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 rounded-md border border-border bg-background text-xs sm:text-sm">
           <div className="text-muted-foreground text-center sm:text-left">
             Página <strong className="text-foreground">{page}</strong> de{" "}
             <strong className="text-foreground">{totalPages}</strong> — Total:{" "}

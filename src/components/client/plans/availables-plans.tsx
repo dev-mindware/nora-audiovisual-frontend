@@ -64,7 +64,7 @@ export function AvailablePlans() {
     <div>
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16" data-tour="plans-header">
-          <h1 className="text-4xl font-bold text-foreground mb-4">
+          <h1 className="text-4xl font-semibold text-foreground mb-4">
             Escolha o Plano Ideal para o Seu Negócio
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -105,11 +105,10 @@ export function AvailablePlans() {
                 return (
                   <Card
                     key={plan.id}
-                    className={`relative border-border rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl ${
-                      isPopular
+                    className={`relative border-border rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl ${isPopular
                         ? "border-2 border-primary-500 bg-primary-300/5 shadow-2xl scale-105"
                         : "border border-border bg-card"
-                    } ${isCurrent && !isSubscriptionActive ? "ring-2 ring-destructive/40" : ""}`}
+                      } ${isCurrent && !isSubscriptionActive ? "ring-2 ring-destructive/40" : ""}`}
                   >
                     {isPopular && (
                       <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
@@ -133,10 +132,10 @@ export function AvailablePlans() {
                           </Badge>
                         </div>
                       )}
-                      <CardTitle className="text-2xl font-bold mb-2">
+                      <CardTitle className="text-2xl font-semibold mb-2">
                         {plan.name}
                       </CardTitle>
-                      <div className="text-4xl font-bold text-primary-600 mb-2">
+                      <div className="text-4xl font-semibold text-primary-600 mb-2">
                         {formatCurrency(Number(plan.priceMonthly))}
                       </div>
                     </CardHeader>

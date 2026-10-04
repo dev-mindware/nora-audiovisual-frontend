@@ -29,7 +29,7 @@ export function BankDetailsModal() {
                     </div>
 
                     <div className="text-center space-y-1 mt-4">
-                        <h2 className="text-2xl font-bold">{currentBank.bankName}</h2>
+                        <h2 className="text-2xl font-semibold">{currentBank.bankName}</h2>
                         <div className="flex items-center justify-center gap-2">
                             {currentBank.isDefault && (
                                 <span className="text-xs text-muted-foreground">Banco Padrão</span>

@@ -41,7 +41,7 @@ export function DocumentVerificationView({ document, token }: Props) {
                         <p className="text-xs text-muted-foreground uppercase">
                             DOCUMENTO OFICIAL
                         </p>
-                        <h2 className="text-xl font-bold">Factura n.º {document.number}</h2>
+                        <h2 className="text-xl font-semibold">Factura n.º {document.number}</h2>
                     </div>
 
                     {/* Issue Date */}
@@ -103,7 +103,7 @@ export function DocumentVerificationView({ document, token }: Props) {
                             <p className="text-sm text-muted-foreground uppercase">
                                 VALOR TOTAL
                             </p>
-                            <p className="text-3xl font-bold text-purple-600">
+                            <p className="text-3xl font-semibold text-purple-600">
                                 {formatCurrency(document.total)}
                             </p>
                         </div>

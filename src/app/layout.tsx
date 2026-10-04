@@ -12,6 +12,7 @@ import {
 import { ThemeProvider } from "@/providers";
 import { CustomToaster } from "@/utils";
 import { SidebarProvider } from "@/components";
+import { BreadcrumbProvider } from "@/components/ui/breadcrumb-context";
 import { AuthProvider } from "@/contexts";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { PwaServiceWorkerRegister } from "@/components/shared/pwa-service-worker-register";
@@ -51,7 +52,12 @@ export const metadata: Metadata = {
     "Plataforma completa de gestão audiovisual: equipamentos, reservas, alugueres, produção técnica e recursos operacionais.",
   applicationName: "Nora Audiovisual",
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/dark-favicon.png", media: "(prefers-color-scheme: dark)" },
+      { url: "/light-favicon.png", media: "(prefers-color-scheme: light)" },
+    ],
+    shortcut: "/dark-favicon.png",
+    apple: "/dark-favicon.png",
   },
 };
 
@@ -82,7 +88,9 @@ export default function RootLayout({
             <AuthProvider>
               <NuqsAdapter>
                 <PwaServiceWorkerRegister />
-                <SidebarProvider>{children}</SidebarProvider>
+                <BreadcrumbProvider>
+                  <SidebarProvider>{children}</SidebarProvider>
+                </BreadcrumbProvider>
                 <CustomToaster />
               </NuqsAdapter>
             </AuthProvider>

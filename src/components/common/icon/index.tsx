@@ -9,6 +9,16 @@ export type IconProps = ComponentProps<"button"> & {
   className?: string;
 };
 
+const ICON_ALIASES: Record<string, keyof typeof icons> = {
+  BarChart3: 'ChartColumn',
+  BarChart2: 'ChartColumn',
+  BarChart: 'ChartColumn',
+  PieChart: 'ChartPie',
+  AlertCircle: 'CircleAlert',
+  AlertTriangle: 'TriangleAlert',
+  HelpCircle: 'CircleHelp',
+};
+
 export function Icon({
   name,
   color,
@@ -16,7 +26,12 @@ export function Icon({
   strokeWidth,
   className,
 }: IconProps) {
-  const LucideIcon = icons[name];
+  const resolvedName = (ICON_ALIASES[name as string] || name) as keyof typeof icons;
+  const LucideIcon = icons[resolvedName] || icons.CircleAlert || icons.Activity;
+
+  if (!LucideIcon) {
+    return null;
+  }
 
   return (
     <LucideIcon

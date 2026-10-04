@@ -89,7 +89,7 @@ export const CategorySelector = React.memo<CategorySectionProps>(
 
                 <div className="space-y-1 relative z-10 w-full">
                   <span className={cn(
-                    "font-bold text-sm block truncate w-full transition-colors",
+                    "font-semibold text-sm block truncate w-full transition-colors",
                     activeCategory === category.id ? "text-foreground" : "text-foreground/80 group-hover:text-foreground"
                   )}>
                     {category.name}

@@ -184,7 +184,7 @@ export function ServiceModal({ action }: ServiceModalProps) {
       id={modalId}
       title={
         <div className="w-full flex items-center justify-between gap-2 mb-4">
-          <span className="text-lg font-bold">
+          <span className="text-lg font-semibold">
             {action === "add" ? "Adicionar Serviço" : "Editar Serviço"}
           </span>
           <Button

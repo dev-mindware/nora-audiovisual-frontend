@@ -14,7 +14,7 @@ export function PosWorkspaceSettings() {
     return (
         <div className="space-y-6 pb-12" data-tour="pos-settings-workspace">
             <div className="space-y-2">
-                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.1em] px-1">Interface & Dispositivos</p>
+                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.1em] px-1">Interface & Dispositivos</p>
                 <div className="bg-card rounded-2xl border border-border/50 overflow-hidden divide-y divide-border/30 shadow-sm">
                     <div className="flex items-center justify-between p-4 hover:bg-muted/20 transition-all" data-tour="pos-settings-virtual-keyboard">
                         <div className="flex items-center gap-3">

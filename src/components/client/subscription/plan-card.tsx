@@ -50,7 +50,7 @@ export function PlanCard({ plan, isSelected, onSelect }: PlanCardProps) {
       </div>
 
       <div className="mb-4">
-        <div className="text-2xl font-bold text-primary-600">
+        <div className="text-2xl font-semibold text-primary-600">
           {formatCurrency(plan.priceMonthly)}
         </div>
       </div>

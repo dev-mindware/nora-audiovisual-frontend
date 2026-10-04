@@ -1,33 +1,3 @@
-/* export const PUBLIC_ROUTES = [
-  "/",
-  "/auth/login",
-  "/auth/register",
-  "/auth/forgot-password",
-  "/auth/reset-password",
-  "/checkout",
-  "/unauthorized",
-  "/not-found",
-];
-
-export const PRIVATE_ROUTE_PREFIXES = [
-  "/admin",
-  "/documents",
-  "/plans",
-  "/dashboard",
-  "/settings",
-  "/items",
-  "/management",
-  "/pos-management",
-  "/pos",
-  "/reports",
-  "/stock",
-];
-
-export const API_AUTH_PREFIX = "/api/auth";
-export const DEFAULT_LOGIN_REDIRECT = "/auth/login";
-export const UPGRADE_REDIRECT = "/pricing"; */
-
-
 import { Role } from "@/types";
 
 // Rotas públicas (acessíveis sem autenticação)
@@ -38,6 +8,8 @@ export const PUBLIC_ROUTES = [
   "/auth/forgot-password",
   "/auth/reset-password",
   "/checkout",
+  "/portal/deliverables/view",
+  "/portal/budgets/view",
   "/unauthorized",
   "/not-found",
 ] as const;
@@ -51,19 +23,22 @@ export const AUTH_PAGES = [
   "/auth/reset-password",
 ] as const;
 
-// Prefixos de rotas privadas
+// Prefixos de rotas privadas (Nora Audiovisual Core)
 export const PRIVATE_ROUTE_PREFIXES = [
+  "/portal",
   "/dashboard",
   "/admin",
-  "/pos",
-  "/pos-management",
+  "/projects",
+  "/equipment",
+  "/studio",
+  "/kanban",
+  "/files",
+  "/deliverables",
+  "/budgets",
+  "/crm",
+  "/ai",
+  "/subscriptions",
   "/settings",
-  "/management",
-  "/documents",
-  "/items",
-  "/plans",
-  "/reports",
-  "/stock",
 ] as const;
 
 // Rota de login padrão
@@ -72,7 +47,7 @@ export const DEFAULT_LOGIN_REDIRECT = "/auth/login";
 // Rota de unauthorized
 export const UNAUTHORIZED_REDIRECT = "/unauthorized";
 
-// Prefixo de auth da API (NextAuth-like, se aplicável)
+// Prefixo de auth da API
 export const API_AUTH_PREFIX = "/api/auth";
 
 // Cookies
@@ -82,11 +57,28 @@ export const ROLE_KEY = "user_role";
 
 // Mapa de redirect por role
 export const ROLE_REDIRECTS: Record<Role, string> = {
-  ADMIN: "/admin/dashboard",
+  ADMIN: "/admin",
   OWNER: "/dashboard",
   MANAGER: "/dashboard",
-  CASHIER: "/pos/counter",
+  PRODUCER: "/dashboard",
+  FINANCE: "/dashboard",
+  EDITOR: "/dashboard",
+  CREW: "/dashboard",
+  CLIENT: "/portal",
+  MEMBER: "/dashboard",
+  CASHIER: "/dashboard",
 };
 
 // Validação: roles aceitas (para validar cookie manipulado)
-export const VALID_ROLES: Role[] = ["ADMIN", "OWNER", "MANAGER", "CASHIER"];
+export const VALID_ROLES: Role[] = [
+  "ADMIN",
+  "OWNER",
+  "MANAGER",
+  "PRODUCER",
+  "FINANCE",
+  "EDITOR",
+  "CREW",
+  "CLIENT",
+  "MEMBER",
+  "CASHIER",
+];

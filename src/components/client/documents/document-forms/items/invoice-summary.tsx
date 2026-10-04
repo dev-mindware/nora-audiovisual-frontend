@@ -40,16 +40,16 @@ export const InvoiceSummary = React.memo<InvoiceSummaryProps>(
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1">
             {hasServiceItem && (
-            <SelectField
-              label="Retenção na Fonte"
-              value={hasServiceItem ? globalRetention : 0}
-              onValueChange={(v) => setGlobalRetention(Number(v))}
-              options={[
-                { value: 0, label: "Sem retenção (0%)" },
-                { value: 6.5, label: "6.5%" },
-                { value: 10, label: "10%" },
-              ]}
-            />
+              <SelectField
+                label="Retenção na Fonte"
+                value={hasServiceItem ? globalRetention : 0}
+                onValueChange={(v) => setGlobalRetention(Number(v))}
+                options={[
+                  { value: 0, label: "Sem retenção (0%)" },
+                  { value: 6.5, label: "6.5%" },
+                  { value: 10, label: "10%" },
+                ]}
+              />
             )}
             {!hasServiceItem && (
               <h1 className="text-destructive">
@@ -155,7 +155,7 @@ export function InvoiceTotalsSummary({
       <Separator className="my-3" />
 
       {/* Total */}
-      <div className="flex justify-between items-center text-lg font-bold">
+      <div className="flex justify-between items-center text-lg font-semibold">
         <span className="text-foreground">Total a Pagar</span>
         <span className="font-mono text-primary">{formatCurrency(total)}</span>
       </div>

@@ -68,17 +68,17 @@ const cashiers: Cashier[] = [
 
 export function PosManagement() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<Cashier["status"] | "Todos">("Todos");
+  const [statusFilter, setStatusFilter] = useState<Cashier["status"] | "">("");
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [openCashRegisters, setOpenCashRegisters] = useState<OpenCashRegister[]>([]);
 
-  const statusOptions: (Cashier["status"] | "Todos")[] = ["Todos", "Ativo", "Inativo", "Pausado", "Fechado"];
+  const statusOptions: Cashier["status"][] = ["Ativo", "Inativo", "Pausado", "Fechado"];
 
   const filteredCashiers = cashiers.filter((cashier) => {
     const matchesSearch =
       cashier.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       cashier.cashNumber.includes(searchTerm);
-    const matchesStatus = statusFilter === "Todos" || cashier.status === statusFilter;
+    const matchesStatus = !statusFilter || cashier.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
@@ -107,7 +107,7 @@ export function PosManagement() {
     <div className="min-h-screen bg-background">
       <div>
         <div className="mb-8">
-          <h1 className="mb-2 text-2xl font-bold text-foreground">Controlo de caixas</h1>
+          <h1 className="mb-2 text-2xl font-semibold text-foreground">Controlo de caixas</h1>
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -127,20 +127,20 @@ export function PosManagement() {
               <div className="relative">
                 <Button
                   variant="outline"
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 rounded-none"
                   onClick={() => setShowStatusDropdown(!showStatusDropdown)}
                 >
-                  Estado: {statusFilter}
+                  {statusFilter ? `Estado: ${statusFilter}` : "Filtrar por estado"}
                   <ChevronDown className="w-4 h-4" />
                 </Button>
                 {showStatusDropdown && (
-                  <div className="absolute right-0 z-10 w-48 mt-1 border rounded-md shadow-lg bg-background">
+                  <div className="absolute right-0 z-10 w-48 mt-1 border rounded-none shadow-lg bg-background">
                     {statusOptions.map((status) => (
                       <button
                         key={status}
-                        className="block w-full px-4 py-2 text-left cursor-pointer hover:bg-gray-100"
+                        className="block w-full px-4 py-2 text-left cursor-pointer hover:bg-gray-100 rounded-none text-xs"
                         onClick={() => {
-                          setStatusFilter(status);
+                          setStatusFilter(status === statusFilter ? "" : status);
                           setShowStatusDropdown(false);
                         }}
                       >

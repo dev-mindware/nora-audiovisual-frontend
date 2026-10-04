@@ -41,7 +41,7 @@ export function DetailsStockModal() {
                     </div>
 
                     <div className="text-center space-y-2 mt-4">
-                        <h2 className="text-2xl font-bold">{currentStock.item?.name || "N/A"}</h2>
+                        <h2 className="text-2xl font-semibold">{currentStock.item?.name || "N/A"}</h2>
                         <div className="flex items-center justify-center gap-2">
                             {getStockLevelBadge(currentStock.stockLevel)}
                         </div>

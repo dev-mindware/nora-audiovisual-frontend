@@ -262,7 +262,7 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
                     }
                   />
                   {errors.workTime && (
-                    <p className="text-[10px] font-bold text-destructive uppercase tracking-widest mt-1">
+                    <p className="text-[10px] font-semibold text-destructive uppercase tracking-widest mt-1">
                       {errors.workTime.message}
                     </p>
                   )}
@@ -292,7 +292,7 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
               )}
             />
             {errors.storeId && (
-              <p className="text-[10px] font-bold text-destructive uppercase tracking-widest mt-1">
+              <p className="text-[10px] font-semibold text-destructive uppercase tracking-widest mt-1">
                 {errors.storeId.message}
               </p>
             )}
@@ -338,15 +338,15 @@ export function PosOpeningModal({ selfSessionMode = false, onSuccess }: PosOpeni
           {isFromRequest && currentCashier && (
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-amber-400/8 border border-amber-400/25">
-                <div className="w-10 h-10 rounded-full bg-amber-400/15 flex items-center justify-center font-bold text-amber-600 shrink-0">
+                <div className="w-10 h-10 rounded-full bg-amber-400/15 flex items-center justify-center font-semibold text-amber-600 shrink-0">
                   {(currentCashier as any).user?.name?.charAt(0)?.toUpperCase() || "?"}
                 </div>
                 <div className="flex-1">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Colaborador solicitante</p>
-                  <p className="text-sm font-bold">{(currentCashier as any).user?.name}</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Colaborador solicitante</p>
+                  <p className="text-sm font-semibold">{(currentCashier as any).user?.name}</p>
                   <p className="text-xs text-muted-foreground">{(currentCashier as any).user?.email}</p>
                 </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full bg-amber-400/15 text-amber-600">
+                <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-1 rounded-full bg-amber-400/15 text-amber-600">
                   Aguarda aprovação
                 </span>
               </div>

@@ -46,7 +46,7 @@ export function DocumentSuccessModal() {
                 }
             }
         }
-        
+
         fetchDocument();
 
         return () => {
@@ -147,7 +147,7 @@ export function DocumentSuccessModal() {
                 </div>
 
                 <div className="flex justify-between items-center px-1">
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold">
                         {isThermal ? "Versão Talão" : "Versão A4"}
                     </p>
                     <div className="flex gap-2">

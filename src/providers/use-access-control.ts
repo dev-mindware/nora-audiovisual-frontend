@@ -41,16 +41,30 @@ export function useAccessControl(allowed: Role[], checkPlan = true): AccessResul
   );
 
   const currentPlanLevel = useMemo(() => {
-    const plan = (user?.company?.subscription?.plan.name as PlanType) || "Base";
+    const plan = (user?.subscription?.plan?.name || user?.company?.subscription?.plan?.name) as PlanType || "INICIAL";
     return PLAN_HIERARCHY[plan] ?? 0;
   }, [user]);
 
   return useMemo<AccessResult>(() => {
     if (isAuthenticating) return { status: "loading" };
     if (!user) return { status: "unauthenticated" };
-    if (!allowed.includes(user.role)) return { status: "unauthorized" };
 
-    const PLAN_BYPASS_ROLES: Role[] = ["CASHIER"];
+    const userRole = user.role;
+    const isPlatformAdmin = Boolean(user.isPlatformAdmin || userRole === "ADMIN");
+    const effectiveRoles: Role[] = isPlatformAdmin ? ["ADMIN", userRole] : [userRole];
+
+    const hasAllowedRole = allowed.some((r) => effectiveRoles.includes(r));
+    if (!hasAllowedRole) return { status: "unauthorized" };
+
+    // RBAC estrito a nível de item de menu / rota (ex: /admin restrito a ADMIN)
+    if (matchingItem?.roles && matchingItem.roles.length > 0) {
+      const hasMenuRole = matchingItem.roles.some((r) => effectiveRoles.includes(r));
+      if (!hasMenuRole) {
+        return { status: "unauthorized" };
+      }
+    }
+
+    const PLAN_BYPASS_ROLES: Role[] = ["ADMIN", "OWNER"];
     const shouldCheckPlan = checkPlan && !PLAN_BYPASS_ROLES.includes(user.role);
 
     if (shouldCheckPlan && matchingItem?.minPlan) {

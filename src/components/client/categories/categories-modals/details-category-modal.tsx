@@ -16,7 +16,7 @@ export function DetailsCategoryModal() {
 
   if (!currentCategory) return null;
 
-  if(!open["view-category"]) return null;
+  if (!open["view-category"]) return null;
 
   return (
     <GlobalModal
@@ -29,7 +29,7 @@ export function DetailsCategoryModal() {
           </div>
 
           <div className="text-center space-y-1">
-            <h2 className="text-2xl font-bold">{currentCategory.name}</h2>
+            <h2 className="text-2xl font-semibold">{currentCategory.name}</h2>
             <div className="flex items-center justify-center gap-2">
               <ItemStatusBadge
                 status={currentCategory.isActive ? "ACTIVE" : "INACTIVE"}

@@ -28,37 +28,37 @@ import {
 import { cn } from "@/lib/utils";
 import { TrendingUp, Package, DollarSign, ArrowUpRight } from "lucide-react";
 
-// --- Mock Data ---
+// --- Mock Data Nora Audiovisual ---
 
 const billingData = [
-  { month: "Jan", revenue: 4000 },
-  { month: "Feb", revenue: 3000 },
-  { month: "Mar", revenue: 2000 },
-  { month: "Apr", revenue: 2780 },
-  { month: "May", revenue: 1890 },
-  { month: "Jun", revenue: 2390 },
-  { month: "Jul", revenue: 3490 },
+  { month: "Jan", revenue: 4200 },
+  { month: "Fev", revenue: 5800 },
+  { month: "Mar", revenue: 4900 },
+  { month: "Abr", revenue: 7200 },
+  { month: "Mai", revenue: 6400 },
+  { month: "Jun", revenue: 8900 },
+  { month: "Jul", revenue: 11400 },
 ];
 
 const stockData = [
-  { category: "Eletrônicos", qty: 400, fill: "var(--primary)" },
-  { category: "Escritório", qty: 300, fill: "var(--primary-400)" },
-  { category: "Limpeza", qty: 200, fill: "var(--primary-600)" },
-  { category: "Outros", qty: 150, fill: "var(--primary-800)" },
+  { category: "Câmaras", qty: 28, fill: "var(--primary)" },
+  { category: "Óticas", qty: 45, fill: "var(--primary-400)" },
+  { category: "Iluminação", qty: 62, fill: "var(--primary-600)" },
+  { category: "Áudio", qty: 34, fill: "var(--primary-800)" },
 ];
 
 const pieData = [
-  { name: "Vendas", value: 400, fill: "var(--primary)" },
-  { name: "Serviços", value: 300, fill: "var(--primary-400)" },
-  { name: "Outros", value: 200, fill: "var(--primary-700)" },
+  { name: "Produção", value: 550, fill: "var(--primary)" },
+  { name: "Aluguer Técnico", value: 320, fill: "var(--primary-400)" },
+  { name: "Estúdios & Pós", value: 240, fill: "var(--primary-700)" },
 ];
 
 const radarData = [
-  { subject: "Eficiência", A: 120, fullMark: 150 },
-  { subject: "Vendas", A: 98, fullMark: 150 },
-  { subject: "Stock", A: 86, fullMark: 150 },
-  { subject: "Clientes", A: 99, fullMark: 150 },
-  { subject: "Suporte", A: 85, fullMark: 150 },
+  { subject: "Pontualidade Call Sheet", A: 135, fullMark: 150 },
+  { subject: "Aprovações Vídeo", A: 142, fullMark: 150 },
+  { subject: "Disponibilidade Stock", A: 128, fullMark: 150 },
+  { subject: "Ocupação Estúdios", A: 118, fullMark: 150 },
+  { subject: "Eficiência de Custos", A: 130, fullMark: 150 },
 ];
 
 // --- Styles ---
@@ -90,17 +90,17 @@ export function HeroBillingChart() {
     <GlassWrapper className="p-4 w-72 h-48 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex items-center justify-between mb-4">
         <div className="space-y-1">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            Facturação semestral
+          <p className="text-xs font-medium text-slate-300 uppercase tracking-wider">
+            Volume de Produção
           </p>
           <div className="flex items-center gap-2">
-            <h3 className="text-xl font-bold">$42,500</h3>
-            <span className="text-[10px] bg-green-500/20 text-green-500 px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
-              <ArrowUpRight className="w-2 h-2" /> +12%
+            <h3 className="text-xl font-semibold text-white">11.400h</h3>
+            <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
+              <ArrowUpRight className="w-2 h-2" /> +18.4%
             </span>
           </div>
         </div>
-        <div className="p-2 bg-primary/10 rounded-lg">
+        <div className="p-2 bg-primary/20 rounded-lg">
           <DollarSign className="w-4 h-4 text-primary" />
         </div>
       </div>
@@ -112,7 +112,7 @@ export function HeroBillingChart() {
                 <stop
                   offset="5%"
                   stopColor="var(--primary)"
-                  stopOpacity={0.3}
+                  stopOpacity={0.4}
                 />
                 <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
               </linearGradient>
@@ -135,7 +135,7 @@ export function HeroBillingChart() {
 const stockConfig = {
   qty: {
     label: "Quantidade",
-    color: "#a855f7",
+    color: "var(--primary)",
   },
 } satisfies ChartConfig;
 
@@ -144,8 +144,8 @@ export function HeroStockChart() {
     <GlassWrapper className="p-4 w-64 h-56 animate-in fade-in slide-in-from-left-4 duration-1000">
       <div className="flex items-center gap-2 mb-4">
         <Package className="w-4 h-4 text-primary" />
-        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-          Gestão de Stock
+        <p className="text-xs font-medium text-slate-300 uppercase tracking-wider">
+          Equipamentos Ativos
         </p>
       </div>
       <div className="h-32 w-full">
@@ -155,14 +155,14 @@ export function HeroStockChart() {
               dataKey="qty"
               fill="var(--primary)"
               radius={[4, 4, 0, 0]}
-              opacity={0.8}
+              opacity={0.85}
             />
           </BarChart>
         </ChartContainer>
       </div>
-      <div className="mt-2 flex justify-between text-[10px] text-muted-foreground">
-        <span>Resumo de inventário ativo</span>
-        <TrendingUp className="w-3 h-3 text-green-500" />
+      <div className="mt-2 flex justify-between text-[10px] text-slate-400">
+        <span>Inventário operacional</span>
+        <TrendingUp className="w-3 h-3 text-emerald-400" />
       </div>
     </GlassWrapper>
   );
@@ -212,7 +212,7 @@ export function HeroRadarChart() {
               tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 10 }}
             />
             <Radar
-              name="Mindgest"
+              name="Nora Audiovisual"
               dataKey="A"
               stroke="var(--primary)"
               fill="var(--primary)"
@@ -255,7 +255,7 @@ export function HeroStatsWidget({
         <p className="text-[10px] text-white/60 uppercase tracking-tight">
           {label}
         </p>
-        <p className="text-lg font-bold text-white">{value}</p>
+        <p className="text-lg font-semibold text-white">{value}</p>
       </div>
     </GlassWrapper>
   );

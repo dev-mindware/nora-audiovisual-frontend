@@ -13,6 +13,7 @@ import {
     useDashboardPeriod,
 } from "@/hooks/reports/use-dashboard-overview";
 import type { DashboardPeriodType } from "@/types";
+import { cn } from "@/lib/utils";
 
 /**
  * Selector de período do dashboard. Lê e escreve directamente no search param,
@@ -20,6 +21,7 @@ import type { DashboardPeriodType } from "@/types";
  */
 export function OverviewPeriodSelect() {
     const { period, setPeriod } = useDashboardPeriod();
+    const isFiltered = Boolean(period);
 
     return (
         <Select
@@ -27,15 +29,26 @@ export function OverviewPeriodSelect() {
             onValueChange={(next) => setPeriod(next as DashboardPeriodType)}
         >
             <SelectTrigger
-                className="w-[170px] shrink-0"
+                className={cn(
+                    "w-[170px] shrink-0 rounded-none transition-colors",
+                    isFiltered
+                        ? "border-primary text-primary bg-primary/10 hover:bg-primary/15 font-medium"
+                        : "border-input text-muted-foreground bg-transparent hover:bg-muted/40 hover:text-foreground font-normal"
+                )}
                 aria-label="Período do dashboard"
             >
-                <Icon name="Calendar" className="size-4 text-muted-foreground" />
+                <Icon
+                    name="Calendar"
+                    className={cn(
+                        "size-4",
+                        isFiltered ? "text-primary" : "text-muted-foreground"
+                    )}
+                />
                 <SelectValue placeholder="Período" />
             </SelectTrigger>
-            <SelectContent align="end">
-                {DASHBOARD_PERIODS.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
+            <SelectContent align="end" className="rounded-none">
+                {DASHBOARD_PERIODS.filter((opt) => opt.label.toLowerCase() !== "todos").map((option) => (
+                    <SelectItem key={option.value} value={option.value} className="rounded-none">
                         {option.label}
                     </SelectItem>
                 ))}

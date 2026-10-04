@@ -2,7 +2,16 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Badge, Button, Input } from "@/components";
+import {
+  Badge,
+  Button,
+  Input,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components";
 import type { User } from "@/types";
 import { ProfileAvatar } from "./profile-avatar";
 import { useUpdateUser } from "@/hooks/users";
@@ -63,33 +72,33 @@ export function ProfileForm({ user }: { user: User | null }) {
   if (!user) return null;
 
   return (
-    <form onSubmit={handleSubmit(handleProfileSubmit)} className="space-y-6">
-      <div className="bg-card rounded-lg border p-4 shadow-sm flex flex-col sm:flex-row items-center gap-4">
+    <form onSubmit={handleSubmit(handleProfileSubmit)} className="space-y-4">
+      <Card className="bg-card rounded-xs border border-border p-4 shadow-none flex flex-col sm:flex-row items-center gap-4">
         <ProfileAvatar userName={user?.name} />
         <div className="w-full flex justify-between items-center">
           <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
-            <h3 className="text-lg font-bold">{user?.name}</h3>
+            <h3 className="text-base font-semibold text-foreground">{user?.name}</h3>
 
             {user?.company?.name && (
-              <p className="text-sm text-foreground/80 mt-1">
+              <p className="text-xs text-muted-foreground mt-0.5">
                 {user.company.name}
               </p>
             )}
           </div>
 
-          <Badge variant="default">{getUserRole(user?.role!)}</Badge>
+          <Badge variant="outline" className="rounded-xs text-xs font-semibold">{getUserRole(user?.role!)}</Badge>
         </div>
-      </div>
+      </Card>
 
-      <div className="bg-card rounded-xl border p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-6 pb-4 border-b">
-          <h3 className="font-semibold text-lg">Informação Pessoal</h3>
+      <Card className="bg-card rounded-xs border border-border shadow-none p-0 gap-0">
+        <CardHeader className="p-5 border-b border-border flex flex-row items-center justify-between">
+          <CardTitle className="font-semibold text-base text-foreground">Informação Pessoal</CardTitle>
           <div className="sm:ml-auto flex gap-2">
             <Button
               type="button"
               variant={isEditing ? "default" : "outline"}
               size="sm"
-              className="hidden sm:inline-flex"
+              className="rounded-xs text-xs font-semibold"
               onClick={() => {
                 if (isEditing) reset();
                 setIsEditing(!isEditing);
@@ -98,37 +107,39 @@ export function ProfileForm({ user }: { user: User | null }) {
               {isEditing ? "Cancelar" : "Editar Perfil"}
             </Button>
           </div>
-        </div>
+        </CardHeader>
 
-        <div
-          className={cn("grid grid-cols-1 gap-6 md:grid-cols-2", {
-            "pointer-events-none": !isEditing,
-          })}
-        >
-          <Input
-            {...register("name")}
-            label="Nome"
-            className={`bg-background shadow-none`}
-            readOnly={!isEditing}
-            error={errors.name?.message}
-          />
-          <Input
-            {...register("phone")}
-            label="Telefone"
-            className={`bg-background shadow-none`}
-            readOnly={!isEditing}
-            error={errors.phone?.message}
-          />
-        </div>
+        <CardContent className="p-5">
+          <div
+            className={cn("grid grid-cols-1 gap-4 md:grid-cols-2", {
+              "pointer-events-none": !isEditing,
+            })}
+          >
+            <Input
+              {...register("name")}
+              label="Nome"
+              className="bg-background shadow-none rounded-xs text-xs"
+              readOnly={!isEditing}
+              error={errors.name?.message}
+            />
+            <Input
+              {...register("phone")}
+              label="Telefone"
+              className="bg-background shadow-none rounded-xs text-xs"
+              readOnly={!isEditing}
+              error={errors.phone?.message}
+            />
+          </div>
+        </CardContent>
 
         {isEditing && (
-          <div className="mt-8 flex justify-end gap-3 border-t pt-6">
-            <Button type="submit" disabled={isUpdatingProfile}>
+          <CardFooter className="p-5 flex justify-end gap-3 border-t border-border">
+            <Button type="submit" disabled={isUpdatingProfile} className="rounded-xs font-semibold shadow-none">
               {isUpdatingProfile ? "A gravar..." : "Guardar Alterações"}
             </Button>
-          </div>
+          </CardFooter>
         )}
-      </div>
+      </Card>
     </form>
   );
 }

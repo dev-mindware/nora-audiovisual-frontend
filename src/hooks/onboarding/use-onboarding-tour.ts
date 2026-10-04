@@ -11,7 +11,7 @@ import {
   type OnboardingTourMode,
 } from "@/constants/onboarding-tours";
 import { useAuthStore, useModal, useOnboardingPreferencesStore } from "@/stores";
-import { PLAN_HIERARCHY, type User } from "@/types";
+import { PLAN_HIERARCHY, type User, type PlanType } from "@/types";
 import { useOnboardingPreferencesPersistence } from "./use-onboarding-preferences";
 
 const ELEMENT_TIMEOUT_MS = 6000;
@@ -466,7 +466,7 @@ export function canUserAccessOnboardingTour(
   if (user.role === "ADMIN") return true;
   if (!tour.roles.includes(user.role)) return false;
 
-  const currentPlan = user.company?.subscription?.plan?.name ?? "Base";
+  const currentPlan = (user.company?.subscription?.plan?.name as PlanType) ?? "Base";
   const currentPlanLevel = PLAN_HIERARCHY[currentPlan] ?? 0;
   const requiredPlanLevel = PLAN_HIERARCHY[tour.minPlan] ?? 0;
 

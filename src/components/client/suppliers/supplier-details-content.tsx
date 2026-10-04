@@ -37,7 +37,7 @@ export function SupplierDetailsContent({ supplierId }: { supplierId: string }) {
     <div className="space-y-6">
       <div className="flex items-center justify-between" data-tour="supplier-details-header">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">{supplier.name}</h2>
+          <h2 className="text-3xl font-semibold tracking-tight">{supplier.name}</h2>
           <p className="text-muted-foreground">
             Detalhes da conta e gestão de itens do fornecedor.
           </p>

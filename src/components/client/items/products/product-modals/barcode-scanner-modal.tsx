@@ -149,7 +149,7 @@ function DesktopKeyboardScanner({
       </div>
 
       <div className="space-y-2">
-        <h2 className="text-2xl font-bold tracking-tight">Aguardando Scanner</h2>
+        <h2 className="text-2xl font-semibold tracking-tight">Aguardando Scanner</h2>
         <p className="text-sm text-muted-foreground leading-relaxed px-4">
           Aponte o leitor para o código de barras do produto para iniciar o registo.
         </p>
@@ -168,14 +168,14 @@ function DesktopKeyboardScanner({
               !isLoading && "animate-ping",
             )}
           />
-          <span className="text-xs font-bold uppercase tracking-[0.2em]">
+          <span className="text-xs font-semibold uppercase tracking-[0.2em]">
             {isLoading ? "Verificando..." : "Pronto para ler"}
           </span>
         </div>
 
         {buffer.length > 0 && (
           <div className="flex flex-col items-center gap-2">
-            <span className="text-xl font-mono font-bold tracking-widest text-primary bg-primary/5 px-4 py-2 rounded-lg border border-primary/10">
+            <span className="text-xl font-mono font-semibold tracking-widest text-primary bg-primary/5 px-4 py-2 rounded-lg border border-primary/10">
               {buffer}
             </span>
             <span className="text-[10px] text-muted-foreground uppercase font-semibold">
@@ -211,7 +211,7 @@ function MobileCameraScanner({ isActive, isLoading, onScan }: MobileCameraScanne
   return (
     <div className="flex flex-col items-center gap-5 text-center">
       <div className="space-y-1">
-        <h2 className="text-xl font-bold tracking-tight">
+        <h2 className="text-xl font-semibold tracking-tight">
           {isLoading ? "Verificando..." : "Aponte a câmara"}
         </h2>
         <p className="text-xs text-muted-foreground leading-relaxed px-2">
@@ -257,7 +257,7 @@ function MobileCameraScanner({ isActive, isLoading, onScan }: MobileCameraScanne
       {hasCameraPermission === true && !isLoading && (
         <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/5 border border-primary/20 text-primary">
           <div className="h-2 w-2 rounded-full bg-primary animate-ping" />
-          <span className="text-xs font-bold uppercase tracking-[0.2em]">Pronto para ler</span>
+          <span className="text-xs font-semibold uppercase tracking-[0.2em]">Pronto para ler</span>
         </div>
       )}
 

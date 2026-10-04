@@ -43,6 +43,7 @@ import {
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
   searchableColumns?: string[]
+  searchPlaceholder?: string
   filterableColumns?: {
     id: string
     title: string
@@ -63,6 +64,7 @@ interface DataTableToolbarProps<TData> {
 export function DataTableToolbar<TData>({
   table,
   searchableColumns = [],
+  searchPlaceholder,
   filterableColumns = [],
   enableColumnVisibility = true,
   onDelete,
@@ -87,7 +89,7 @@ export function DataTableToolbar<TData>({
       {toolbar && (toolbar.title || toolbar.description) && (
         <div>
           {toolbar.title && (
-            <h2 className="text-2xl font-bold tracking-tight">{toolbar.title}</h2>
+            <h2 className="text-2xl font-semibold tracking-tight">{toolbar.title}</h2>
           )}
           {toolbar.description && (
             <p className="text-muted-foreground">{toolbar.description}</p>
@@ -95,20 +97,20 @@ export function DataTableToolbar<TData>({
         </div>
       )}
 
-      <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3 w-full">
+        <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center w-full sm:w-auto">
           {searchColumnObj && (
-            <div className="relative">
+            <div className="relative w-full sm:w-auto">
               <Input
                 id={`${id}-input`}
                 ref={inputRef}
                 className={cn(
-                  "peer w-full sm:min-w-60 ps-9",
+                  "peer w-full sm:w-64 ps-9 rounded-none border-border h-9 text-xs",
                   Boolean(searchColumnObj.getFilterValue()) && "pe-9"
                 )}
                 value={(searchColumnObj.getFilterValue() ?? "") as string}
                 onChange={(e) => searchColumnObj.setFilterValue(e.target.value)}
-                placeholder={`Pesquisar...`}
+                placeholder={searchPlaceholder || `Pesquisar...`}
                 type="text"
                 aria-label={`Filter by ${searchColumn}`}
               />
@@ -117,7 +119,7 @@ export function DataTableToolbar<TData>({
               </div>
               {Boolean(searchColumnObj.getFilterValue()) && (
                 <button
-                  className="text-muted-foreground/80 hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-md transition-[color,box-shadow] outline-none focus:z-10 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+                  className="text-muted-foreground/80 hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-none transition-[color,box-shadow] outline-none focus:z-10 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
                   aria-label="Clear filter"
                   onClick={() => {
                     searchColumnObj.setFilterValue("")
@@ -132,7 +134,7 @@ export function DataTableToolbar<TData>({
             </div>
           )}
 
-          <div className="flex gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
             {filterableColumns.map((filterConfig) => (
               <FilterDropdown
                 key={filterConfig.id}
@@ -144,16 +146,16 @@ export function DataTableToolbar<TData>({
             {enableColumnVisibility && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="flex-1 sm:flex-none">
+                  <Button variant="outline" className="flex-1 sm:flex-none rounded-none border-border">
                     <Columns3Icon
                       className="-ms-1 opacity-60"
                       size={16}
                       aria-hidden="true"
                     />
-                    <span>Columns</span>
+                    <span>Colunas</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="rounded-none">
                   <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
                   {table
                     .getAllColumns()
@@ -175,7 +177,7 @@ export function DataTableToolbar<TData>({
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto">
           {onDelete && table.getSelectedRowModel().rows.length > 0 && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
@@ -250,7 +252,7 @@ function FilterDropdown<TData>({
 
   const uniqueValues = useMemo(() => {
     if (!column) return []
-    
+
     if (filterConfig.options) {
       return filterConfig.options
     }
@@ -289,17 +291,17 @@ function FilterDropdown<TData>({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="flex-1 sm:flex-none">
+        <Button variant="outline" className="flex-1 sm:flex-none rounded-none border-border">
           <FilterIcon className="-ms-1 opacity-60" size={16} aria-hidden="true" />
           <span>{filterConfig.title}</span>
           {selectedValues.length > 0 && (
-            <span className="bg-background text-muted-foreground/70 -me-1 inline-flex h-5 max-h-full items-center rounded border px-1 font-[inherit] text-[0.625rem] font-medium">
+            <span className="bg-background text-muted-foreground/70 -me-1 inline-flex h-5 max-h-full items-center rounded-none border px-1 font-[inherit] text-[0.625rem] font-medium">
               {selectedValues.length}
             </span>
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-3 min-w-36" align="start">
+      <PopoverContent className="w-auto p-3 min-w-36 rounded-none border-border" align="start">
         <div className="space-y-3">
           <div className="text-xs font-medium text-muted-foreground">
             {filterConfig.title}
@@ -309,6 +311,7 @@ function FilterDropdown<TData>({
               <div key={option.value} className="flex items-center gap-2">
                 <Checkbox
                   id={`${id}-${i}`}
+                  className="rounded-none"
                   checked={selectedValues.includes(option.value)}
                   onCheckedChange={(checked: boolean) =>
                     handleValueChange(checked, option.value)

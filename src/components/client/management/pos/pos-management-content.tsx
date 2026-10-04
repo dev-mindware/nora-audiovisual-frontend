@@ -117,7 +117,7 @@ export function PosManagementContent() {
                             <div className="flex justify-between items-start">
                               <h2
                                 className={cn(
-                                  "text-xl md:text-2xl font-bold tracking-tight",
+                                  "text-xl md:text-2xl font-semibold tracking-tight",
                                   hasPendingRequests
                                     ? "text-amber-500"
                                     : "text-primary",
@@ -182,8 +182,8 @@ export function PosManagementContent() {
                   title={
                     card.type === "default"
                       ? formatCurrency((card.value as number) ?? 0).split(
-                          ",",
-                        )[0] || "0"
+                        ",",
+                      )[0] || "0"
                       : (card.value ?? "0")
                   }
                   subtitle={card.title}

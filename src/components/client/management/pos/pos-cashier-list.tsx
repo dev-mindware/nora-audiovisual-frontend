@@ -82,7 +82,7 @@ export function PosCashierList({
             />
           </div>
           <div>
-            <p className="font-bold">{item.cashierName || "N/A"}</p>
+            <p className="font-semibold">{item.cashierName || "N/A"}</p>
             <p className="text-xs text-muted-foreground">{item.userId}</p>
           </div>
         </div>
@@ -106,18 +106,18 @@ export function PosCashierList({
     {
       key: "openingCash",
       header: "Cap. Inicial",
-      render: (value) => <span className="font-bold font-mono">{formatCurrency(value)}</span>,
+      render: (value) => <span className="font-semibold font-mono">{formatCurrency(value)}</span>,
     },
     {
       key: "totalSales",
       header: "Vendas",
-      render: (value) => <span className="font-bold text-primary font-mono">{formatCurrency(value)}</span>,
+      render: (value) => <span className="font-semibold text-primary font-mono">{formatCurrency(value)}</span>,
     },
     {
       key: "cashDifference",
       header: "Diferença",
       render: (value) => (
-        <span className={cn("font-bold font-mono", value < 0 ? "text-destructive" : value > 0 ? "text-green-500" : "")}>
+        <span className={cn("font-semibold font-mono", value < 0 ? "text-destructive" : value > 0 ? "text-green-500" : "")}>
           {formatCurrency(value)}
         </span>
       ),
@@ -163,7 +163,7 @@ export function PosCashierList({
               <div className="p-5 flex items-start justify-between border-b border-muted-foreground/5 bg-muted/10">
                 <div className="flex items-center gap-4">
                   <div className="relative">
-                    <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-bold text-lg group-hover:scale-110 transition-transform duration-500 border border-primary/20 shadow-inner">
+                    <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-semibold text-lg group-hover:scale-110 transition-transform duration-500 border border-primary/20 shadow-inner">
                       {session.cashierName?.charAt(0) || "O"}
                     </div>
                     <div className={cn(
@@ -172,7 +172,7 @@ export function PosCashierList({
                     )} />
                   </div>
                   <div className="space-y-0.5">
-                    <h4 className="font-bold text-sm tracking-tight text-foreground/90 leading-tight">
+                    <h4 className="font-semibold text-sm tracking-tight text-foreground/90 leading-tight">
                       {session.cashierName || "Operador Desconhecido"}
                     </h4>
                     <p className="text-[11px] text-muted-foreground font-medium flex items-center gap-1">
@@ -204,9 +204,9 @@ export function PosCashierList({
                 <div className="space-y-1 p-3 rounded-xl bg-muted/30 border border-muted-foreground/5 group-hover:bg-muted/50 transition-colors duration-300">
                   <div className="flex items-center gap-1.5 mb-1">
                     <Icon name="CircleDollarSign" size={13} className="text-muted-foreground" />
-                    <span className="text-[9px] text-muted-foreground uppercase font-bold tracking-wider">Cap. Inicial</span>
+                    <span className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">Cap. Inicial</span>
                   </div>
-                  <p className="text-xs font-bold font-mono text-foreground/80">
+                  <p className="text-xs font-semibold font-mono text-foreground/80">
                     {formatCurrency(session.openingCash)}
                   </p>
                 </div>
@@ -214,9 +214,9 @@ export function PosCashierList({
                 <div className="space-y-1 p-3 rounded-xl bg-muted/30 border border-muted-foreground/5 group-hover:bg-muted/50 transition-colors duration-300">
                   <div className="flex items-center gap-1.5 mb-1">
                     <Icon name="Scale" size={13} className="text-muted-foreground" />
-                    <span className="text-[9px] text-muted-foreground uppercase font-bold tracking-wider">Capital de Fecho</span>
+                    <span className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">Capital de Fecho</span>
                   </div>
-                  <p className="text-xs font-bold font-mono text-foreground/80">
+                  <p className="text-xs font-semibold font-mono text-foreground/80">
                     {formatCurrency(session.expectedClosingCash)}
                   </p>
                 </div>
@@ -224,9 +224,9 @@ export function PosCashierList({
                 <div className="space-y-1 p-3 rounded-xl bg-muted/30 border border-muted-foreground/5 group-hover:bg-muted/50 transition-colors duration-300">
                   <div className="flex items-center gap-1.5 mb-1">
                     <Icon name="Scale" size={13} className="text-muted-foreground" />
-                    <span className="text-[9px] text-muted-foreground uppercase font-bold tracking-wider">Diferença</span>
+                    <span className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">Diferença</span>
                   </div>
-                  <p className="text-xs font-bold font-mono text-foreground/80">
+                  <p className="text-xs font-semibold font-mono text-foreground/80">
                     {formatCurrency(session.cashDifference)}
                   </p>
                 </div>
@@ -234,9 +234,9 @@ export function PosCashierList({
                 <div className="space-y-1 p-3 rounded-xl bg-muted/30 border border-muted-foreground/5 group-hover:bg-muted/50 transition-colors duration-300">
                   <div className="flex items-center gap-1.5 mb-1">
                     <Icon name="Clock" size={13} className="text-muted-foreground" />
-                    <span className="text-[9px] text-muted-foreground uppercase font-bold tracking-wider">Duração</span>
+                    <span className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">Duração</span>
                   </div>
-                  <p className="text-xs font-bold text-foreground/80">
+                  <p className="text-xs font-semibold text-foreground/80">
                     {session.duration || "--:--"}
                   </p>
                 </div>
@@ -244,9 +244,9 @@ export function PosCashierList({
                 <div className="space-y-1 p-3 rounded-xl bg-muted/30 border border-muted-foreground/5 group-hover:bg-muted/50 transition-colors duration-300">
                   <div className="flex items-center gap-1.5 mb-1">
                     <Icon name="Wallet" size={13} className="text-muted-foreground" />
-                    <span className="text-[9px] text-muted-foreground uppercase font-bold tracking-wider">Fundo</span>
+                    <span className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">Fundo</span>
                   </div>
-                  <p className="text-xs font-bold text-foreground/80 capitalize">
+                  <p className="text-xs font-semibold text-foreground/80 capitalize">
                     {session.fundType?.toLowerCase() === "coin" ? "Moeda" : "Nota"}
                   </p>
                 </div>
@@ -257,7 +257,7 @@ export function PosCashierList({
                 <Badge
                   variant={session.isOpen ? "success" : "secondary"}
                   className={cn(
-                    "rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider",
+                    "rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
                     session.isOpen ? "bg-green-500/10 text-green-600 border-green-500/20 shadow-none" : "bg-muted/50 text-muted-foreground border-muted-foreground/10"
                   )}
                 >

@@ -124,7 +124,7 @@ export function MobileScannerView({
         </button>
 
         <div className="flex flex-col items-center">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
             Scanner
           </span>
           <span
@@ -141,7 +141,7 @@ export function MobileScannerView({
 
         <button
           onClick={onPay}
-          className="flex h-9 items-center gap-2 rounded-lg bg-primary px-4 text-xs font-bold text-primary-foreground transition-transform active:scale-95"
+          className="flex h-9 items-center gap-2 rounded-lg bg-primary px-4 text-xs font-semibold text-primary-foreground transition-transform active:scale-95"
         >
           <ShoppingCart className="h-3.5 w-3.5" />
           <span>Concluir venda</span>
@@ -217,13 +217,13 @@ export function MobileScannerView({
               </div>
 
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Produto identificado
                 </p>
                 <h3 className="truncate text-sm font-black text-foreground">
                   {pendingProduct.name}
                 </h3>
-                <p className="mt-1 text-sm font-bold text-primary">
+                <p className="mt-1 text-sm font-semibold text-primary">
                   {formatCurrency(pendingProduct.price || 0)}
                 </p>
               </div>
@@ -284,13 +284,13 @@ export function MobileScannerView({
       <div className="z-20 flex h-[40%] flex-col overflow-hidden border-t border-border bg-background p-6 shadow-2xl">
         <div className="mb-4 flex items-center justify-between border-b border-border/50 pb-3">
           <div>
-            <h3 className="text-sm font-bold text-foreground">Artigos</h3>
+            <h3 className="text-sm font-semibold text-foreground">Artigos</h3>
             <p className="text-[10px] text-muted-foreground">
               {totalItems} itens no carrinho
             </p>
           </div>
           <div className="text-right">
-            <p className="mb-1 text-[10px] font-bold uppercase leading-none tracking-tighter text-muted-foreground">
+            <p className="mb-1 text-[10px] font-semibold uppercase leading-none tracking-tighter text-muted-foreground">
               Total
             </p>
             <p className="text-lg font-black leading-none text-primary">
@@ -308,7 +308,7 @@ export function MobileScannerView({
                   className="flex items-center justify-between rounded-xl border border-border/40 bg-secondary/20 p-3"
                 >
                   <div className="min-w-0 flex-1 pr-2">
-                    <p className="truncate text-xs font-bold text-foreground">
+                    <p className="truncate text-xs font-semibold text-foreground">
                       {item.name}
                     </p>
                     <p className="text-[10px] uppercase text-muted-foreground">
@@ -316,7 +316,7 @@ export function MobileScannerView({
                     </p>
                   </div>
                   <div className="text-right underline decoration-primary/30 decoration-2 underline-offset-4">
-                    <p className="text-xs font-bold text-foreground">
+                    <p className="text-xs font-semibold text-foreground">
                       {formatCurrency((item.price || 0) * item.qty)}
                     </p>
                   </div>

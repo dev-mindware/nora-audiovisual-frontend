@@ -27,7 +27,7 @@ const CartItemRow = React.memo<{
     <div key={item.id} className="flex gap-3 mb-2 group items-center" data-tour="pos-cart-item">
         <Avatar className="h-10 w-10 rounded-lg shrink-0 border border-border">
             <AvatarImage src={item.image} className="object-cover" />
-            <AvatarFallback className="rounded-lg bg-primary/10 text-primary font-bold text-xs">{item.name.charAt(0)}</AvatarFallback>
+            <AvatarFallback className="rounded-lg bg-primary/10 text-primary font-semibold text-xs">{item.name.charAt(0)}</AvatarFallback>
         </Avatar>
         <div className="flex-1 flex flex-col justify-center overflow-hidden">
             <h4 className="font-semibold text-sm line-clamp-1 leading-tight" title={item.name}>{item.name}</h4>
@@ -36,7 +36,7 @@ const CartItemRow = React.memo<{
             </p>
         </div>
         <div className="flex flex-col items-end justify-center gap-1 shrink-0">
-            <span className="font-bold text-sm text-nowrap">{formatCurrency((item.price || 0) * item.qty)}</span>
+            <span className="font-semibold text-sm text-nowrap">{formatCurrency((item.price || 0) * item.qty)}</span>
             <button
                 onClick={() => onDelete(item.id)}
                 className="text-muted-foreground hover:text-destructive transition-colors hidden group-hover:block"
@@ -66,7 +66,7 @@ export const CartList = React.memo<CartSectionProps>(
                 className="flex flex-col bg-sidebar rounded-md shadow-sm p-4 m-4 mt-2 border border-border/50 h-auto"
                 data-tour="pos-cart"
             >
-                <h2 className="text-xl font-bold mb-4">
+                <h2 className="text-xl font-semibold mb-4">
                     {type === "invoice" ? "Facturação" : "Proforma"}
                 </h2>
 

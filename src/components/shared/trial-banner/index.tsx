@@ -4,7 +4,7 @@ import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 import { differenceInDays } from "date-fns";
 import { useAuthStore } from "@/stores/auth";
-import { SubscriptionStatus } from "@/types";
+import { useNoraSubscriptions } from "@/hooks/subscriptions";
 import { Button } from "@/components/ui";
 import { AlertCircle, Clock, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -12,13 +12,14 @@ import { usePathname } from "next/navigation";
 
 export function TrialBanner() {
   const { user } = useAuthStore();
+  const { subscription: noraSub } = useNoraSubscriptions();
   const pathname = usePathname();
   const [isVisible, setIsVisible] = useState(true);
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
-  const subscription = user?.company?.subscription;
-  const isTrialing = subscription?.status === SubscriptionStatus.TRIALING;
+  const subscription = noraSub || (user as any)?.subscription || (user?.activeOrganization as any)?.subscription;
+  const isTrialing = subscription?.status === "TRIALING";
   const trialEndsAt = subscription?.trialEndsAt;
 
   const { daysRemaining, urgency } = useMemo(() => {
@@ -29,12 +30,12 @@ export function TrialBanner() {
     let level = "neutral";
     if (diff <= 0) level = "expired";
     else if (diff <= 2) level = "critical";
-    else if (diff <= 6) level = "warning";
+    else if (diff <= 4) level = "warning";
     
     return { daysRemaining: Math.max(0, diff), urgency: level };
   }, [trialEndsAt]);
 
-  if (!mounted || !isTrialing || !isVisible || pathname === "/billing") {
+  if (!mounted || !isTrialing || !isVisible || pathname === "/subscriptions" || pathname === "/checkout") {
     return null;
   }
 
@@ -72,7 +73,7 @@ export function TrialBanner() {
       </div>
       
       <div className="flex items-center gap-3">
-        <Link href="/billing">
+        <Link href="/subscriptions">
           <Button 
             size="sm" 
             variant={urgency === "expired" ? "secondary" : "default"}

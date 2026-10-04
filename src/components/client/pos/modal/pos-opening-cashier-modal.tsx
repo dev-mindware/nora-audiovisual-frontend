@@ -148,7 +148,7 @@ export function PosOpeningCashierModal({
               <Icon name="Store" className="w-5 h-5 text-primary" />
             </div>
             <div className="space-y-1 overflow-hidden">
-              <p className="text-sm font-bold text-primary uppercase tracking-wider">
+              <p className="text-sm font-semibold text-primary uppercase tracking-wider">
                 Loja da operação
               </p>
               <h4 className="font-outfit font-black text-lg leading-tight uppercase truncate">
@@ -199,7 +199,7 @@ export function PosOpeningCashierModal({
                         }
                       />
                       {errors.workTime && (
-                        <p className="text-[10px] font-bold text-destructive uppercase tracking-widest mt-1">
+                        <p className="text-[10px] font-semibold text-destructive uppercase tracking-widest mt-1">
                           {errors.workTime.message}
                         </p>
                       )}
@@ -221,7 +221,7 @@ export function PosOpeningCashierModal({
                 />
 
                 <div className="flex flex-col justify-end pb-1.5">
-                  <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">
+                  <p className="text-[10px] text-muted-foreground uppercase font-semibold tracking-tighter">
                     Operador
                   </p>
                   <p className="text-sm font-medium truncate">

@@ -221,7 +221,7 @@ export function NoraHomePageContent() {
             <Video className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">148</div>
+            <div className="text-2xl font-semibold">148</div>
             <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
               <span className="text-emerald-500 font-medium">92%</span> prontos para rodagem
             </p>
@@ -236,7 +236,7 @@ export function NoraHomePageContent() {
             <Tv className="h-4 w-4 text-blue-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12</div>
+            <div className="text-2xl font-semibold">12</div>
             <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
               <span className="text-blue-500 font-medium">+3</span> agendadas para hoje
             </p>
@@ -251,7 +251,7 @@ export function NoraHomePageContent() {
             <TrendingUp className="h-4 w-4 text-emerald-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">78.4%</div>
+            <div className="text-2xl font-semibold">78.4%</div>
             <p className="text-xs text-emerald-600 font-medium mt-1">
               +14% em relação ao mês anterior
             </p>
@@ -266,7 +266,7 @@ export function NoraHomePageContent() {
             <Mic className="h-4 w-4 text-amber-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">42 kits</div>
+            <div className="text-2xl font-semibold">42 kits</div>
             <p className="text-xs text-muted-foreground mt-1">
               3 kits em manutenção preventiva
             </p>

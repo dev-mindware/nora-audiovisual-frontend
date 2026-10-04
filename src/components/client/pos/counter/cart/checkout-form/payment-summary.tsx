@@ -20,7 +20,7 @@ export function PaymentSummary({
 }: PaymentSummaryProps) {
     return (
         <div data-tour="pos-payment-summary">
-            <h3 className="font-bold mb-3">Resumo de Pagamento</h3>
+            <h3 className="font-semibold mb-3">Resumo de Pagamento</h3>
 
             <div className="space-y-2 mb-4">
                 <div className="flex justify-between text-sm text-muted-foreground">
@@ -56,7 +56,7 @@ export function PaymentSummary({
                 )}
             </div>
 
-            <div className="flex justify-between items-center text-base font-bold mb-6 border-t border-dashed pt-2">
+            <div className="flex justify-between items-center text-base font-semibold mb-6 border-t border-dashed pt-2">
                 <span>Total</span>
                 <span>{formatCurrency(total)}</span>
             </div>

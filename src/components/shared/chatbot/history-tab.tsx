@@ -40,22 +40,22 @@ export function HistoryTab({ sessions, openSession }: HistoryTabProps) {
                                 <button
                                     key={session.id}
                                     onClick={() => openSession(session)}
-                                    className="flex items-start gap-4 p-3 rounded-xl hover:bg-muted/50 transition-colors text-left group border border-transparent hover:border-border/60"
+                                    className="flex items-start gap-4 p-3 rounded-xs hover:bg-muted transition-colors text-left group border border-transparent hover:border-border"
                                 >
-                                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mt-1">
-                                        <Icon name="Sparkles" className="h-5 w-5 text-primary" />
+                                    <div className="flex-shrink-0 w-8 h-8 rounded-xs bg-muted flex items-center justify-center mt-1 border border-border">
+                                        <Icon name="Sparkles" className="h-4 w-4 text-primary" />
                                     </div>
-                                    <div className="flex-1 min-w-0 flex flex-col pt-1">
+                                    <div className="flex-1 min-w-0 flex flex-col pt-0.5">
                                         <div className="flex justify-between items-center gap-2">
                                             <p className="text-sm text-foreground font-medium truncate">
-                                                MIND: {lastAssistantMessage.replace(/\*\*/g, '').slice(0, 40)}...
+                                                Nora AI: {lastAssistantMessage.replace(/\*\*/g, '').slice(0, 40)}...
                                             </p>
                                             <span className="flex-shrink-0 text-xs text-muted-foreground font-medium">
                                                 {formatTimeAgo(session.updatedAt)}
                                             </span>
                                         </div>
                                         <p className="text-xs text-muted-foreground mt-1 font-medium group-hover:text-foreground/80 transition-colors">
-                                            Fechado
+                                            Guardado
                                         </p>
                                     </div>
                                 </button>
@@ -63,10 +63,10 @@ export function HistoryTab({ sessions, openSession }: HistoryTabProps) {
                         })}
                     </div>
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-10 text-center gap-2 border border-dashed border-border/60 rounded-xl mt-4">
+                    <div className="flex flex-col items-center justify-center py-10 text-center gap-2 border border-dashed border-border rounded-xs mt-4">
                         <Icon name="MessageSquare" className="h-8 w-8 text-muted-foreground/30 mb-2" />
                         <p className="text-sm text-muted-foreground font-medium">Nenhuma conversa encontrada</p>
-                        <p className="text-xs text-muted-foreground/60 max-w-[200px]">As suas conversas dos últimos 7 dias aparecerão aqui.</p>
+                        <p className="text-xs text-muted-foreground/60 max-w-[220px]">As suas conversas de produção dos últimos 7 dias aparecerão aqui.</p>
                     </div>
                 )}
             </div>

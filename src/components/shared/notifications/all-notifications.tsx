@@ -53,6 +53,7 @@ export function AllNotifications() {
     const isAiAlert =
       n.isAiAlert ||
       rawType === "AI_ALERT" ||
+      n.title.toUpperCase().includes("NORA AI") ||
       n.title.toUpperCase().includes("MIND AI") ||
       n.title.toUpperCase().includes("ALERTA INTELIGENTE");
 

@@ -29,7 +29,7 @@ export function DetailsProductModal() {
           </div>
 
           <div className="mt-4 space-y-1 text-center">
-            <h2 className="text-2xl font-bold tracking-tight">{currentProduct.name}</h2>
+            <h2 className="text-2xl font-semibold tracking-tight">{currentProduct.name}</h2>
             <div className="flex items-center justify-center gap-2">
               {currentProduct.sku && (
                 <span className="text-xs font-mono text-muted-foreground uppercase">
@@ -54,7 +54,7 @@ export function DetailsProductModal() {
         <section className="space-y-3">
           <div className="flex items-center gap-2 border-b pb-1 mb-2">
             <Icon name="Info" className="w-4 h-4 text-primary" />
-            <h3 className="font-bold text-foreground uppercase tracking-wider text-xs">
+            <h3 className="font-semibold text-foreground uppercase tracking-wider text-xs">
               Informações Gerais
             </h3>
           </div>
@@ -73,7 +73,7 @@ export function DetailsProductModal() {
         <section className="space-y-3">
           <div className="flex items-center gap-2 border-b pb-1 mb-2 text-primary">
             <Icon name="Coins" className="w-4 h-4" />
-            <h3 className="font-bold uppercase tracking-wider text-xs">Financeiro</h3>
+            <h3 className="font-semibold uppercase tracking-wider text-xs">Financeiro</h3>
           </div>
           <div className="grid gap-2 pl-1">
             <DetailRow
@@ -105,7 +105,7 @@ export function DetailsProductModal() {
           <section className="space-y-3">
             <div className="flex items-center gap-2 border-b pb-1 mb-2 text-primary">
               <Icon name="Scale" className="w-4 h-4" />
-              <h3 className="font-bold uppercase tracking-wider text-xs">Stock</h3>
+              <h3 className="font-semibold uppercase tracking-wider text-xs">Stock</h3>
             </div>
             <div className="grid gap-2 pl-1">
               <DetailRow label="Stock actual" value={currentProduct.quantity} />
@@ -119,7 +119,7 @@ export function DetailsProductModal() {
             <section className="space-y-3">
               <div className="flex items-center gap-2 border-b pb-1 mb-2 text-primary">
                 <Icon name="Maximize" className="w-4 h-4" />
-                <h3 className="font-bold uppercase tracking-wider text-xs">Logística</h3>
+                <h3 className="font-semibold uppercase tracking-wider text-xs">Logística</h3>
               </div>
               <div className="grid gap-2 pl-1">
                 <DetailRow label="Peso" value={currentProduct.weight ? `${currentProduct.weight}kg` : undefined} />
@@ -134,7 +134,7 @@ export function DetailsProductModal() {
             <section className="space-y-3">
               <div className="flex items-center gap-2 border-b pb-1 mb-2 text-primary">
                 <Icon name="Calendar" className="w-4 h-4" />
-                <h3 className="font-bold uppercase tracking-wider text-xs">Validade</h3>
+                <h3 className="font-semibold uppercase tracking-wider text-xs">Validade</h3>
               </div>
               <div className="grid gap-2 pl-1">
                 <DetailRow

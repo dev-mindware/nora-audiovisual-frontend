@@ -16,7 +16,7 @@ function FeatureItem({ icon, title, description }: FeatureItemProps) {
           className="h-8 w-8 text-primary-600 animate-in fade-in zoom-in duration-500"
         />
       </div>
-      <h3 className="font-bold text-lg mb-2 text-foreground">{title}</h3>
+      <h3 className="font-semibold text-lg mb-2 text-foreground">{title}</h3>
       <p className="text-sm text-muted-foreground leading-relaxed max-w-[240px]">
         {description}
       </p>
@@ -28,7 +28,7 @@ export function PlanInclusionFeatures() {
   return (
     <div className="mt-20 py-16 border-t border-border/50" data-tour="plans-inclusions">
       <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold text-foreground mb-4">
+        <h2 className="text-3xl font-semibold text-foreground mb-4">
           Todos os planos incluem
         </h2>
         <div className="h-1.5 w-16 bg-primary-500 rounded-full mx-auto" />

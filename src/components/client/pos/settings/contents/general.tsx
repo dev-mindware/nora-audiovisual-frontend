@@ -70,10 +70,10 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
       variant: isOpen ? ("default" as const) : ("action" as const),
       onClick: !isOpen
         ? () =>
-            openModal(
-              isManagement ? "opening-cashier" : "opening-cashier-session",
-              isManagement ? { mode: "create" } : undefined,
-            )
+          openModal(
+            isManagement ? "opening-cashier" : "opening-cashier-session",
+            isManagement ? { mode: "create" } : undefined,
+          )
         : undefined,
     },
     {
@@ -140,10 +140,10 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
                 />
               </div>
               <div className="space-y-0.5">
-                <p className="text-xs font-bold leading-tight uppercase tracking-wide opacity-70">
+                <p className="text-xs font-semibold leading-tight uppercase tracking-wide opacity-70">
                   {card.title}
                 </p>
-                <p className="text-sm font-bold truncate max-w-[130px]">
+                <p className="text-sm font-semibold truncate max-w-[130px]">
                   {card.subtitle}
                 </p>
               </div>
@@ -191,7 +191,7 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
 
       {currentSession && (
         <div className="space-y-4" data-tour="pos-settings-session-details">
-          <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.1em] px-1">
+          <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.1em] px-1">
             Detalhes da sessão
           </p>
 
@@ -245,7 +245,7 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
                   <Icon name={metric.icon as any} size={20} className={metric.color} />
                 </div>
                 <div className="space-y-0.5">
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                     {metric.label}
                   </p>
                   <p
@@ -288,7 +288,7 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
                     isOpen ? "bg-green-500 animate-pulse" : "bg-red-500",
                   )}
                 />
-                <span className="text-sm font-bold">
+                <span className="text-sm font-semibold">
                   {isOpen ? "Em operação" : "Finalizada"}
                 </span>
               </div>
@@ -353,7 +353,7 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
                   </div>
                   <p className="text-sm font-medium">{metric.label}</p>
                 </div>
-                <span className={cn("text-sm font-bold", metric.valueClass)}>
+                <span className={cn("text-sm font-semibold", metric.valueClass)}>
                   {metric.value}
                 </span>
               </div>
@@ -368,7 +368,7 @@ export function PosGeneralSettings({ currentSession }: PosGeneralSettingsProps) 
                 className="text-muted-foreground mt-0.5"
               />
               <div className="space-y-0.5">
-                <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
+                <p className="text-[10px] uppercase font-semibold text-muted-foreground tracking-wider">
                   Observações
                 </p>
                 <p className="text-xs italic text-muted-foreground leading-relaxed">

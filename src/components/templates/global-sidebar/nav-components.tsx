@@ -25,7 +25,13 @@ export function NavMenu({ items }: { items: MenuItem[] }) {
   const toggleSubmenu = (id: string) =>
     setOpenSubmenu((prev) => (prev === id ? null : id));
 
-  const isActive = (url: string) => pathname.startsWith(url);
+  const isActive = (url: string) => {
+    const cleanUrl = url.split("?")[0];
+    if (cleanUrl === "/admin") {
+      return pathname === "/admin";
+    }
+    return pathname.startsWith(cleanUrl);
+  };
 
   const handleMobileClick = () => {
     if (isMobile) {

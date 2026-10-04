@@ -56,7 +56,7 @@ export function MobileMenuView({
               <Icon name="Store" size={18} className="text-primary" />
             </div>
             <h1
-              className="text-lg font-bold truncate max-w-[140px]"
+              className="text-lg font-semibold truncate max-w-[140px]"
               title={currentStore?.name}
             >
               {currentStore?.name || "Empresa"}
@@ -131,7 +131,7 @@ export function MobileMenuView({
           </div>
         </div>
 
-        <h2 className="text-base font-bold">Menu</h2>
+        <h2 className="text-base font-semibold">Menu</h2>
       </div>
 
       {/* ─── SCROLLABLE PRODUCT GRID ─── */}
@@ -211,17 +211,17 @@ export function MobileMenuView({
 
                     {/* Badge de quantidade — canto superior direito */}
                     {isInCart && (
-                      <div className="absolute top-2 right-2 bg-primary text-primary-foreground text-[10px] font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-background animate-in zoom-in duration-200 z-10">
+                      <div className="absolute top-2 right-2 bg-primary text-primary-foreground text-[10px] font-semibold rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-background animate-in zoom-in duration-200 z-10">
                         {cartItem.qty}
                       </div>
                     )}
                   </div>
                   <div className="p-3 space-y-1">
-                    <h3 className="text-sm font-bold line-clamp-1">
+                    <h3 className="text-sm font-semibold line-clamp-1">
                       {product.name}
                     </h3>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-bold text-primary">
+                      <span className="text-sm font-semibold text-primary">
                         {formatCurrency(product.price || 0)}
                       </span>
                       <span className="text-[10px] text-muted-foreground truncate ml-1">

@@ -135,8 +135,8 @@ export function CounterContent() {
         onUpdateQty={(item: TypeCartItem, delta: number) => handleUpdateQuantity(item.id, item.qty + delta)}
         onRemove={handleRemoveFromCart}
         onProcessTransaction={() => {
-            // Logic to open checkout drawer/modal for mobile
-            // For now, we can use the existing CartList logic but in a mobile way
+          // Logic to open checkout drawer/modal for mobile
+          // For now, we can use the existing CartList logic but in a mobile way
         }}
         onScan={handleManualScan}
         onResolveScan={findProductByBarcode}
@@ -168,7 +168,7 @@ export function CounterContent() {
         )}
 
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold">
+          <h2 className="text-xl font-semibold">
             {currentCategoryName || "Todos"}
           </h2>
         </div>

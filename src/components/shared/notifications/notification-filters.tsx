@@ -30,7 +30,7 @@ const STATUS_LABELS: Record<"all" | "read" | "unread", string> = {
 
 const TYPE_LABELS: Record<"all" | "INFO" | "WARNING" | "ERROR" | "SUCCESS" | "AI_ALERT", string> = {
   all: "Todos os tipos",
-  AI_ALERT: "MIND AI / Inteligentes",
+  AI_ALERT: "Nora AI / Inteligentes",
   INFO: "Informações",
   SUCCESS: "Sucesso / Validações",
   WARNING: "Avisos",
@@ -70,27 +70,28 @@ export function NotificationFilters({
             <Button
               variant="outline"
               className={cn(
-                "border gap-2 shrink-0 transition-colors",
+                "border gap-2 shrink-0 transition-colors rounded-none",
                 isStatusFiltered && "border-primary text-primary bg-primary/5 hover:bg-primary/10"
               )}
             >
               <Icon name="ListFilter" className="h-4 w-4" />
-              {STATUS_LABELS[filterStatus]}
+              {isStatusFiltered ? STATUS_LABELS[filterStatus] : "Estado"}
               {isStatusFiltered && (
-                <span className="ml-1 flex h-2 w-2 rounded-full bg-primary" />
+                <span className="ml-1 flex h-2 w-2 bg-primary" />
               )}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="min-w-[160px]">
+          <DropdownMenuContent align="end" className="min-w-[160px] rounded-none">
             <DropdownMenuLabel className="text-xs text-muted-foreground font-normal">
               Filtrar por estado
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {(["all", "unread", "read"] as const).map((status) => (
+            {(["unread", "read"] as const).map((status) => (
               <DropdownMenuCheckboxItem
                 key={status}
+                className="rounded-none cursor-pointer"
                 checked={filterStatus === status}
-                onCheckedChange={() => setFilterStatus(status)}
+                onCheckedChange={() => setFilterStatus(filterStatus === status ? "all" : status)}
               >
                 {STATUS_LABELS[status]}
               </DropdownMenuCheckboxItem>
@@ -104,27 +105,28 @@ export function NotificationFilters({
             <Button
               variant="outline"
               className={cn(
-                "border gap-2 shrink-0 transition-colors",
+                "border gap-2 shrink-0 transition-colors rounded-none",
                 isTypeFiltered && "border-primary text-primary bg-primary/5 hover:bg-primary/10"
               )}
             >
               <Icon name="Tag" className="h-4 w-4" />
-              {TYPE_LABELS[filterType]}
+              {isTypeFiltered ? TYPE_LABELS[filterType] : "Tipo de alerta"}
               {isTypeFiltered && (
-                <span className="ml-1 flex h-2 w-2 rounded-full bg-primary" />
+                <span className="ml-1 flex h-2 w-2 bg-primary" />
               )}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="min-w-[160px]">
+          <DropdownMenuContent align="end" className="min-w-[160px] rounded-none">
             <DropdownMenuLabel className="text-xs text-muted-foreground font-normal">
               Filtrar por tipo
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {(["all", "AI_ALERT", "INFO", "SUCCESS", "WARNING", "ERROR"] as const).map((type) => (
+            {(["AI_ALERT", "INFO", "SUCCESS", "WARNING", "ERROR"] as const).map((type) => (
               <DropdownMenuCheckboxItem
                 key={type}
+                className="rounded-none cursor-pointer"
                 checked={filterType === type}
-                onCheckedChange={() => setFilterType(type)}
+                onCheckedChange={() => setFilterType(filterType === type ? "all" : type)}
               >
                 {TYPE_LABELS[type]}
               </DropdownMenuCheckboxItem>

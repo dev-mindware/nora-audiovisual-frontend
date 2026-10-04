@@ -31,7 +31,7 @@ export function ContributorVerifyForm() {
         className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-6 shadow-xl dark:border-slate-800/80 dark:bg-slate-950 transition-all duration-300"
       >
         <div className="mb-5">
-          <h3 className="text-lg font-bold text-slate-900 dark:text-slate-50">
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-50">
             Consultar Contribuinte (SETIC-FP)
           </h3>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
@@ -41,7 +41,7 @@ export function ContributorVerifyForm() {
 
         <div className="flex flex-col gap-4 sm:flex-row">
           <div className="w-full sm:w-1/3">
-            <label className="mb-1.5 block text-xs font-bold text-slate-500 dark:text-slate-400">
+            <label className="mb-1.5 block text-xs font-semibold text-slate-500 dark:text-slate-400">
               Tipo de Documento
             </label>
             <div className="relative">
@@ -67,7 +67,7 @@ export function ContributorVerifyForm() {
           </div>
 
           <div className="flex-1">
-            <label className="mb-1.5 block text-xs font-bold text-slate-500 dark:text-slate-400">
+            <label className="mb-1.5 block text-xs font-semibold text-slate-500 dark:text-slate-400">
               Número do Documento
             </label>
             <div className="relative">
@@ -86,7 +86,7 @@ export function ContributorVerifyForm() {
             type="submit"
             disabled={verifyContributor.isPending || !numeroDocumento.trim()}
             className={cn(
-              "flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-bold text-white shadow-md shadow-blue-500/10 transition-all duration-200 hover:from-blue-500 hover:to-indigo-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
+              "flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-blue-500/10 transition-all duration-200 hover:from-blue-500 hover:to-indigo-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
             )}
           >
             {verifyContributor.isPending ? (

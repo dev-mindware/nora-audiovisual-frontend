@@ -40,7 +40,7 @@ export function PosSessionGuard({ children }: { children: React.ReactNode }) {
                         <div className="absolute inset-0 h-12 w-12 animate-ping bg-primary/20 rounded-full -z-10" />
                     </div>
                     <div className="text-center space-y-1.5 relative">
-                        <p className="text-lg font-outfit font-bold text-foreground tracking-tight">Verificando POS</p>
+                        <p className="text-lg font-outfit font-semibold text-foreground tracking-tight">Verificando POS</p>
                         <p className="text-sm text-muted-foreground font-medium animate-pulse">Aguarde um momento...</p>
                     </div>
                 </div>
@@ -77,7 +77,7 @@ export function PosSessionGuard({ children }: { children: React.ReactNode }) {
                     </div>
                     <Button
                         onClick={() => window.location.reload()}
-                        className="w-full h-12 rounded-xl font-bold font-outfit"
+                        className="w-full h-12 rounded-xl font-semibold font-outfit"
                     >
                         Tentar Novamente
                     </Button>

@@ -94,7 +94,7 @@ export function ManagerAuthModal({ onAuthenticated, bypass = false }: ManagerAut
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold tracking-tight">
+            <h2 className="text-2xl font-semibold tracking-tight">
               Scanner Requerido
             </h2>
             <p className="text-sm text-muted-foreground leading-relaxed px-4">
@@ -108,7 +108,7 @@ export function ManagerAuthModal({ onAuthenticated, bypass = false }: ManagerAut
               <>
                 <div className="flex items-center gap-3 px-6 py-3 rounded-full bg-primary/5 border border-primary/20 text-primary animate-bounce-slow">
                   <div className="h-2 w-2 rounded-full bg-primary animate-ping"></div>
-                  <span className="text-xs font-bold uppercase tracking-[0.2em]">
+                  <span className="text-xs font-semibold uppercase tracking-[0.2em]">
                     Aguardando Leitura...
                   </span>
                 </div>
@@ -165,7 +165,7 @@ export function ManagerAuthModal({ onAuthenticated, bypass = false }: ManagerAut
                     Voltar para Scanner
                   </Button>
                   <Button
-                    className="flex-1 h-10 text-xs font-bold"
+                    className="flex-1 h-10 text-xs font-semibold"
                     onClick={() => verifyCode(manualCode)}
                     disabled={isLoading || manualCode.length < 1}
                   >
@@ -179,7 +179,7 @@ export function ManagerAuthModal({ onAuthenticated, bypass = false }: ManagerAut
           <div className="w-full pt-4">
             <Button
               variant="ghost"
-              className="w-full text-muted-foreground hover:text-destructive hover:bg-destructive/5 h-10 text-xs uppercase font-bold tracking-widest"
+              className="w-full text-muted-foreground hover:text-destructive hover:bg-destructive/5 h-10 text-xs uppercase font-semibold tracking-widest"
               onClick={() => closeModal(MODAL_MANAGER_AUTH_ID)}
               disabled={isLoading}
             >

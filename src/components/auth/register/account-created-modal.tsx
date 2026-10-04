@@ -3,7 +3,7 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useFormContext } from "react-hook-form";
 import { useModal, useAuthStore } from "@/stores";
-import { Button } from "@/components";
+import { Button } from "@/components/ui";
 import { GlobalModal } from "@/components/modal";
 import { RegisterFormData } from "@/schemas";
 import { loginAction } from "@/actions/login";
@@ -23,10 +23,10 @@ export function AccountCreatedModal() {
 
         const result = await loginAction({ email, password });
 
-        if (result.user && result.redirectPath) {
+        if (result.user) {
           setUser(result.user);
           closeModal("account-created");
-          router.push(result.redirectPath);
+          router.push(result.redirectPath || "/dashboard");
           return;
         }
 
@@ -43,9 +43,9 @@ export function AccountCreatedModal() {
       sucess
       canClose={false}
       id="account-created"
-      title="Bem-vindo(a) ao Mindgest!"
+      title="Bem-vindo(a) ao Nora Audiovisual!"
       className="!w-lg text-center"
-      description="Sua conta foi criada com sucesso."
+      description="Sua produtora e conta foram configuradas com sucesso."
     >
       <div className="flex flex-col items-center justify-center py-2 space-y-4">
         <div className="w-full">

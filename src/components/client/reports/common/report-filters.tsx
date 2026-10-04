@@ -62,21 +62,35 @@ export function ReportFilters({ filters, className }: ReportFiltersProps) {
 
             {filter.type === "select" ? (
               <Select value={filter.value} onValueChange={filter.onChange}>
-                <SelectTrigger className="w-full h-10 bg-background/50 hover:bg-background transition-colors">
+                <SelectTrigger
+                  className={cn(
+                    "w-full h-10 rounded-none transition-colors",
+                    filter.value
+                      ? "border-primary text-primary bg-primary/10 hover:bg-primary/15 font-medium"
+                      : "border-input text-muted-foreground bg-transparent hover:bg-muted/40 hover:text-foreground font-normal"
+                  )}
+                >
                   <SelectValue
                     placeholder={filter.placeholder || "Seleccione"}
                   />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="rounded-none">
                   <SelectGroup>
                     <SelectLabel>
                       {filter.placeholder || filter.label}
                     </SelectLabel>
-                    {filter.options.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
+                    {filter.options
+                      .filter(
+                        (opt) =>
+                          opt.label.toLowerCase() !== "todos" &&
+                          opt.label.toLowerCase() !== "tudo" &&
+                          opt.value.toLowerCase() !== "all"
+                      )
+                      .map((option) => (
+                        <SelectItem key={option.value} value={option.value} className="rounded-none">
+                          {option.label}
+                        </SelectItem>
+                      ))}
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -86,11 +100,18 @@ export function ReportFilters({ filters, className }: ReportFiltersProps) {
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full h-10 justify-start text-left font-normal bg-background/50 hover:bg-background transition-colors",
-                      !filter.value && "text-muted-foreground",
+                      "w-full h-10 rounded-none justify-start text-left transition-colors",
+                      filter.value
+                        ? "border-primary text-primary bg-primary/10 hover:bg-primary/15 font-medium"
+                        : "border-input text-muted-foreground bg-transparent hover:bg-muted/40 hover:text-foreground font-normal"
                     )}
                   >
-                    <CalendarIcon className="mr-2 h-4 w-4 shrink-0" />
+                    <CalendarIcon
+                      className={cn(
+                        "mr-2 h-4 w-4 shrink-0",
+                        filter.value ? "text-primary" : "text-muted-foreground"
+                      )}
+                    />
                     <span className="truncate">
                       {filter.value
                         ? format(filter.value, "PPP", { locale: ptBR })
@@ -98,7 +119,7 @@ export function ReportFilters({ filters, className }: ReportFiltersProps) {
                     </span>
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-auto p-0 rounded-none" align="start">
                   <Calendar
                     mode="single"
                     selected={filter.value}

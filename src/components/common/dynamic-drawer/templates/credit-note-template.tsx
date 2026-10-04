@@ -40,7 +40,7 @@ export function CreditNoteTemplate({ data }: Props) {
       <div className="flex justify-between items-start">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <h2 className="text-xl font-bold uppercase tracking-wide">
+            <h2 className="text-xl font-semibold uppercase tracking-wide">
               Nota de Crédito
             </h2>
             {data.status && <DocumentStatusBadge status={data.status} />}
@@ -197,7 +197,7 @@ export function CreditNoteTemplate({ data }: Props) {
             <span className="font-mono">{formatCurrency(invoiceTotal)}</span>
           </div>
 
-          <div className="flex justify-between font-bold text-base pt-1 text-primary">
+          <div className="flex justify-between font-semibold text-base pt-1 text-primary">
             <span>Total Creditado:</span>
             <span className="font-mono text-lg">
               {formatCurrency(creditTotal)}

@@ -3,10 +3,10 @@ export function Loader() {
     <div className="flex flex-col w-screen items-center justify-center min-h-screen bg-background relative selection:bg-transparent">
       <div className="relative flex flex-col items-center justify-center">
         <div className="relative flex items-center justify-center w-32 h-32">
-          <div className="absolute inset-0 rounded-full border border-purple-500/10 dark:border-purple-400/10"></div>
+          <div className="absolute inset-0 rounded-full border border-primary/10 dark:border-primary/10"></div>
 
           <svg
-            className="absolute inset-0 w-full h-full animate-spin text-purple-600 dark:text-purple-500"
+            className="absolute inset-0 w-full h-full animate-spin text-primary dark:text-primary"
             viewBox="0 0 100 100"
             style={{ animationDuration: '1.2s' }}
           >
@@ -29,14 +29,19 @@ export function Loader() {
           </svg>
 
           <img
-            src="/mindgest.png"
-            alt="Logo"
-            className="w-12 h-12 z-10 object-contain drop-shadow-sm opacity-90 transition-opacity"
+            src="/light-favicon.png"
+            alt="Nora Audiovisual"
+            className="w-12 h-12 z-10 object-contain drop-shadow-sm opacity-90 transition-opacity dark:hidden"
+          />
+          <img
+            src="/dark-favicon.png"
+            alt="Nora Audiovisual"
+            className="w-12 h-12 z-10 object-contain drop-shadow-sm opacity-90 transition-opacity hidden dark:block"
           />
         </div>
 
         <div className="absolute -bottom-10 text-[11px] tracking-[0.25em] text-muted-foreground/40 font-medium uppercase font-sans">
-          Mindgest
+          Nora
         </div>
       </div>
     </div>

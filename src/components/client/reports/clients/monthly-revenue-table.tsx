@@ -64,9 +64,9 @@ export function MonthlyRevenueTable({ monthlyTrend }: MonthlyRevenueTableProps) 
                         <Table>
                             <TableHeader className="bg-muted/30">
                                 <TableRow className="hover:bg-transparent border-none">
-                                    <TableHead className="font-bold text-foreground">Mês Referência</TableHead>
-                                    <TableHead className="text-right font-bold text-foreground">Receita</TableHead>
-                                    <TableHead className="text-right font-bold text-foreground">Facturas</TableHead>
+                                    <TableHead className="font-semibold text-foreground">Mês Referência</TableHead>
+                                    <TableHead className="text-right font-semibold text-foreground">Receita</TableHead>
+                                    <TableHead className="text-right font-semibold text-foreground">Facturas</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>

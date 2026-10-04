@@ -63,7 +63,7 @@ export function ContributorResultCard({
             />
           </div>
           <div>
-            <h4 className="text-base font-bold tracking-tight text-slate-900 dark:text-slate-50">
+            <h4 className="text-base font-semibold tracking-tight text-slate-900 dark:text-slate-50">
               {contributor.nome}
             </h4>
             <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
@@ -80,7 +80,7 @@ export function ContributorResultCard({
 
       <div className="mt-6 grid gap-4 border-t border-slate-100 pt-5 sm:grid-cols-3 dark:border-slate-800/80">
         <div className="rounded-xl border border-slate-100 bg-slate-50/40 p-3.5 dark:border-slate-900 dark:bg-slate-900/20">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
             Número de NIF / Documento
           </span>
           <p className="mt-1 text-sm font-semibold text-slate-800 dark:text-slate-200">
@@ -89,7 +89,7 @@ export function ContributorResultCard({
         </div>
 
         <div className="rounded-xl border border-slate-100 bg-slate-50/40 p-3.5 dark:border-slate-900 dark:bg-slate-900/20">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
             Regime de IVA
           </span>
           <p className="mt-1 text-sm font-semibold text-slate-800 dark:text-slate-200">
@@ -98,7 +98,7 @@ export function ContributorResultCard({
         </div>
 
         <div className="rounded-xl border border-slate-100 bg-slate-50/40 p-3.5 dark:border-slate-900 dark:bg-slate-900/20">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
             Tipo Contribuinte
           </span>
           <p className="mt-1 text-sm font-semibold text-slate-800 dark:text-slate-200">

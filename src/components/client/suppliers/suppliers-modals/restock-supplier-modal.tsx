@@ -65,7 +65,7 @@ export function RestockSupplierModal() {
     } catch (err: any) {
       ErrorMessage(
         err?.response?.data?.message ||
-          "Ocorreu um erro ao registar o reabastecimento."
+        "Ocorreu um erro ao registar o reabastecimento."
       );
     }
   }
@@ -115,7 +115,7 @@ export function RestockSupplierModal() {
           </div>
 
           {errors.items?.root && (
-            <p className="text-[10px] font-bold text-destructive uppercase tracking-widest">
+            <p className="text-[10px] font-semibold text-destructive uppercase tracking-widest">
               {errors.items.root.message}
             </p>
           )}

@@ -57,15 +57,15 @@ export function PreferredProductsTable({ preferredItems }: PreferredProductsTabl
                         <Table>
                             <TableHeader className="bg-muted/30">
                                 <TableRow className="hover:bg-transparent border-none">
-                                    <TableHead className="font-bold text-foreground">Item / Produto</TableHead>
-                                    <TableHead className="text-right font-bold text-foreground">Qtd</TableHead>
-                                    <TableHead className="text-right font-bold text-foreground">Receita</TableHead>
+                                    <TableHead className="font-semibold text-foreground">Item / Produto</TableHead>
+                                    <TableHead className="text-right font-semibold text-foreground">Qtd</TableHead>
+                                    <TableHead className="text-right font-semibold text-foreground">Receita</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {sortedItems.map((item, index) => (
                                     <TableRow key={index} className="transition-colors hover:bg-muted/20">
-                                        <TableCell className="font-bold flex items-center gap-2">
+                                        <TableCell className="font-semibold flex items-center gap-2">
                                             <div className="p-1 rounded bg-muted animate-in zoom-in duration-300">
                                                 <Package className="h-3.5 w-3.5 text-muted-foreground" />
                                             </div>

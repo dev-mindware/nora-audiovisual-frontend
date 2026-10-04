@@ -33,7 +33,7 @@ export function DynamicDrawer({
             <SheetContent side={side} className={cn("w-full sm:max-w-xl md:max-w-2xl flex flex-col p-0 gap-0", className)}>
                 {(title || description) && (
                     <SheetHeader className="p-6 pb-4 border-b">
-                        {title && <SheetTitle className="text-lg font-bold">{title}</SheetTitle>}
+                        {title && <SheetTitle className="text-lg font-semibold">{title}</SheetTitle>}
                         {description && <SheetDescription className="text-xs text-muted-foreground">{description}</SheetDescription>}
                     </SheetHeader>
                 )}

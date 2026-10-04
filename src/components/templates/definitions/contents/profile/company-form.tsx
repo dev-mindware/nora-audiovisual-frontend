@@ -2,7 +2,16 @@
 
 import { cn } from "@/lib";
 import { useState } from "react";
-import { Button, Input, NifVerificationField } from "@/components";
+import {
+  Button,
+  Input,
+  NifVerificationField,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components";
 import type { CompanyFormData } from "@/schemas/company";
 import { useForm } from "react-hook-form";
 import { User } from "@/types";
@@ -67,107 +76,110 @@ export function CompanyForm({ user }: { user: User }) {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(handleCompanySubmit)}
-      className="bg-card rounded-lg border p-6 shadow-sm"
-    >
-      <div className="flex items-center justify-between mb-6 pb-4 border-b">
-        <h3 className="font-semibold text-lg">Dados da Actividade</h3>
-        <div className="sm:ml-auto flex gap-2">
-          <Button
-            type="button"
-            variant={isEditing ? "default" : "outline"}
-            size="sm"
-            onClick={() => {
-              if (isEditing) reset();
-              setIsEditing(!isEditing);
-            }}
+    <Card className="bg-card rounded-xs border border-border shadow-none p-0 gap-0">
+      <form onSubmit={handleSubmit(handleCompanySubmit)}>
+        <CardHeader className="p-5 border-b border-border flex flex-row items-center justify-between">
+          <CardTitle className="font-semibold text-base text-foreground">Dados da Actividade</CardTitle>
+          <div className="sm:ml-auto flex gap-2">
+            <Button
+              type="button"
+              variant={isEditing ? "default" : "outline"}
+              size="sm"
+              onClick={() => {
+                if (isEditing) reset();
+                setIsEditing(!isEditing);
+              }}
+              className="rounded-xs text-xs font-semibold"
+            >
+              {isEditing ? "Cancelar" : "Editar dados"}
+            </Button>
+          </div>
+        </CardHeader>
+
+        <CardContent className="p-5">
+          <div
+            className={cn("grid grid-cols-1 gap-4 md:grid-cols-2", {
+              "pointer-events-none": !isEditing,
+            })}
           >
-            {isEditing ? "Cancelar" : "Editar dados"}
-          </Button>
-        </div>
-      </div>
+            <Input
+              {...register("name")}
+              label="Nome completo ou designação comercial"
+              placeholder="Ex.: Manuel António ou Mindgest Soluções"
+              className="bg-background shadow-none rounded-xs text-xs"
+              readOnly={!isEditing}
+              error={errors.name?.message}
+            />
 
-      <div
-        className={cn("grid grid-cols-1 gap-6 md:grid-cols-2", {
-          "pointer-events-none": !isEditing,
-        })}
-      >
-        <Input
-          {...register("name")}
-          label="Nome completo ou designação comercial"
-          placeholder="Ex.: Manuel António ou Mindgest Soluções"
-          className="bg-background shadow-none"
-          readOnly={!isEditing}
-          error={errors.name?.message}
-        />
+            <Input
+              {...register("email")}
+              label="Email de contacto"
+              placeholder="Ex.: contacto@mindgest.com"
+              className="bg-background shadow-none rounded-xs text-xs"
+              readOnly={!isEditing}
+              error={errors?.email?.message}
+            />
 
-        <Input
-          {...register("email")}
-          label="Email de contacto"
-          placeholder="Ex.: contacto@mindgest.com"
-          className="bg-background shadow-none"
-          readOnly={!isEditing}
-          error={errors?.email?.message}
-        />
+            <Input
+              {...register("phone")}
+              label="Telefone de contacto"
+              placeholder="Ex: +244 900 000 000"
+              className="bg-background shadow-none rounded-xs text-xs"
+              readOnly={!isEditing}
+              error={errors?.phone?.message}
+            />
 
-        <Input
-          {...register("phone")}
-          label="Telefone de contacto"
-          placeholder="Ex: +244 900 000 000"
-          className="bg-background shadow-none"
-          readOnly={!isEditing}
-          error={errors?.phone?.message}
-        />
+            <Input
+              {...register("address")}
+              label="Endereço"
+              placeholder="Ex: Rua Principal, 123, Luanda"
+              className="bg-background shadow-none rounded-xs text-xs"
+              readOnly={!isEditing}
+              error={errors?.address?.message}
+            />
 
-        <Input
-          {...register("address")}
-          label="Endereço"
-          placeholder="Ex: Rua Principal, 123, Luanda"
-          className="bg-background shadow-none"
-          readOnly={!isEditing}
-          error={errors?.address?.message}
-        />
+            <NifVerificationField
+              label="NIF"
+              placeholder="NIF empresarial ou pessoal"
+              value={taxNumber}
+              onChange={(value) =>
+                setValue("taxNumber", value, {
+                  shouldDirty: true,
+                  shouldTouch: true,
+                  shouldValidate: true,
+                })
+              }
+              onVerified={handleVerified}
+              onStatusChange={handleStatusChange}
+              verificationEnabled={isEditing}
+              className="bg-background shadow-none rounded-xs text-xs"
+              disabled={!isEditing}
+              error={errors?.taxNumber?.message}
+            />
 
-        <NifVerificationField
-          label="NIF"
-          placeholder="NIF empresarial ou pessoal"
-          value={taxNumber}
-          onChange={(value) =>
-            setValue("taxNumber", value, {
-              shouldDirty: true,
-              shouldTouch: true,
-              shouldValidate: true,
-            })
-          }
-          onVerified={handleVerified}
-          onStatusChange={handleStatusChange}
-          verificationEnabled={isEditing}
-          className="bg-background shadow-none"
-          disabled={!isEditing}
-          error={errors?.taxNumber?.message}
-        />
+            <Input
+              {...register("website")}
+              label="Website"
+              placeholder="Ex.: https://www.mindgest.com"
+              className="bg-background shadow-none rounded-xs text-xs"
+              readOnly={!isEditing}
+              error={errors.website?.message}
+            />
+          </div>
+        </CardContent>
 
-        <Input
-          {...register("website")}
-          label="Website"
-          placeholder="Ex.: https://www.mindgest.com"
-          className="bg-background shadow-none"
-          readOnly={!isEditing}
-          error={errors.website?.message}
-        />
-      </div>
-
-      {isEditing && (
-        <div className="mt-8 flex justify-end gap-3 border-t pt-6">
-          <Button
-            type="submit"
-            disabled={isPending}
-          >
-            {isPending ? "A gravar..." : "Guardar Alterações"}
-          </Button>
-        </div>
-      )}
-    </form>
+        {isEditing && (
+          <CardFooter className="p-5 flex justify-end gap-3 border-t border-border">
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="rounded-xs font-semibold shadow-none"
+            >
+              {isPending ? "A gravar..." : "Guardar Alterações"}
+            </Button>
+          </CardFooter>
+        )}
+      </form>
+    </Card>
   );
 }

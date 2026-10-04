@@ -1,20 +1,23 @@
 "use client";
+
 import Link from "next/link";
-import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { ErrorMessage } from "@/utils/messages";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormData, loginSchema } from "@/schemas";
-import { ButtonSubmit, Input } from "@/components";
+import { ButtonSubmit, Input } from "@/components/ui";
 import { loginAction } from "@/actions/login";
 import { useAuthStore } from "@/stores";
+import { useTenantStore } from "@/stores/tenant";
 import { queryClient } from "@/lib";
 import { getApiErrorMessage } from "@/utils";
+import { Clapperboard, ArrowRight, ShieldCheck } from "lucide-react";
 
 export function LoginForm() {
   const router = useRouter();
   const { setUser, setIsAuthenticating } = useAuthStore();
+  const { setActiveOrganization, setOrganizations, clearTenant } = useTenantStore();
 
   const {
     register,
@@ -36,11 +39,33 @@ export function LoginForm() {
 
       setIsAuthenticating(true);
 
-      // ✅ Popula o cache do React Query antes de redirecionar para evitar requisição redundante
-      queryClient.setQueryData(["user"], res.user);
+      const isAdmin = res.user.isPlatformAdmin || res.user.role === "ADMIN";
 
+      if (isAdmin) {
+        clearTenant();
+      } else {
+        if (res.activeOrganization) {
+          setActiveOrganization({
+            id: res.activeOrganization.id,
+            name: res.activeOrganization.name,
+            slug: res.activeOrganization.slug,
+          });
+        }
+
+        if (res.memberships && res.memberships.length > 0) {
+          setOrganizations(
+            res.memberships.map((m: any) => ({
+              id: m.organizationId,
+              name: m.organizationName || "Organização",
+              role: m.roleId,
+            }))
+          );
+        }
+      }
+
+      queryClient.setQueryData(["user"], res.user);
       setUser(res.user);
-      router.replace(res.redirectPath || "/");
+      router.replace(res.redirectPath || "/dashboard");
     } catch (error) {
       setIsAuthenticating(false);
       ErrorMessage(getApiErrorMessage(error, "Ocorreu um erro inesperado. Tente novamente."));
@@ -48,53 +73,76 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(handleLogin)} className="flex flex-col gap-6">
-      <div className="flex flex-col items-center gap-2 text-center">
-        <Image src={"/mindgest.png"} alt="Logótipo do Mindgest" className="size-20" width={100} height={100} />
-        <h1 className="text-2xl font-bold">Bem-vindo(a) ao Mindgest</h1>
+    <div className="w-full max-w-sm mx-auto my-auto flex flex-col gap-6">
+      {/* Header com badge de produção audiovisual */}
+      <div className="flex flex-col gap-2.5 text-left">
+        <div className="space-y-1">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+            Iniciar Sessão
+          </h1>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Introduza as suas credenciais para aceder aos seus projetos, folhas de chamada e equipamentos.
+          </p>
+        </div>
       </div>
 
-      <div className="grid gap-6">
-        <Input
-          type="email"
-          label="Email"
-          startIcon="AtSign"
-          placeholder="Endereço de email"
-          {...register("email")}
-          error={errors?.email && errors?.email?.message}
-          autoComplete="email"
-        />
-        <div className="flex flex-col space-y-2 items-center">
+      <form onSubmit={handleSubmit(handleLogin)} className="flex flex-col gap-5">
+        <div className="grid gap-4">
           <Input
-            label="Palavra-passe"
-            startIcon="Lock"
-            type="password"
-            placeholder="Introduza a palavra-passe"
-            {...register("password")}
-            autoComplete="current-password"
+            type="email"
+            label="Email Profissional"
+            startIcon="AtSign"
+            placeholder="admin@nora-audiovisual.com"
+            {...register("email")}
+            error={errors?.email && errors?.email?.message}
+            autoComplete="email"
           />
-          <Link
-            href="/auth/forgot-password"
-            className="ml-auto text-sm text-primary underline-offset-4 hover:underline"
+
+          <div className="flex flex-col space-y-1.5">
+            <Input
+              label="Palavra-passe"
+              startIcon="Lock"
+              type="password"
+              placeholder="••••••••••••"
+              {...register("password")}
+              error={errors?.password && errors?.password?.message}
+              autoComplete="current-password"
+            />
+            <div className="flex justify-end pt-1">
+              <Link
+                href="/auth/forgot-password"
+                className="text-xs font-semibold text-primary hover:text-primary/90 hover:underline transition-colors"
+              >
+                Esqueceu a palavra-passe?
+              </Link>
+            </div>
+          </div>
+
+          <ButtonSubmit
+            isLoading={isSubmitting}
+            className="w-full h-10 font-semibold gap-2 mt-1"
           >
-            Esqueceu a sua palavra-passe?
-          </Link>
+            {isSubmitting ? (
+              "A autenticar..."
+            ) : (
+              <>
+                <span>Entrar</span>
+                <ArrowRight className="h-4 w-4" />
+              </>
+            )}
+          </ButtonSubmit>
         </div>
 
-        <ButtonSubmit isLoading={isSubmitting}>
-          {isSubmitting ? "" : "Entrar"}
-        </ButtonSubmit>
-
-      </div>
-      <div className="text-sm text-center">
-        Ainda não tem uma conta?{" "}
-        <Link
-          href="/auth/register"
-          className="font-medium text-primary hover:underline underline-offset-4"
-        >
-          Criar conta
-        </Link>
-      </div>
-    </form>
+        <div className="pt-2 text-center text-xs text-muted-foreground border-t border-border/50">
+          Ainda não tem conta da sua produtora?{" "}
+          <Link
+            href="/auth/register"
+            className="font-semibold text-primary hover:text-primary/90 hover:underline transition-colors"
+          >
+            Registar nova produtora
+          </Link>
+        </div>
+      </form>
+    </div>
   );
 }

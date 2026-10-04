@@ -7,7 +7,7 @@ import type { DocumentVerificationResponse } from "@/types/documents";
  */
 export async function verifyDocument(token: string) {
   return publicApi.get<DocumentVerificationResponse>(
-    `/v1/documents/verify/${token}`,
+    `/documents/verify/${token}`,
   );
 }
 
@@ -16,7 +16,7 @@ export async function verifyDocument(token: string) {
  * @param token - The verification token from the QR code
  */
 export async function downloadPublicDocument(token: string) {
-  return publicApi.get(`/v1/documents/download/${token}`, {
+  return publicApi.get(`/documents/download/${token}`, {
     responseType: "blob",
   });
 }

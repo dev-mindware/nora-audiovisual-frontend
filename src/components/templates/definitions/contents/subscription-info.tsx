@@ -77,7 +77,7 @@ export function SubscriptionInfo() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div>
               <p className="text-sm text-muted-foreground">Preço Mensal</p>
-              <p className="text-2xl font-bold text-primary">
+              <p className="text-2xl font-semibold text-primary">
                 {formatCurrency(Number(plan.priceMonthly))}
               </p>
             </div>

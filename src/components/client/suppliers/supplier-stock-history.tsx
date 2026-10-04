@@ -159,7 +159,7 @@ export function SupplierStockHistory({ supplierId }: { supplierId: string }) {
       {
         key: "total",
         header: "Total",
-        className: "text-right font-bold text-foreground whitespace-nowrap",
+        className: "text-right font-semibold text-foreground whitespace-nowrap",
         render: (_, row) => formatCurrency(row.costAtEntry * row.quantity),
       },
     ],

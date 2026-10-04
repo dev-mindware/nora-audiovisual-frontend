@@ -28,7 +28,7 @@ export function DetailsServiceModal() {
           </div>
 
           <div className="text-center space-y-1 mt-4">
-            <h2 className="text-2xl font-bold tracking-tight">{currentService.name}</h2>
+            <h2 className="text-2xl font-semibold tracking-tight">{currentService.name}</h2>
             <div className="flex items-center justify-center gap-2">
               {currentService.sku && (
                 <span className="text-xs font-mono text-muted-foreground uppercase">
@@ -53,7 +53,7 @@ export function DetailsServiceModal() {
         <section className="space-y-3">
           <div className="flex items-center gap-2 border-b pb-1 mb-2">
             <Icon name="Info" className="w-4 h-4 text-primary" />
-            <h3 className="font-bold text-foreground uppercase tracking-wider text-xs">
+            <h3 className="font-semibold text-foreground uppercase tracking-wider text-xs">
               Informações Gerais
             </h3>
           </div>
@@ -71,7 +71,7 @@ export function DetailsServiceModal() {
         <section className="space-y-3">
           <div className="flex items-center gap-2 border-b pb-1 mb-2 text-primary">
             <Icon name="Coins" className="w-4 h-4" />
-            <h3 className="font-bold uppercase tracking-wider text-xs">Financeiro</h3>
+            <h3 className="font-semibold uppercase tracking-wider text-xs">Financeiro</h3>
           </div>
           <div className="grid gap-2 pl-1">
             <DetailRow

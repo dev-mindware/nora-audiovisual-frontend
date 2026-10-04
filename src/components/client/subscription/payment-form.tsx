@@ -10,9 +10,9 @@ import {
   FileUpload,
   RadioGroup,
   RadioGroupItem,
-  SubscriptionSucessModal,
-  SubscriptionSummary,
 } from "@/components";
+import { SubscriptionSucessModal } from "./subscription-sucess-modal";
+import { SubscriptionSummary } from "./subscription-summary";
 import { ErrorMessage } from "@/utils/messages";
 import { PaymentInstruction } from "./payment-insctrutions";
 import { PaymentMethodInformation } from "./payment-method-information";
@@ -64,7 +64,7 @@ export function PaymentForm({ form, onSubmit, isPending }: PaymentFormProps) {
       form.setValue("couponCode", undefined);
       setCouponError(
         err?.response?.data?.message ||
-          "Cupão inválido, expirado ou não aplicável ao plano selecionado.",
+        "Cupão inválido, expirado ou não aplicável ao plano selecionado.",
       );
     } finally {
       setCouponLoading(false);
@@ -110,7 +110,7 @@ export function PaymentForm({ form, onSubmit, isPending }: PaymentFormProps) {
         <div className="lg:col-span-8 space-y-6">
           <div className="flex flex-col gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-foreground">
+              <h1 className="text-2xl font-semibold text-foreground">
                 Concluir pagamento
               </h1>
               <p className="text-muted-foreground">
@@ -171,8 +171,8 @@ export function PaymentForm({ form, onSubmit, isPending }: PaymentFormProps) {
                       key={key}
                       onClick={() => setPaymentMethod(key as any)}
                       className={`p-4 border-2 rounded-lg flex flex-col items-center gap-2 transition-all ${paymentMethod === key
-                          ? "border-primary-500 bg-primary-50 dark:bg-primary-900/20"
-                          : "border-gray-200 dark:border-zinc-800 hover:border-gray-300 dark:hover:border-zinc-700"
+                        ? "border-primary-500 bg-primary-50 dark:bg-primary-900/20"
+                        : "border-gray-200 dark:border-zinc-800 hover:border-gray-300 dark:hover:border-zinc-700"
                         }`}
                     >
                       <div className="h-16 w-full relative flex items-center justify-center p-2 mb-2">

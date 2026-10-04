@@ -135,7 +135,7 @@ export function SubscriptionSummary({
           </InfoRow>
 
           <InfoRow label="Preço mensal:">
-            <span className="font-bold text-primary-600">
+            <span className="font-semibold text-primary-600">
               {formatCurrency(price)}
             </span>
           </InfoRow>
@@ -161,7 +161,7 @@ export function SubscriptionSummary({
             <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 space-y-1.5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="font-mono font-bold tracking-wider border-primary text-primary">
+                  <Badge variant="outline" className="font-mono font-semibold tracking-wider border-primary text-primary">
                     {couponData.coupon.code}
                   </Badge>
                   <span className="text-xs text-muted-foreground">
@@ -253,7 +253,7 @@ export function SubscriptionSummary({
                   {formatCurrency(subtotal)}
                 </p>
               )}
-              <p className="font-bold text-primary-600 text-lg">
+              <p className="font-semibold text-primary-600 text-lg">
                 {formatCurrency(totalToPay)}
               </p>
             </div>

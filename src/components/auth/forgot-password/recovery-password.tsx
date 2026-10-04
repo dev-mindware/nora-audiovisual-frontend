@@ -1,28 +1,28 @@
 "use client";
-import Logo from "@/assets/brand.png";
-import { ButtonSubmit, Input } from "@/components";
-import { useModal } from "@/stores/modal/use-modal-store";
-import { ForgotPasswordFormData } from "@/schemas";
+
+import { useState } from "react";
+import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { forgotPasswordSchema } from "@/schemas";
+import { ButtonSubmit, Input } from "@/components/ui";
+import { useModal } from "@/stores/modal/use-modal-store";
+import { ForgotPasswordFormData, forgotPasswordSchema } from "@/schemas";
 import { ErrorMessage } from "@/utils/messages";
-import { OTPModal } from "./otp-modal";
-import { AuthHeader, BackToLogin } from "../_components";
-import { cn } from "@/lib";
-import Image from "next/image";
-import { useState } from "react";
 import { useForgotPassword } from "@/hooks/auth";
+import { OTPModal } from "./otp-modal";
+import { ArrowRight } from "lucide-react";
 
 export function RecoveryPassword() {
   const { openModal } = useModal();
   const [message, setMessage] = useState("");
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
+    mode: "onChange",
   });
 
   const { mutateAsync: forgotPassword, isPending } = useForgotPassword();
@@ -35,46 +35,66 @@ export function RecoveryPassword() {
     } catch (error: any) {
       ErrorMessage(
         error?.response?.data?.message ||
-          "Ocorreu um erro ao enviar o email. Tente mais tarde.",
+          "Ocorreu um erro ao enviar o email. Tente mais tarde."
       );
     }
   }
 
   return (
     <>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className={cn(
-          "mx-auto flex w-full max-w-sm flex-col gap-5",
-        )}
-      >
-        <div className="space-y-4">
-          <div className="flex items-center justify-center">
-            <Image src={Logo} alt="Logo" className="size-20" />
+      <div className="w-full max-w-sm mx-auto my-auto flex flex-col gap-6">
+        {/* Header */}
+        <div className="flex flex-col gap-2.5 text-left">
+          <div className="space-y-1">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+              Recuperar Palavra-passe
+            </h1>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Introduza o seu email profissional para receber as instruções de recuperação.
+            </p>
           </div>
-          <AuthHeader
-            title="Recuperar palavra-passe"
-            description="Introduza o seu endereço de correio electrónico. Enviaremos as instruções para definir uma nova palavra-passe."
-          />
         </div>
 
-        <div className="grid gap-6">
-          <Input
-            label="Email"
-            type="email"
-            startIcon="Mail"
-            {...register("email")}
-            placeholder="Endereço de email"
-            error={errors.email?.message}
-          />
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+          <div className="grid gap-4">
+            <Input
+              label="Email Profissional"
+              type="email"
+              startIcon="Mail"
+              placeholder="admin@nora-audiovisual.com"
+              {...register("email")}
+              error={errors.email?.message}
+              autoComplete="email"
+              autoFocus
+            />
 
-          <ButtonSubmit isLoading={isPending} className="w-full">
-            {isPending ? "A enviar..." : "Verificar"}
-          </ButtonSubmit>
+            <ButtonSubmit
+              isLoading={isPending}
+              className="w-full h-10 font-semibold gap-2 mt-1"
+            >
+              {isPending ? (
+                "A enviar instruções..."
+              ) : (
+                <>
+                  <span>Enviar instruções</span>
+                  <ArrowRight className="h-4 w-4" />
+                </>
+              )}
+            </ButtonSubmit>
+          </div>
 
-          <BackToLogin />
-        </div>
-      </form>
+          <div className="pt-2 text-center text-xs text-muted-foreground border-t border-border/50">
+            Lembrou-se da palavra-passe?{" "}
+            <Link
+              href="/auth/login"
+              className="font-semibold text-primary hover:text-primary/90 hover:underline transition-colors"
+            >
+              Voltar ao login
+            </Link>
+          </div>
+        </form>
+      </div>
+
       <OTPModal message={message} />
     </>
   );

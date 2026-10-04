@@ -92,6 +92,7 @@ export function NotificationItem({
     notification.isAiAlert ||
     notification.type === "AI_ALERT" ||
     String(notification.type || "").toUpperCase() === "AI_ALERT" ||
+    notification.title.toUpperCase().includes("NORA AI") ||
     notification.title.toUpperCase().includes("MIND AI") ||
     notification.title.toUpperCase().includes("ALERTA INTELIGENTE");
 
@@ -128,7 +129,7 @@ export function NotificationItem({
             {isAiAlert && (
               <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-primary/15 text-primary shrink-0">
                 <Icon name="Sparkles" className="w-2.5 h-2.5" />
-                MIND AI
+                Nora AI
               </span>
             )}
             <h4

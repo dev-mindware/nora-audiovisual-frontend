@@ -6,8 +6,8 @@ export function useAuth() {
   const setUser = useAuthStore((state) => state.setUser);
   const isAuthenticating = useAuthStore((state) => state.isAuthenticating);
 
-  const subscription = user?.company?.subscription;
-  const rawStatus = subscription?.status;
+  const subscription = user?.subscription || user?.company?.subscription;
+  const rawStatus = subscription?.status || (user ? SubscriptionStatus.ACTIVE : undefined);
   const isTrial = rawStatus === SubscriptionStatus.TRIALING;
   const endDate = isTrial
     ? subscription?.trialEndsAt

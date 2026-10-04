@@ -80,7 +80,7 @@ export function BarcodeProductScanner({
           )}
 
           <div className="text-center space-y-1">
-            <h3 className="font-bold text-lg">{scannedProduct.name}</h3>
+            <h3 className="font-semibold text-lg">{scannedProduct.name}</h3>
             <p className="text-sm text-muted-foreground">
               {formatCurrency(scannedProduct.price || 0)}
             </p>

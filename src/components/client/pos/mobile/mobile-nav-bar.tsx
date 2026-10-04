@@ -33,7 +33,7 @@ export function MobileNavBar({ activeTab, onTabChange, cartCount }: MobileNavBar
           <div className="relative">
             <Icon name={tab.icon} size={24} />
             {tab.count !== undefined && tab.count > 0 && (
-              <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-[10px] font-semibold rounded-full w-4 h-4 flex items-center justify-center">
                 {tab.count}
               </span>
             )}

@@ -1,11 +1,11 @@
 "use client";
 
 import { useCartCheckout, CartItem } from "@/hooks";
-import { 
-  Drawer, 
-  DrawerContent, 
-  DrawerHeader, 
-  DrawerTitle, 
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
   DrawerFooter,
   Button,
   Icon
@@ -61,10 +61,12 @@ export function MobileCheckoutDrawer({
     dismissPrint,
     isPrinting,
     isPending,
-  } = useCartCheckout({ cartItems, type, onSuccess: () => {
-    onSuccess?.();
-    onOpenChange(false);
-  }, cashSessionId });
+  } = useCartCheckout({
+    cartItems, type, onSuccess: () => {
+      onSuccess?.();
+      onOpenChange(false);
+    }, cashSessionId
+  });
 
   const handleValidationError = (errors: any) => {
     console.error("Form Validation Errors:", errors);
@@ -84,51 +86,51 @@ export function MobileCheckoutDrawer({
           <DrawerHeader>
             <DrawerTitle>Finalizar transacção</DrawerTitle>
           </DrawerHeader>
-          
+
           <div className="px-4 overflow-y-auto pb-4 space-y-6" data-tour="pos-checkout">
             <PaymentSummary
-                subtotal={totals.subtotal}
-                taxAmount={totals.taxAmount}
-                discountAmount={totals.discountAmount}
-                total={totals.total}
-                change={change}
-                paymentMethod={paymentMethod}
+              subtotal={totals.subtotal}
+              taxAmount={totals.taxAmount}
+              discountAmount={totals.discountAmount}
+              total={totals.total}
+              change={change}
+              paymentMethod={paymentMethod}
             />
 
             <CustomerSelection
-                isExpanded={isCustomerExpanded}
-                onToggleExpand={() => setIsCustomerExpanded(!isCustomerExpanded)}
-                selectedClient={selectedClient}
-                onClientChange={handleClientChange}
-                newCustomerPhone={newCustomerPhone}
-                onPhoneChange={setNewCustomerPhone}
-                newCustomerName={newCustomerName}
-                onNameChange={setNewCustomerName}
-                newCustomerTaxNumber={newCustomerTaxNumber}
-                onTaxNumberChange={setNewCustomerTaxNumber}
-                newCustomerAddress={newCustomerAddress}
-                onAddressChange={setNewCustomerAddress}
-                onVerificationStatusChange={setNewCustomerVerification}
+              isExpanded={isCustomerExpanded}
+              onToggleExpand={() => setIsCustomerExpanded(!isCustomerExpanded)}
+              selectedClient={selectedClient}
+              onClientChange={handleClientChange}
+              newCustomerPhone={newCustomerPhone}
+              onPhoneChange={setNewCustomerPhone}
+              newCustomerName={newCustomerName}
+              onNameChange={setNewCustomerName}
+              newCustomerTaxNumber={newCustomerTaxNumber}
+              onTaxNumberChange={setNewCustomerTaxNumber}
+              newCustomerAddress={newCustomerAddress}
+              onAddressChange={setNewCustomerAddress}
+              onVerificationStatusChange={setNewCustomerVerification}
             />
 
             <PaymentMethods
-                paymentMethod={paymentMethod}
-                onMethodChange={setPaymentMethod}
-                cashGiven={cashGiven}
-                onCashChange={setCashGiven}
-                onQuickCash={handleQuickCash}
-                change={change}
+              paymentMethod={paymentMethod}
+              onMethodChange={setPaymentMethod}
+              cashGiven={cashGiven}
+              onCashChange={setCashGiven}
+              onQuickCash={handleQuickCash}
+              change={change}
             />
           </div>
 
           <DrawerFooter className="pt-0">
             <Button
-                className="w-full h-12 text-base font-bold"
-                onClick={handleSubmit(handleCheckout, handleValidationError)}
-                disabled={isPending}
-                data-tour="pos-submit"
+              className="w-full h-12 text-base font-semibold"
+              onClick={handleSubmit(handleCheckout, handleValidationError)}
+              disabled={isPending}
+              data-tour="pos-submit"
             >
-                {isPending ? "A processar..." : "Confirmar pagamento"}
+              {isPending ? "A processar..." : "Confirmar pagamento"}
             </Button>
           </DrawerFooter>
         </DrawerContent>

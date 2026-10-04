@@ -140,20 +140,24 @@ export function useNotifications(
       }),
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
-      if (lastPage.data.length < TAKE) return undefined;
+      const items = Array.isArray(lastPage?.data) ? lastPage.data : [];
+      if (items.length < TAKE) return undefined;
       return allPages.length * TAKE;
     },
     staleTime: 1000 * 60,
     refetchInterval: 1000 * 5,
   });
 
-  const notifications = data?.pages.flatMap((page) => page.data) ?? [];
+  const notifications = useMemo(() => {
+    if (!data?.pages || !Array.isArray(data.pages)) return [];
+    return data.pages.flatMap((page) => (Array.isArray(page?.data) ? page.data : []));
+  }, [data?.pages]);
 
   useEffect(() => {
-    if (!data || hasEstablishedBaselineRef.current) return;
+    if (!data?.pages || hasEstablishedBaselineRef.current) return;
 
     const existingIds = data.pages.flatMap((page) =>
-      page.data.map((notification) => notification.id),
+      Array.isArray(page?.data) ? page.data.map((notification) => notification.id) : [],
     );
 
     notificationAlertState.establishBaseline(existingIds);
@@ -214,10 +218,10 @@ export function useNotifications(
           queryClient.setQueryData<any>(
             queryKey,
             (oldData: any) => {
-              if (!oldData) return oldData;
+              if (!oldData || !Array.isArray(oldData.pages)) return oldData;
               const newPages = [...oldData.pages];
               if (newPages.length > 0) {
-                const firstPage = (newPages[0].data || []) as NotificationType[];
+                const firstPage = (Array.isArray(newPages[0]?.data) ? newPages[0].data : []) as NotificationType[];
                 if (firstPage.some((n) => n.id === newNotification.id)) {
                   return oldData;
                 }
@@ -253,21 +257,19 @@ export function useNotifications(
   const { mutateAsync: markAsRead } = useMutation({
     mutationFn: notificationsService.markAsRead,
     onMutate: async (id) => {
-      // Optimistic update would be complex with infinite pages, disabling for simplicity or implementing basic toggle
-      // For now, simpler to just invalidate or manually update if critical.
-      // Let's manually update cache for responsiveness
-
       queryClient.setQueryData<any>(
         queryKey,
         (oldData: any) => {
-          if (!oldData) return oldData;
+          if (!oldData || !Array.isArray(oldData.pages)) return oldData;
           return {
             ...oldData,
             pages: oldData.pages.map((page: any) => ({
               ...page,
-              data: page.data.map((n: NotificationType) =>
-                n.id === id ? { ...n, isRead: true } : n,
-              ),
+              data: Array.isArray(page?.data)
+                ? page.data.map((n: NotificationType) =>
+                    n.id === id ? { ...n, isRead: true } : n,
+                  )
+                : [],
             })),
           };
         },
@@ -275,7 +277,6 @@ export function useNotifications(
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
-      // Optional: Re-fetch to confirm
     },
   });
 
@@ -285,15 +286,17 @@ export function useNotifications(
       queryClient.setQueryData<any>(
         queryKey,
         (oldData: any) => {
-          if (!oldData) return oldData;
+          if (!oldData || !Array.isArray(oldData.pages)) return oldData;
           return {
             ...oldData,
             pages: oldData.pages.map((page: any) => ({
               ...page,
-              data: page.data.map((n: NotificationType) => ({
-                ...n,
-                isRead: true,
-              })),
+              data: Array.isArray(page?.data)
+                ? page.data.map((n: NotificationType) => ({
+                    ...n,
+                    isRead: true,
+                  }))
+                : [],
             })),
           };
         },
@@ -310,12 +313,14 @@ export function useNotifications(
       queryClient.setQueryData<any>(
         queryKey,
         (oldData: any) => {
-          if (!oldData) return oldData;
+          if (!oldData || !Array.isArray(oldData.pages)) return oldData;
           return {
             ...oldData,
             pages: oldData.pages.map((page: any) => ({
               ...page,
-              data: page.data.filter((n: NotificationType) => n.id !== id),
+              data: Array.isArray(page?.data)
+                ? page.data.filter((n: NotificationType) => n.id !== id)
+                : [],
             })),
           };
         },
@@ -334,6 +339,14 @@ export function useNotifications(
     }
   };
 
+  const unreadCount = useMemo(() => {
+    const firstPageUnread = data?.pages?.[0]?.unreadCount;
+    if (typeof firstPageUnread === "number") {
+      return firstPageUnread;
+    }
+    return notifications.filter((n) => !n.isRead).length;
+  }, [data?.pages, notifications]);
+
   return {
     notifications,
     isLoading,
@@ -348,7 +361,6 @@ export function useNotifications(
     deleteNotification,
     handleNotificationClick,
     refetch,
-    unreadCount:
-      data?.pages[0]?.data.filter((n) => n.isRead === false).length || 0, // Abordagem provisória, idealmente a API devia enviar isto global
+    unreadCount,
   };
 }

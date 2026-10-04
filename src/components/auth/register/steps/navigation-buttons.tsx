@@ -1,5 +1,6 @@
 "use client"
-import { Button, Icon } from "@/components";
+import { Button } from "@/components/ui";
+import { Icon } from "@/components/common";
 import { cn } from "@/lib/utils";
 
 type Props = {

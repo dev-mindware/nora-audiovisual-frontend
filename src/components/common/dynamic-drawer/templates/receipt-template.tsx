@@ -42,7 +42,7 @@ export function ReceiptTemplate({ data }: ReceiptTemplateProps) {
       <div className="flex justify-between items-start">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <h2 className="text-xl font-bold uppercase tracking-wide">Recibo</h2>
+            <h2 className="text-xl font-semibold uppercase tracking-wide">Recibo</h2>
             {data.status && <DocumentStatusBadge status={data.status} />}
           </div>
           <p className="text-muted-foreground font-mono font-medium">
@@ -153,7 +153,7 @@ export function ReceiptTemplate({ data }: ReceiptTemplateProps) {
 
         <Separator className="my-1.5" />
 
-        <div className="flex justify-between font-bold text-base pt-1">
+        <div className="flex justify-between font-semibold text-base pt-1">
           <span className="text-foreground">Total Quitado:</span>
           <span className="text-primary font-mono text-lg">
             {formatCurrency(total)}

@@ -22,7 +22,7 @@ export function DetailsClientModal() {
           </div>
 
           <div className="text-center space-y-1 mt-4">
-            <h2 className="text-2xl font-bold">{currentClient.name}</h2>
+            <h2 className="text-2xl font-semibold">{currentClient.name}</h2>
             <div className="flex items-center justify-center gap-2">
               <span className="text-xs text-muted-foreground">
                 NIF: {currentClient.taxNumber}

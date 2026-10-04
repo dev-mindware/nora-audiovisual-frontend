@@ -112,7 +112,7 @@ export function OverviewSalesDonut({ distribution }: OverviewSalesDonutProps) {
                                             <tspan
                                                 x={viewBox.cx}
                                                 y={viewBox.cy}
-                                                className="fill-foreground text-2xl font-bold"
+                                                className="fill-foreground text-2xl font-semibold"
                                             >
                                                 {distribution.totalSales}
                                             </tspan>

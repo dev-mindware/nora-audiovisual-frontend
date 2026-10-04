@@ -50,7 +50,7 @@ export function CustomerSelection({
                 className="flex items-center justify-between w-full py-2 group hover:text-primary transition-colors"
             >
                 <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold">Cliente (Opcional)</span>
+                    <span className="text-sm font-semibold">Cliente (Opcional)</span>
                 </div>
                 {isExpanded ? (
                     <Icon

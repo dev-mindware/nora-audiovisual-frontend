@@ -4,6 +4,8 @@ export function SucessMessage(message: string | null) {
   toast.success(message);
 }
 
+export const SuccessMessage = SucessMessage;
+
 export function ErrorMessage(message: string | null) {
   toast.error(message);
 }

@@ -3,20 +3,14 @@
 import { useForm } from "react-hook-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { GlobalModal, Input, Button, Textarea } from "@/components";
+import { GlobalModal, Button, ButtonSubmit, Textarea } from "@/components";
 import { useModal, currentStoreStore } from "@/stores";
 import { cashSessionsService } from "@/services/cash-sessions-service";
 import { ErrorMessage, SucessMessage, WarningMessage } from "@/utils/messages";
 import { isDuplicateOpeningRequestError } from "@/utils/cash-session";
+import { posRequestOpeningSchema, PosRequestOpeningFormData } from "@/schemas";
 
 export const MODAL_POS_REQUEST_OPENING_ID = "pos-request-opening-modal";
-
-const requestSchema = z.object({
-  message: z.string().min(1, "A mensagem é obrigatória"),
-});
-
-type RequestFormData = z.infer<typeof requestSchema>;
 
 export function PosRequestOpeningModal() {
   const { closeModal } = useModal();
@@ -28,11 +22,16 @@ export function PosRequestOpeningModal() {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<RequestFormData>({
-    resolver: zodResolver(requestSchema),
+  } = useForm<PosRequestOpeningFormData>({
+    resolver: zodResolver(posRequestOpeningSchema),
   });
 
-  const onSubmit = async (data: RequestFormData) => {
+  const handleCancel = () => {
+    closeModal(MODAL_POS_REQUEST_OPENING_ID);
+    reset();
+  };
+
+  const onSubmit = async (data: PosRequestOpeningFormData) => {
     if (!currentStore?.id) {
       ErrorMessage("Loja não identificada. Contacte o suporte.");
       return;
@@ -50,8 +49,7 @@ export function PosRequestOpeningModal() {
           queryKey: ["reports", "dashboard", "pos-management"],
         }),
       ]);
-      closeModal(MODAL_POS_REQUEST_OPENING_ID);
-      reset();
+      handleCancel();
     } catch (err: any) {
       const apiMessage = String(err?.response?.data?.message || "");
 
@@ -72,28 +70,36 @@ export function PosRequestOpeningModal() {
       title="Solicitar Abertura de Caixa"
       description="Envie uma mensagem ao gerente solicitando a abertura."
       className="!w-max"
+      footer={
+        <div className="flex justify-end gap-2 w-full pt-1">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={handleCancel}
+            disabled={isSubmitting}
+          >
+            Cancelar
+          </Button>
+          <ButtonSubmit
+            form="pos-request-opening-form"
+            isLoading={isSubmitting}
+          >
+            Enviar pedido
+          </ButtonSubmit>
+        </div>
+      }
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        id="pos-request-opening-form"
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-4"
+      >
         <Textarea
           label="Mensagem"
           placeholder="Ex: Preciso abrir o caixa para o turno da tarde."
           error={errors.message?.message}
           {...register("message")}
         />
-
-        <div className="flex justify-end gap-2 pt-2">
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={() => closeModal(MODAL_POS_REQUEST_OPENING_ID)}
-            disabled={isSubmitting}
-          >
-            Cancelar
-          </Button>
-          <Button type="submit" loading={isSubmitting}>
-            Enviar pedido
-          </Button>
-        </div>
       </form>
     </GlobalModal>
   );

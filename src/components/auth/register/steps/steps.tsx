@@ -9,8 +9,8 @@ import {
   StepperTrigger,
   StepperSeparator,
   StepperIndicator,
-  AccountCreatedModal,
-} from "@/components";
+} from "@/components/ui/stepper";
+import { AccountCreatedModal } from "../account-created-modal";
 import { NavigationButtons } from "./navigation-buttons";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

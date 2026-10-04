@@ -46,7 +46,7 @@ export function DynamicMetricCard({
                     <div className="space-y-0.5 sm:space-y-1">
                         <div className="flex justify-between items-center gap-1.5 sm:gap-2">
                             <h2 className={cn(
-                                "text-base sm:text-lg md:text-xl font-bold tracking-tight truncate",
+                                "text-base sm:text-lg md:text-xl font-semibold tracking-tight truncate tabular-nums",
                                 variant === "action" && (isDestructive ? "text-destructive" : "text-primary")
                             )}>
                                 {title}

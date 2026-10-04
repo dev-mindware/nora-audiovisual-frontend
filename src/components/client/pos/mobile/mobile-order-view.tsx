@@ -38,18 +38,18 @@ export function MobileOrderView({
     <div className="flex flex-col h-full bg-background pb-16" data-tour="pos-cart">
       {/* Header */}
       <div className="p-4 flex items-center gap-4 border-b border-border">
-        <button 
+        <button
           onClick={onBack}
           className="w-10 h-10 rounded-full border border-border flex items-center justify-center active:bg-muted"
           data-tour="pos-back-to-menu"
         >
           <Icon name="ArrowLeft" size={20} />
         </button>
-        <h1 className="text-lg font-bold flex-1 text-center pr-10">Pedido</h1>
+        <h1 className="text-lg font-semibold flex-1 text-center pr-10">Pedido</h1>
       </div>
 
       <ScrollArea className="flex-1 p-4">
-        <h2 className="text-sm font-bold mb-4">Item</h2>
+        <h2 className="text-sm font-semibold mb-4">Item</h2>
         <div className="space-y-6">
           {cartItems.map((item) => (
             <div key={item.id} className="flex gap-4">
@@ -64,28 +64,28 @@ export function MobileOrderView({
               </div>
               <div className="flex-1 flex flex-col justify-between py-1">
                 <div className="space-y-1">
-                   <h3 className="text-sm font-bold line-clamp-1">{item.name}</h3>
-                   {/* Design shows variations, but we follow desktop functionality (no variations usually) */}
-                   {/* <p className="text-[10px] text-muted-foreground">Default Variant</p> */}
+                  <h3 className="text-sm font-semibold line-clamp-1">{item.name}</h3>
+                  {/* Design shows variations, but we follow desktop functionality (no variations usually) */}
+                  {/* <p className="text-[10px] text-muted-foreground">Default Variant</p> */}
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="flex items-center bg-muted/50 rounded-full h-9 px-1">
-                    <button 
+                    <button
                       onClick={() => onUpdateQty(item, -1)}
                       className="w-7 h-7 rounded-full bg-background flex items-center justify-center shadow-sm"
                     >
                       <Icon name="Minus" size={14} />
                     </button>
-                    <span className="w-8 text-center text-sm font-bold">{item.qty}</span>
-                    <button 
+                    <span className="w-8 text-center text-sm font-semibold">{item.qty}</span>
+                    <button
                       onClick={() => onUpdateQty(item, 1)}
                       className="w-7 h-7 rounded-full bg-background flex items-center justify-center shadow-sm"
                     >
                       <Icon name="Plus" size={14} />
                     </button>
                   </div>
-                  <span className="text-sm font-bold text-primary">{formatCurrency((item.price || 0) * item.qty)}</span>
+                  <span className="text-sm font-semibold text-primary">{formatCurrency((item.price || 0) * item.qty)}</span>
                 </div>
               </div>
             </div>
@@ -97,22 +97,22 @@ export function MobileOrderView({
           className="mt-8 p-4 rounded-2xl bg-muted/30 space-y-3"
           data-tour="pos-payment-summary"
         >
-          <h2 className="text-sm font-bold">Resumo do Pedido</h2>
+          <h2 className="text-sm font-semibold">Resumo do Pedido</h2>
           <div className="flex justify-between text-sm text-muted-foreground">
             <span>Subtotal</span>
-            <span className="font-bold text-foreground">{formatCurrency(subtotal)}</span>
+            <span className="font-semibold text-foreground">{formatCurrency(subtotal)}</span>
           </div>
           <div className="flex justify-between text-sm text-muted-foreground">
             <span>Impostos</span>
-            <span className="font-bold text-foreground">{formatCurrency(taxAmount)}</span>
+            <span className="font-semibold text-foreground">{formatCurrency(taxAmount)}</span>
           </div>
           <div className="pt-3 border-t border-border/50 flex justify-between items-center">
-             <span className="text-lg font-bold">Total</span>
-             <span className="text-lg font-bold">{formatCurrency(total)}</span>
+            <span className="text-lg font-semibold">Total</span>
+            <span className="text-lg font-semibold">{formatCurrency(total)}</span>
           </div>
         </div>
 
-        <Button 
+        <Button
           className="w-full mt-2"
           onClick={onProcessTransaction}
           disabled={cartItems.length === 0}

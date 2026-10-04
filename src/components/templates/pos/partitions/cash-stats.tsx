@@ -8,7 +8,7 @@ export function CashStats() {
           <div className="flex items-start justify-between mb-2">
             <h3 className="font-medium text-muted-foreground">Cash</h3>
           </div>
-          <p className="mb-1 text-2xl font-bold">37.050 Kz</p>
+          <p className="mb-1 text-2xl font-semibold">37.050 Kz</p>
           <p className="text-sm text-muted-foreground/90">
             Referência a notas físicas que entraram
           </p>
@@ -22,7 +22,7 @@ export function CashStats() {
               Pagamento Eletrônico
             </h3>
           </div>
-          <p className="mb-1 text-2xl font-bold">97.050 Kz</p>
+          <p className="mb-1 text-2xl font-semibold">97.050 Kz</p>
           <p className="text-sm text-muted-foreground/90">
             Refere - se ao dinheiro que entrou de forma eletrônica
           </p>
@@ -32,14 +32,14 @@ export function CashStats() {
       <div className="flex items-center justify-center w-full mx-auto mb-4 border-2 rounded-full border-primary/60">
         <div>
           <p className="text-lg font-semibold">Receitas</p>
-          <p className="text-xl font-bold text-primary">121.000 Kz</p>
+          <p className="text-xl font-semibold text-primary">121.000 Kz</p>
         </div>
       </div>
 
       <div className="flex items-center justify-center w-full mx-auto mb-4 border-2 rounded-full border-primary/60">
         <div>
           <p className="text-lg font-semibold">Despesas</p>
-          <p className="text-xl font-bold text-primary">13.100 Kz</p>
+          <p className="text-xl font-semibold text-primary">13.100 Kz</p>
         </div>
       </div>
     </div>

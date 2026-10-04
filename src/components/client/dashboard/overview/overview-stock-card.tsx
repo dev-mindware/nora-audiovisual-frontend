@@ -32,7 +32,7 @@ export function OverviewStockCard({ stock }: OverviewStockCardProps) {
     return (
         <OverviewSectionCard title="Stock" icon="Package" href="/management/stock">
             <p className="text-sm text-muted-foreground">Valor do stock</p>
-            <p className="text-2xl font-bold tracking-tight">
+            <p className="text-2xl font-semibold tracking-tight">
                 {formatCurrencyCompact(stock.stockValue, stock.currency)}
             </p>
 

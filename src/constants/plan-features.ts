@@ -11,84 +11,115 @@ export type PlanFeatureGroup = {
 };
 
 export const mindMessageLimitByPlan: Record<PlanType, number> = {
-  Base: 10,
-  Smart: 15,
-  Pro: 20,
+  INICIAL: 100,
+  PROFISSIONAL: 500,
+  BUSINESS: 2000,
+  Base: 100,
+  Smart: 500,
+  Pro: 2000,
 };
 
 export const includedInAllPlans: PlanBenefit[] = [
   {
-    icon: "MonitorSmartphone",
-    title: "Multiplataforma",
+    icon: "Clapperboard",
+    title: "Gestão Operacional de Produções",
     description:
-      "Acesso web responsivo para desktop, tablet e telemóvel, sem instalação obrigatória.",
+      "Acompanhamento de rodagens, call sheets, equipas e cronogramas em tempo real.",
   },
   {
-    icon: "FileText",
-    title: "Documentos ilimitados",
+    icon: "Camera",
+    title: "Catálogo Técnico de Equipamentos",
     description:
-      "Emita facturas, recibos, pró-formas e notas de crédito sem limite comercial por plano.",
+      "Registo de câmaras, lentes, iluminação e deteção de conflitos de reserva.",
   },
   {
-    icon: "Users",
-    title: "Gestão de Clientes",
+    icon: "FileSpreadsheet",
+    title: "Orçamentação Audiovisual",
     description:
-      "Organize clientes, contactos e dados fiscais para facturação e acompanhamento.",
+      "Elaboração de propostas comerciais e pipelines de custos de produção.",
   },
   {
-    icon: "Package",
-    title: "Produtos e serviços",
+    icon: "Sparkles",
+    title: "Nora AI Audiovisual",
     description:
-      "Cadastre produtos, serviços, categorias, preços e impostos numa base única.",
+      "Assistente para decupagem de roteiros e ordens de rodagem inteligentes.",
   },
 ];
 
-export const planFeatureMatrix: Record<PlanType, PlanFeatureGroup> = {
+export const planFeatureMatrix: Record<string, PlanFeatureGroup> = {
+  INICIAL: {
+    features: [
+      "Até 5 Projetos Ativos em Simultâneo",
+      "Até 50 Equipamentos no Catálogo",
+      "50 GB de Armazenamento Cloud",
+      "Call Sheets & Folhas de Rodagem Digitais",
+      "Portal do Cliente com Visualização Básica",
+      "100 Créditos Nora AI Mensais",
+    ],
+  },
+  PROFISSIONAL: {
+    features: [
+      "Até 20 Projetos Ativos em Simultâneo",
+      "Até 200 Equipamentos com Deteção de Conflitos",
+      "250 GB de Armazenamento Cloud",
+      "Client Portal & Timecode Review Player",
+      "Integração Fiscal Mindgest (Faturação AGT)",
+      "Gestão de Sets & Calendário de Estúdio",
+      "Relatórios Financeiros Avançados",
+      "500 Créditos Nora AI Mensais",
+    ],
+  },
+  BUSINESS: {
+    features: [
+      "Projetos e Equipamentos Ilimitados",
+      "1 TB de Armazenamento Cloud de Alta Velocidade",
+      "Multi-set & Gestão de Pós-Produção Completa",
+      "Kanbans por Departamento (Câmara, Som, Luz, Arte)",
+      "Automação de Faturação & Multi-utilizador Avançado",
+      "Suporte Prioritário & SLA Dedicado",
+      "2.000 Créditos Nora AI Mensais",
+    ],
+  },
+  // Aliases de compatibilidade
   Base: {
     features: [
-      "Categorias de Itens",
-      "Bancos e Configurações Fiscais",
-      "Relatórios Básicos de Vendas",
-      "Acesso Web Multiplataforma",
-      "Gestão de Clientes",
-      "Gestão de Produtos e Serviços",
-      "Assistente MIND - 10 mensagens",
-    ]
+      "Até 5 Projetos Ativos em Simultâneo",
+      "Até 50 Equipamentos no Catálogo",
+      "50 GB de Armazenamento Cloud",
+      "Call Sheets & Folhas de Rodagem Digitais",
+      "100 Créditos Nora AI Mensais",
+    ],
   },
   Smart: {
     features: [
-      "Tudo do plano Base",
-      "Movimentos de Caixa",
-      "Configurações POS do operador",
-      "Controlo de stock",
-      "Registo de produtos com código de barras",
-      "Relatórios de Clientes",
-      "Personalização de Aparência",
+      "Até 20 Projetos Ativos em Simultâneo",
+      "Até 200 Equipamentos com Deteção de Conflitos",
+      "250 GB de Armazenamento Cloud",
+      "Client Portal & Timecode Review Player",
+      "Integração Fiscal Mindgest (Faturação AGT)",
+      "500 Créditos Nora AI Mensais",
     ],
   },
   Pro: {
     features: [
-      "Tudo do plano Smart",
-      "Gestão de reservas de stock",
-      "Gestão Avançada de POS",
-      "Controlo avançado de produtos",
-      "Relatórios avançados",
-      "Relatórios de Acesso e Auditoria",
-      "Gestão Completa para Operações Multi-loja",
+      "Projetos e Equipamentos Ilimitados",
+      "1 TB de Armazenamento Cloud",
+      "Gestão de Estúdios e Sets Avançada",
+      "Integração Fiscal Mindgest e Automações",
+      "2.000 Créditos Nora AI Mensais",
     ],
   },
 };
 
-export function getPlanFeatureGroups(planType: PlanType): PlanFeatureGroup {
-  const base = planFeatureMatrix.Base;
-
-  if (planType === "Base") {
-    return base;
+export function getPlanFeatureGroups(planType: PlanType | string): PlanFeatureGroup {
+  if (planType === "INICIAL" || planType === "Base") {
+    return planFeatureMatrix.INICIAL;
   }
-
-  if (planType === "Smart") {
-    return planFeatureMatrix.Smart;
+  if (planType === "PROFISSIONAL" || planType === "Smart") {
+    return planFeatureMatrix.PROFISSIONAL;
   }
-
-  return planFeatureMatrix.Pro;
+  if (planType === "BUSINESS" || planType === "Pro" || planType === "ESTUDIO") {
+    return planFeatureMatrix.BUSINESS;
+  }
+  return planFeatureMatrix.PROFISSIONAL;
 }

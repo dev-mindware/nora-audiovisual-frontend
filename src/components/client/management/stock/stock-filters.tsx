@@ -21,7 +21,6 @@ const sortOrderOptions = [
 ];
 
 const booleanOptions = [
-  { label: "Todos", value: "" },
   { label: "Sim", value: "true" },
   { label: "Não", value: "false" },
 ];

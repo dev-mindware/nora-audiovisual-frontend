@@ -1,6 +1,7 @@
 "use client"
 import { cn } from "@/lib/utils";
-import { Input, NifVerificationField } from "@/components";
+import { Input } from "@/components/ui";
+import { NifVerificationField } from "@/components/common";
 import { RegisterFormData } from "@/schemas";
 import { useFormContext } from "react-hook-form";
 import { StepsHeader } from "./steps-header";

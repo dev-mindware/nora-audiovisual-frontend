@@ -98,7 +98,7 @@ export function ItemsSummarySection({
               <div className="flex h-10 items-center justify-end rounded-md bg-muted px-3 font-mono text-sm font-semibold">
                 {formatCurrency(
                   Number(watchedItems?.[index]?.quantity || 0) *
-                    Number(watchedItems?.[index]?.price || 0),
+                  Number(watchedItems?.[index]?.price || 0),
                 )}
               </div>
             </div>
@@ -137,7 +137,7 @@ export function ItemsSummarySection({
               <span>{formatCurrency(creditNoteTaxAmount)}</span>
             </div>
             <Separator />
-            <div className="flex justify-between text-base font-bold">
+            <div className="flex justify-between text-base font-semibold">
               <span>Total a creditar</span>
               <span>{formatCurrency(creditNoteTotal)}</span>
             </div>
@@ -152,7 +152,7 @@ export function ItemsSummarySection({
               <span>{formatCurrency(invoiceBodySubtotal)}</span>
             </div>
             <Separator />
-            <div className="flex justify-between text-base font-bold">
+            <div className="flex justify-between text-base font-semibold">
               <span>Total final</span>
               <span>{formatCurrency(invoiceBodyTotal)}</span>
             </div>

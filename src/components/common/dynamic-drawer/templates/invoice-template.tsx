@@ -32,12 +32,12 @@ export function InvoiceTemplate({
   const documentTitle = isProforma
     ? "Factura Proforma"
     : data.invoiceType === "INVOICE_RECEIPT" || type === "invoice-receipt"
-    ? "Factura-Recibo"
-    : data.invoiceType === "RECEIPT" || type === "receipt"
-    ? "Recibo"
-    : data.invoiceType === "CREDIT_NOTE" || type === "credit-note"
-    ? "Nota de Crédito"
-    : "Factura";
+      ? "Factura-Recibo"
+      : data.invoiceType === "RECEIPT" || type === "receipt"
+        ? "Recibo"
+        : data.invoiceType === "CREDIT_NOTE" || type === "credit-note"
+          ? "Nota de Crédito"
+          : "Factura";
 
   const clientNif =
     data.client?.taxNumber ||
@@ -80,7 +80,7 @@ export function InvoiceTemplate({
       <div className="flex justify-between items-start">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <h2 className="text-xl font-bold uppercase tracking-wide">
+            <h2 className="text-xl font-semibold uppercase tracking-wide">
               {documentTitle}
             </h2>
             {/* Factura Proforma não tem estado */}
@@ -235,8 +235,8 @@ export function InvoiceTemplate({
                   </td>
                   <td className="px-3 py-2.5 text-right font-mono text-xs text-muted-foreground">
                     {itemTaxRate !== null &&
-                    itemTaxRate !== undefined &&
-                    itemTaxRate !== ""
+                      itemTaxRate !== undefined &&
+                      itemTaxRate !== ""
                       ? `${itemTaxRate}%`
                       : "-"}
                   </td>
@@ -314,7 +314,7 @@ export function InvoiceTemplate({
 
           <Separator className="my-1.5" />
 
-          <div className="flex justify-between font-bold text-base pt-1">
+          <div className="flex justify-between font-semibold text-base pt-1">
             <span className="text-foreground">Total a Pagar</span>
             <span className="text-primary font-mono text-lg">
               {formatCurrency(total, data.currencyCode)}

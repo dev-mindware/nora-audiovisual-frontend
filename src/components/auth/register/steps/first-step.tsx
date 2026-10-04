@@ -1,6 +1,8 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { Input, Button, PasswordStrengthBar, AlertError } from "@/components";
+import { Input, Button } from "@/components/ui";
+import { AlertError } from "@/components/common";
+import { PasswordStrengthBar } from "../../_components";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { RegisterFormData } from "@/schemas";
 import { useFormContext } from "react-hook-form";

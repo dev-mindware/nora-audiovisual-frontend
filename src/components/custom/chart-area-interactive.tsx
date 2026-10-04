@@ -130,15 +130,10 @@ export function ChartAreaInteractive({
   description = "Evolução do desempenho ao longo do tempo",
   dataKey = "revenue"
 }: ChartAreaInteractiveProps) {
-  const [timeRange, setTimeRange] = React.useState("all")
+  const [timeRange, setTimeRange] = React.useState("30d")
 
   const filteredData = React.useMemo(() => {
-    if (timeRange === "all") return data;
-
-    // Simplistic filtering for demonstration, assuming 'month' or 'date' field
-    // In a real scenario, we'd use better logic based on the date format
-    const daysToSubtract = timeRange === "90d" ? 90 : timeRange === "30d" ? 30 : 7;
-    // ... filtering logic ...
+    // Demonstrative filter logic
     return data;
   }, [data, timeRange]);
 
@@ -160,23 +155,20 @@ export function ChartAreaInteractive({
         </div>
         <Select value={timeRange} onValueChange={setTimeRange}>
           <SelectTrigger
-            className="hidden w-[160px] rounded-lg sm:ml-auto sm:flex"
+            className="hidden w-[160px] rounded-none sm:ml-auto sm:flex"
             aria-label="Select a value"
           >
             <SelectValue placeholder="Periodo" />
           </SelectTrigger>
-          <SelectContent className="rounded-xl">
-            <SelectItem value="all" className="rounded-lg">
-              Tudo
-            </SelectItem>
-            <SelectItem value="90d" className="rounded-lg">
+          <SelectContent className="rounded-none">
+            <SelectItem value="90d" className="rounded-none">
               Últimos 90 dias
             </SelectItem>
-            <SelectItem value="30d" className="rounded-lg">
+            <SelectItem value="30d" className="rounded-none">
               Últimos 30 dias
             </SelectItem>
-            <SelectItem value="7d" className="rounded-lg">
-              Último 7 dias
+            <SelectItem value="7d" className="rounded-none">
+              Últimos 7 dias
             </SelectItem>
           </SelectContent>
         </Select>

@@ -26,7 +26,7 @@ export function SupplierStockHistoryPage({ supplierId }: SupplierStockHistoryPag
               <span className="font-medium text-foreground">{supplier?.name}</span>
             )}
           </div>
-          <h2 className="text-2xl font-bold tracking-tight">Histórico de Entradas de Stock</h2>
+          <h2 className="text-2xl font-semibold tracking-tight">Histórico de Entradas de Stock</h2>
           <p className="text-sm text-muted-foreground">
             Registo cronológico de todos os abastecimentos deste fornecedor.
           </p>

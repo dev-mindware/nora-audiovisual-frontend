@@ -4,6 +4,8 @@ import { ReactNode } from "react"
 export interface DataTableConfig<TData> {
   columns: ColumnDef<TData>[]
   data: TData[]
+  searchKey?: string
+  searchPlaceholder?: string
   searchableColumns?: string[]
   filterableColumns?: {
     id: string

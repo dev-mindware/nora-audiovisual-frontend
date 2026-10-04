@@ -73,7 +73,7 @@ export const ProductCard = React.memo<ProductCardProps>(
           <div className="flex gap-3 sm:gap-3.5">
             <Avatar className="h-14 w-14 sm:h-16 sm:w-16 rounded-xl shrink-0 border border-border/50 shadow-inner">
               <AvatarImage src={product.image} className="object-cover" />
-              <AvatarFallback className="rounded-xl bg-primary/10 text-primary font-bold text-lg">
+              <AvatarFallback className="rounded-xl bg-primary/10 text-primary font-semibold text-lg">
                 {product.name.charAt(0)}
               </AvatarFallback>
             </Avatar>
@@ -81,7 +81,7 @@ export const ProductCard = React.memo<ProductCardProps>(
               <TooltipTrigger asChild>
                 <div className="flex flex-col justify-between py-0.5 sm:py-1 flex-1 overflow-hidden cursor-help">
                   <div className="flex items-start justify-between gap-1">
-                    <h3 className="font-bold text-xs sm:text-sm leading-tight line-clamp-2 text-foreground/90 group-hover:text-primary transition-colors">
+                    <h3 className="font-semibold text-xs sm:text-sm leading-tight line-clamp-2 text-foreground/90 group-hover:text-primary transition-colors">
                       {product.name}
                     </h3>
                   </div>
@@ -134,7 +134,7 @@ export const ProductCard = React.memo<ProductCardProps>(
                 align="start"
                 className="max-w-[220px] p-3 flex flex-col gap-1.5 shadow-xl border-border/50 z-[100]"
               >
-                <h4 className="font-bold text-sm leading-tight text-white">
+                <h4 className="font-semibold text-sm leading-tight text-white">
                   {product.name}
                 </h4>
                 <p className="text-xs text-white/80 leading-relaxed italic border-t border-white/10 pt-1.5 mt-0.5">
@@ -206,7 +206,7 @@ export const ProductCard = React.memo<ProductCardProps>(
                       </Button>
 
                       <span
-                        className="text-xs sm:text-sm font-bold min-w-[1.25rem] sm:min-w-[1.5rem] text-center cursor-pointer select-none tabular-nums hover:text-primary transition-colors px-0.5 sm:px-1"
+                        className="text-xs sm:text-sm font-semibold min-w-[1.25rem] sm:min-w-[1.5rem] text-center cursor-pointer select-none tabular-nums hover:text-primary transition-colors px-0.5 sm:px-1"
                         onDoubleClick={(e: React.MouseEvent) => {
                           e.preventDefault();
                           handleDoubleClick();
@@ -251,14 +251,14 @@ export const ProductCard = React.memo<ProductCardProps>(
                 }}
               >
                 <div className="flex flex-col gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Quantidade
                   </span>
                   <div className="flex items-center gap-2">
                     <Input
                       value={editQty}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditQty(e.target.value)}
-                      className="h-8 w-16 text-center text-sm font-bold focus-visible:ring-primary/30"
+                      className="h-8 w-16 text-center text-sm font-semibold focus-visible:ring-primary/30"
                       type="number"
                       onKeyDown={handleKeyDown}
                       autoFocus

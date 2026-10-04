@@ -90,7 +90,7 @@ export function PosRequestsModal() {
                     key={request.id}
                     className="p-4 flex items-start gap-4 hover:bg-muted/10 transition-colors cursor-pointer rounded-xl border border-muted-foreground/10"
                   >
-                    <div className="flex items-center justify-center shrink-0 w-10 h-10 border rounded-full bg-primary/10 border-primary/10 font-bold text-primary text-sm">
+                    <div className="flex items-center justify-center shrink-0 w-10 h-10 border rounded-full bg-primary/10 border-primary/10 font-semibold text-primary text-sm">
                       {request.userName?.charAt(0)?.toUpperCase() || "?"}
                     </div>
 
@@ -104,7 +104,7 @@ export function PosRequestsModal() {
                             {request.message || "Pedido de abertura de caixa"}
                           </p>
                         </div>
-                        <span className="text-[10px] font-bold text-muted-foreground whitespace-nowrap pt-0.5">
+                        <span className="text-[10px] font-semibold text-muted-foreground whitespace-nowrap pt-0.5">
                           {formatDateTime(request.createdAt)}
                         </span>
                       </div>

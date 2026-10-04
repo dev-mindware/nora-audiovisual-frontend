@@ -24,10 +24,10 @@ export function PublicDocumentHeader({ token, documentNumber }: Props) {
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
-                            <span className="text-white font-bold text-lg">K</span>
+                            <span className="text-white font-semibold text-lg">K</span>
                         </div>
                         <div>
-                            <h1 className="font-bold text-lg">Mindgest</h1>
+                            <h1 className="font-semibold text-lg">Mindgest</h1>
                             <p className="text-xs text-muted-foreground">
                                 PORTAL DE VERIFICAÇÃO
                             </p>

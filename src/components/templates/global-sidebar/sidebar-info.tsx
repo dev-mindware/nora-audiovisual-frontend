@@ -1,7 +1,8 @@
 "use client";
-import { useEffect } from "react";
+
 import {
   Icon,
+  BrandLogo,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -12,52 +13,44 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-  LoaderStoresSkeleton,
 } from "@/components";
 import { useAuth } from "@/hooks/auth";
-import { useGetStores, useSwitchStore } from "@/hooks/entities";
-import { currentStoreStore } from "@/stores/store/current-store-store";
-import { Role } from "@/types";
+import { useTenantStore } from "@/stores/tenant";
+import { api } from "@/services/api";
+import { queryClient } from "@/lib";
+import { SucessMessage, ErrorMessage } from "@/utils/messages";
+import { useState } from "react";
 
 export function SidebarCompanyInfo() {
   const { user } = useAuth();
   const { isMobile } = useSidebar();
-  const isCashier = user?.role === "CASHIER";
-  const { currentStore } = currentStoreStore();
-  const { mutate: switchStore } = useSwitchStore();
-  const {
-    refetch,
-    storesData,
-    isLoading: loadingStores,
-    error: storesError,
-  } = useGetStores(user?.role as Role);
+  const { activeOrganization, organizations, setActiveOrganization } = useTenantStore();
+  const [isSwitching, setIsSwitching] = useState(false);
 
-  if (loadingStores) return <LoaderStoresSkeleton />;
+  const isPlatformAdmin = user?.role === "ADMIN" || user?.isPlatformAdmin;
+  const orgName = isPlatformAdmin
+    ? "Nora Audiovisual"
+    : (activeOrganization?.name || user?.company?.name || "Nora Audiovisual Studio");
+  const orgSubtitle = isPlatformAdmin
+    ? "ADMIN • Plataforma"
+    : (user?.role ? `${user.role} • Produção` : "Estúdio Audiovisual");
 
-  if (storesError) {
-    return <StoresErrorState onRetry={refetch} />;
-  }
-
-  if (isCashier) {
-    return (
-      <SidebarMenu className="group-data-[collapsible=icon]:items-center">
-        <SidebarMenuItem>
-          <SidebarMenuButton size="lg">
-            <div className="flex items-center justify-center rounded-lg bg-primary text-sidebar-primary-foreground aspect-square size-8">
-              <Icon name="Building2" className="size-4" />
-            </div>
-            <div className="grid flex-1 text-sm leading-tight text-left">
-              <span className="font-medium truncate">
-                {currentStore?.name || user.company?.name || "Empresa"}
-              </span>
-              <span className="text-xs truncate text-muted-foreground">
-                Visualização
-              </span>
-            </div>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-      </SidebarMenu>
-    );
+  async function handleSwitch(orgId: string) {
+    if (orgId === activeOrganization?.id) return;
+    try {
+      setIsSwitching(true);
+      const res = await api.post("/auth/organization/switch", { organizationId: orgId });
+      const data = res.data?.data || res.data;
+      if (data?.activeOrganization) {
+        setActiveOrganization(data.activeOrganization);
+        await queryClient.invalidateQueries();
+        SucessMessage(`Organização ativa: ${data.activeOrganization.name}`);
+      }
+    } catch (err: any) {
+      ErrorMessage(err?.response?.data?.message || "Erro ao trocar de organização.");
+    } finally {
+      setIsSwitching(false);
+    }
   }
 
   return (
@@ -67,60 +60,76 @@ export function SidebarCompanyInfo() {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-sidebar-accent/80 transition-colors"
+              disabled={isSwitching}
             >
-              <div className="flex items-center justify-center rounded-lg bg-primary text-sidebar-primary-foreground aspect-square size-8">
-                <Icon name="Building2" className="size-4" />
+              <div className="flex items-center justify-center aspect-square size-8 overflow-hidden shrink-0">
+                {isPlatformAdmin ? (
+                  <div className="flex items-center justify-center bg-primary text-primary-foreground size-full">
+                    <Icon name="ShieldCheck" className="size-4" />
+                  </div>
+                ) : (
+                  <BrandLogo variant="symbol" size="sm" />
+                )}
               </div>
               <div className="grid flex-1 text-sm leading-tight text-left">
-                <span className="font-medium truncate">
-                  {currentStore?.name || "Empresa"}
+                <span className="font-semibold truncate text-foreground">
+                  {orgName}
                 </span>
-                <span className="text-xs truncate">
-                  {currentStore ? "Loja seleccionada" : "Seleccione uma loja"}
+                <span className="text-[11px] truncate text-muted-foreground">
+                  {orgSubtitle}
                 </span>
               </div>
-              <Icon name="ChevronsUpDown" className="ml-auto" />
+              <Icon name="ChevronsUpDown" className="ml-auto size-4 text-muted-foreground" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+            className="w-(--radix-dropdown-menu-trigger-width) min-w-60 rounded-xl border border-border/80 bg-card p-1.5 shadow-xl backdrop-blur-xl"
             align="start"
             side={isMobile ? "bottom" : "right"}
-            sideOffset={4}
+            sideOffset={6}
           >
-            <DropdownMenuLabel className="text-xs text-muted-foreground">
-              Lojas
+            <DropdownMenuLabel className="px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Estúdio / Organização Ativa
             </DropdownMenuLabel>
+            <DropdownMenuSeparator className="my-1 border-border/60" />
 
-            {storesData?.map((store) => (
-              <DropdownMenuItem
-                key={store.id}
-                onClick={() => switchStore(store)}
-                className="gap-2 p-2"
-              >
-                <div className="flex items-center justify-center border rounded-md size-6">
-                  <Icon name="Building2" className="size-3.5 shrink-0" />
+            {organizations.length > 0 ? (
+              organizations.map((org) => {
+                const isSelected = org.id === (activeOrganization?.id || user?.company?.id);
+                return (
+                  <DropdownMenuItem
+                    key={org.id}
+                    onClick={() => handleSwitch(org.id)}
+                    className="flex items-center justify-between gap-2.5 rounded-lg px-2.5 py-2 text-xs font-medium cursor-pointer hover:bg-muted focus:bg-muted transition-colors"
+                  >
+                    <div className="flex items-center gap-2 truncate">
+                      <div className="flex items-center justify-center rounded-md border border-border/80 size-6 bg-muted/50">
+                        <Icon name="Building2" className="size-3.5 text-primary" />
+                      </div>
+                      <span className="truncate">{org.name}</span>
+                    </div>
+                    {isSelected && (
+                      <Icon name="Check" className="size-4 text-primary shrink-0" />
+                    )}
+                  </DropdownMenuItem>
+                );
+              })
+            ) : (
+              <div className="flex items-center gap-2.5 px-2.5 py-2 text-xs text-foreground">
+                <div className="flex items-center justify-center rounded-md border border-border/80 size-6 bg-primary/10 text-primary">
+                  <Icon name="Film" className="size-3.5" />
                 </div>
-                {store.name}
-              </DropdownMenuItem>
-            ))}
-
+                <div className="flex flex-col truncate">
+                  <span className="font-medium truncate">{orgName}</span>
+                  <span className="text-[10px] text-muted-foreground">Unidade de Produção</span>
+                </div>
+              </div>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  );
-}
-
-function StoresErrorState({ onRetry }: { onRetry: () => void }) {
-  return (
-    <div className="p-4 border border-destructive rounded-lg text-sm text-destructive space-y-2">
-      <p>Erro ao carregar lojas.</p>
-      <button onClick={onRetry} className="text-xs underline hover:opacity-80">
-        Tentar novamente
-      </button>
-    </div>
   );
 }

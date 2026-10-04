@@ -18,14 +18,14 @@ export function MetricCard({
     <Card className="border shadow-sm rounded-lg">
       <CardContent className="px-4 flex flex-col gap-4">
         <div className="flex flex-row items-center justify-between gap-3">
-          <p className="text-2xl font-bold text-foreground leading-none tracking-tight">
+          <p className="text-2xl font-semibold text-foreground leading-none tracking-tight">
             {value}
           </p>
           <div className="p-2 rounded-lg shrink-0 bg-muted/60 text-muted-foreground">
             <Icon name={icon} className="w-4 h-4" />
           </div>
         </div>
-        
+
         <div className="flex flex-col gap-1.5 mt-2">
           <p className="text-sm font-medium text-foreground/90 leading-none">
             {label}

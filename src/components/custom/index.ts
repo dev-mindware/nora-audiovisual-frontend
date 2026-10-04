@@ -12,3 +12,4 @@ export * from "./dynamic-breadcrumb"
 export * from "./universal-table"
 export * from "./universal-table"
 export * from "./chart-area-interactive"
+export * from './organization-switcher';

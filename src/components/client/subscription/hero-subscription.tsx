@@ -10,7 +10,7 @@ export function HeroSubscription({
 }: HeroSubscriptionProps) {
   return (
     <div className="text-center mb-12">
-      <h1 className="text-4xl font-bold text-foreground mb-4">
+      <h1 className="text-4xl font-semibold text-foreground mb-4">
         {title ? (
           <span className="text-primary-500">{title}</span>
         ) : (

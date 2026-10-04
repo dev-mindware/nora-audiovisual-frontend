@@ -10,7 +10,11 @@ import {
 } from "@/components/ui/sheet";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button, Icon } from "@/components";
-import { MIND_WEEKLY_MESSAGE_LIMIT, countWeeklyUserMessages, MIND_RETRY_ERROR_MESSAGE } from "@/constants/mind-ai";
+import {
+  NORA_WEEKLY_MESSAGE_LIMIT,
+  countWeeklyUserMessages,
+  NORA_RETRY_ERROR_MESSAGE,
+} from "@/constants/nora-ai";
 import { useAuthStore, currentStoreStore } from "@/stores";
 import { useSendChatMessage } from "@/hooks";
 import { ChatHistoryItem } from "@/types";
@@ -20,9 +24,6 @@ import { ErrorMessage } from "@/utils/messages";
 import { ChatTab } from "./chat-tab";
 import { HistoryTab } from "./history-tab";
 
-// Certifica-te de que o ficheiro CSS é importado no ponto de entrada ou aqui:
-// import "./chatbot-button.css";
-
 const EXPIRATION_DAYS = 7;
 
 export type LocalChatHistoryItem = ChatHistoryItem & {
@@ -31,14 +32,14 @@ export type LocalChatHistoryItem = ChatHistoryItem & {
   failed?: boolean;
 };
 
-
 export interface LocalChatSession {
   id: string;
   updatedAt: string;
   messages: LocalChatHistoryItem[];
 }
 
-const DB_NAME = "MindgestChatDB";
+const DB_NAME = "NoraChatDB";
+const LEGACY_DB_NAME = "MindgestChatDB";
 const STORE_NAME = "chat_sessions";
 const DB_VERSION = 1;
 
@@ -84,16 +85,17 @@ const ChatDB = {
         request.onerror = () => reject(request.error);
       });
     } catch (error) {
-      console.error("IDB Save Error", error);
+      console.error("Nora IDB Save Error", error);
     }
   },
 };
 
 const FRASES = [
-  "Fale com MIND",
-  "Como posso ajudar?",
-  "Tire as suas dúvidas",
-  "Estou disponível"
+  "Fale com a Nora AI",
+  "Precisa de Call Sheet?",
+  "Otimizar orçamento?",
+  "Escala & Equipamento",
+  "Estou disponível",
 ];
 
 export function ChatbotSheet() {
@@ -159,7 +161,6 @@ export function ChatbotSheet() {
             setFase(2);
           }, tempoEscrita + 900);
         } else {
-          // Nas voltas subsequentes após a gota pingar, o texto já está escrito. Fica parado por 2.5s antes de apagar.
           timerId = setTimeout(() => {
             setFase(2);
           }, 2500);
@@ -198,7 +199,6 @@ export function ChatbotSheet() {
       case 6:
         setFxState("gota");
 
-        // Física da gota d'água: no impacto (400ms) cria as ondas de ripple e micro-gotas
         impactTimer = setTimeout(() => {
           setFxState("ripple");
           setLiquidGlass(true);
@@ -206,7 +206,7 @@ export function ChatbotSheet() {
 
         timerId = setTimeout(() => {
           setFase(1);
-        }, 1150); // Ajuste fino para dar tempo de terminar o fadeout do splash hidráulico
+        }, 1150);
         break;
 
       default:
@@ -219,13 +219,14 @@ export function ChatbotSheet() {
     };
   }, [fase, fraseIndex, reducedMotion]);
 
+  const companyName = user?.company?.name || user?.activeOrganization?.name || "nora";
   const sessionId = user
-    ? `${user.company.name.replace(/\s+/g, "_").toLowerCase()}_${user.id}_${new Date().toISOString().split("T")[0]}`
+    ? `${companyName.replace(/\s+/g, "_").toLowerCase()}_${user.id}_${new Date().toISOString().split("T")[0]}`
     : "";
   const { mutate: sendMessage, isPending } = useSendChatMessage();
-  const mindMessageLimit = MIND_WEEKLY_MESSAGE_LIMIT;
+  const noraMessageLimit = NORA_WEEKLY_MESSAGE_LIMIT;
 
-  // Carregar dados do IndexedDB no Mount
+  // Carregar dados do IndexedDB no Mount (com migração suave de legados)
   useEffect(() => {
     if (!user) return;
 
@@ -234,9 +235,10 @@ export function ChatbotSheet() {
         let parsedSessions = await ChatDB.getUserSessions(user.id);
 
         if (parsedSessions.length === 0) {
-          const legacyStorage = localStorage.getItem(
-            `mindgest-chat-history_${user.id}`,
-          );
+          // Migração de chaves locais anteriores
+          const legacyStorage =
+            localStorage.getItem(`nora-chat-history_${user.id}`) ||
+            localStorage.getItem(`mindgest-chat-history_${user.id}`);
           if (legacyStorage) {
             try {
               const parsedData = JSON.parse(legacyStorage);
@@ -252,19 +254,8 @@ export function ChatbotSheet() {
                 } else {
                   parsedSessions = parsedData;
                 }
-              } else if (
-                parsedData &&
-                parsedData.history &&
-                Array.isArray(parsedData.history)
-              ) {
-                parsedSessions = [
-                  {
-                    id: parsedData.timestamp || new Date().toISOString(),
-                    updatedAt: parsedData.timestamp || new Date().toISOString(),
-                    messages: parsedData.history,
-                  },
-                ];
               }
+              localStorage.removeItem(`nora-chat-history_${user.id}`);
               localStorage.removeItem(`mindgest-chat-history_${user.id}`);
             } catch (e) {
               console.error("Migration error", e);
@@ -296,7 +287,7 @@ export function ChatbotSheet() {
           await ChatDB.saveUserSessions(user.id, validSessions);
         }
       } catch (error) {
-        console.error("Failed to load generic chat history from IDB", error);
+        console.error("Failed to load Nora chat history from IDB", error);
       }
     };
 
@@ -350,9 +341,9 @@ export function ChatbotSheet() {
   const handleSend = () => {
     if (!input.trim() || !user || isPending) return;
 
-    if (totalMessagesUsed >= mindMessageLimit) {
+    if (totalMessagesUsed >= noraMessageLimit) {
       ErrorMessage(
-        `Limite de ${mindMessageLimit} mensagens por semana do MIND atingido. O limite renova no início da próxima semana.`,
+        `Limite de ${noraMessageLimit} mensagens por semana da Nora AI atingido. O limite renova no início da próxima semana.`,
       );
       return;
     }
@@ -360,7 +351,7 @@ export function ChatbotSheet() {
     const userMsg = input.trim();
     setInput("");
 
-    // Snapshot history BEFORE appending the new user message (backend sliding window)
+    // Snapshot do histórico antes da nova mensagem
     const historyPayload = messages
       .filter(
         (m) =>
@@ -378,10 +369,10 @@ export function ChatbotSheet() {
     sendMessage(
       {
         message: userMsg,
-        empresa: user.company.name,
+        empresa: user?.company?.name || user?.activeOrganization?.name || "Nora Audiovisual Studio",
         userName: user.name,
         sessionId,
-        companyId: user.company.id,
+        companyId: user?.company?.id || user?.activeOrganization?.id || "default",
         userId: user.id,
         storeId: currentStore?.id ?? user.store?.id ?? null,
         role: user.role,
@@ -402,9 +393,9 @@ export function ChatbotSheet() {
             return;
           }
 
-          // Soft failure (no reply / success false) — do not count toward limit
+          // Soft failure — não cobra do limite semanal
           setInput(userMsg);
-          ErrorMessage(MIND_RETRY_ERROR_MESSAGE);
+          ErrorMessage(NORA_RETRY_ERROR_MESSAGE);
           setMessages((prev) => {
             const updated = [...prev];
             for (let i = updated.length - 1; i >= 0; i--) {
@@ -417,7 +408,7 @@ export function ChatbotSheet() {
               ...updated,
               {
                 role: "assistant",
-                content: MIND_RETRY_ERROR_MESSAGE,
+                content: NORA_RETRY_ERROR_MESSAGE,
                 created_at: new Date().toISOString(),
                 isTyping: true,
                 failed: true,
@@ -429,8 +420,8 @@ export function ChatbotSheet() {
           setInput(userMsg);
           const detail =
             error?.message && error.message !== "Failed to send message to Chatbot"
-              ? `${MIND_RETRY_ERROR_MESSAGE} (${error.message})`
-              : MIND_RETRY_ERROR_MESSAGE;
+              ? `${NORA_RETRY_ERROR_MESSAGE} (${error.message})`
+              : NORA_RETRY_ERROR_MESSAGE;
           ErrorMessage(detail);
           setMessages((prev) => {
             const updated = [...prev];
@@ -444,7 +435,7 @@ export function ChatbotSheet() {
               ...updated,
               {
                 role: "assistant",
-                content: MIND_RETRY_ERROR_MESSAGE,
+                content: NORA_RETRY_ERROR_MESSAGE,
                 created_at: new Date().toISOString(),
                 isTyping: true,
                 failed: true,
@@ -492,80 +483,88 @@ export function ChatbotSheet() {
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <ProtectedAction>
-        <SheetTrigger asChild>
-          <button
-            className={`
-              mind-button
-              ${liquidGlass ? "liquid-glass-base" : "transparente-borda-base"}
-              fase${fase}
-              ${(fase === 5 || (fase === 1 && isFirstCycleRef.current)) ? "typing" : ""}
-              relative flex items-center justify-center
-              active:scale-[0.98]
-              group
-              overflow-hidden
-            `}
-            style={{
-              "--num-chars": FRASES[fraseIndex].length,
-              "--tempo-escrita": `${FRASES[fraseIndex].length * 60}ms`,
-            } as React.CSSProperties}
-            aria-label={FRASES[fraseIndex]}
-          >
-            {/* Efeitos Visuais Dinâmicos Otimizados */}
-            <div className="absolute inset-0 pointer-events-none z-10">
-              {fxState === "gota" && <span className="gota" />}
-              {fxState === "ripple" && (
-                <>
-                  <span className="ripple-primario" />
-                  <span className="ripple-secundario" />
-                  <span className="micro-gotas drop-1" />
-                  <span className="micro-gotas drop-2" />
-                  <span className="micro-gotas drop-3" />
-                  <span className="micro-gotas drop-4" />
-                </>
-              )}
-            </div>
+      <SheetTrigger asChild>
+        <button
+          className={`
+            mind-button
+            ${liquidGlass ? "liquid-glass-base" : "transparente-borda-base"}
+            fase${fase}
+            ${(fase === 5 || (fase === 1 && isFirstCycleRef.current)) ? "typing" : ""}
+            relative flex items-center justify-center
+            active:scale-[0.98]
+            group
+            overflow-hidden
+          `}
+          style={{
+            "--num-chars": FRASES[fraseIndex].length,
+            "--tempo-escrita": `${FRASES[fraseIndex].length * 60}ms`,
+          } as React.CSSProperties}
+          aria-label={FRASES[fraseIndex]}
+        >
+          {/* Efeitos Visuais Dinâmicos Otimizados */}
+          <div className="absolute inset-0 pointer-events-none z-10">
+            {fxState === "gota" && <span className="gota" />}
+            {fxState === "ripple" && (
+              <>
+                <span className="ripple-primario" />
+                <span className="ripple-secundario" />
+                <span className="micro-gotas drop-1" />
+                <span className="micro-gotas drop-2" />
+                <span className="micro-gotas drop-3" />
+                <span className="micro-gotas drop-4" />
+              </>
+            )}
+          </div>
 
-            {/* Ícone Sparkles */}
-            <span className="icone-container">
-              <svg className="mind-icon text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-                <path d="m5 3 1 2.5L8.5 6 6 7 5 9.5 4 7 1.5 6 4 5.5z" />
-                <path d="m19 17 1 2.5 2.5.5-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1z" />
-              </svg>
-            </span>
+          {/* Ícone Sparkles */}
+          <span className="icone-container">
+            <svg className="mind-icon text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+              <path d="m5 3 1 2.5L8.5 6 6 7 5 9.5 4 7 1.5 6 4 5.5z" />
+              <path d="m19 17 1 2.5 2.5.5-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1z" />
+            </svg>
+          </span>
 
-            {/* Texto Animado */}
-            <span className="texto-container">
-              <span className="texto-digitado tracking-tight font-medium text-sm">
-                {FRASES[fraseIndex]}
-              </span>
+          {/* Texto Animado */}
+          <span className="texto-container">
+            <span className="texto-digitado tracking-tight font-medium text-sm">
+              {FRASES[fraseIndex]}
             </span>
-          </button>
-        </SheetTrigger>
-      </ProtectedAction>
+          </span>
+        </button>
+      </SheetTrigger>
 
       <SheetContent
         side="right"
         onInteractOutside={(e) => e.preventDefault()}
-        className="w-full sm:max-w-[420px] flex flex-col p-0 border-l gap-0 shadow-2xl bg-background"
+        className="w-full sm:max-w-[440px] flex flex-col p-0 border-l gap-0 shadow-2xl bg-background"
       >
         <Tabs
           value={activeTab}
           onValueChange={setActiveTab}
           className="flex flex-col h-full w-full"
         >
-          <SheetHeader className="py-4 px-12 pb-2 shrink-0">
-            <SheetTitle className="sr-only">Assistente MIND</SheetTitle>
-            <div className="flex items-start justify-between mb-4">
-              <TabsList className="bg-muted/60 p-1">
-                <TabsTrigger value="chat" className="px-4 text-xs">
-                  Chat
-                </TabsTrigger>
-                <TabsTrigger value="history" className="px-4 text-xs">
-                  Histórico
-                </TabsTrigger>
-              </TabsList>
+          <SheetHeader className="py-4 px-6 pb-3 shrink-0 border-b border-border/40">
+            <SheetTitle className="sr-only">Nora AI — Assistente Audiovisual</SheetTitle>
+            
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-xs">
+                  <Icon name="Sparkles" className="w-4 h-4" />
+                </div>
+                <div className="flex flex-col text-left">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold text-foreground tracking-tight">Nora AI</span>
+                    <span className="text-[10px] font-semibold bg-primary/15 text-primary px-1.5 py-0.5 rounded-full">
+                      Nora 2.5 Pro
+                    </span>
+                  </div>
+                  <span className="text-[11px] text-muted-foreground flex items-center gap-1.5 font-medium">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    Assistente Audiovisual
+                  </span>
+                </div>
+              </div>
 
               <div className="flex items-center gap-2">
                 <Button
@@ -573,19 +572,35 @@ export function ChatbotSheet() {
                   variant="outline"
                   title="Novo Chat"
                   size="icon"
+                  className="h-8 w-8 rounded-lg"
                 >
                   <Icon name="SquarePen" className="h-4 w-4" />
                 </Button>
               </div>
             </div>
 
+            <div className="flex items-center justify-between mt-3 pt-2">
+              <TabsList className="bg-muted/60 p-1 h-8">
+                <TabsTrigger value="chat" className="px-3.5 text-xs h-6">
+                  Chat
+                </TabsTrigger>
+                <TabsTrigger value="history" className="px-3.5 text-xs h-6">
+                  Histórico
+                </TabsTrigger>
+              </TabsList>
+
+              <span className="text-[11px] text-muted-foreground font-medium">
+                Quota: <strong className="text-foreground">{totalMessagesUsed}/{noraMessageLimit}</strong>
+              </span>
+            </div>
+
             {activeTab === "chat" && messages.length === 0 && (
-              <div className="text-center mt-2">
-                <h2 className="text-xl font-semibold flex items-center justify-center gap-2">
-                  Olá {user?.name} 👋
+              <div className="text-center mt-3 pt-1">
+                <h2 className="text-base font-semibold flex items-center justify-center gap-1.5">
+                  Olá {user?.name?.split(" ")[0] || "Criador"} 👋
                 </h2>
-                <p className="text-foreground/80 text-sm mt-1">
-                  Como posso ajudar?
+                <p className="text-muted-foreground text-xs mt-0.5">
+                  Como posso ajudar na sua produção hoje?
                 </p>
               </div>
             )}
@@ -601,7 +616,7 @@ export function ChatbotSheet() {
             handleTypingComplete={handleTypingComplete}
             messagesEndRef={messagesEndRef}
             totalMessagesUsed={totalMessagesUsed}
-            messageLimit={mindMessageLimit}
+            messageLimit={noraMessageLimit}
           />
 
           <HistoryTab sessions={sessions} openSession={openSession} />

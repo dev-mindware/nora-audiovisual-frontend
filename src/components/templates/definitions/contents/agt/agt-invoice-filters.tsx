@@ -4,7 +4,6 @@ import { Button, Input, Label, SelectField } from "@/components";
 import { useAgtInvoiceFilters } from "@/hooks/agt";
 
 const DOCUMENT_TYPE_OPTIONS = [
-  { value: "ALL", label: "Todos" },
   { value: "FT", label: "Factura (FT)" },
   { value: "FR", label: "Factura-recibo (FR)" },
   { value: "NC", label: "Nota de crédito (NC)" },
@@ -21,6 +20,7 @@ export function AgtInvoiceFilters() {
         <Input
           id="agt-start-date"
           type="date"
+          className="rounded-none"
           value={filters.queryStartDate || ""}
           onChange={(event) =>
             setFilters({ queryStartDate: event.target.value })
@@ -33,6 +33,7 @@ export function AgtInvoiceFilters() {
         <Input
           id="agt-end-date"
           type="date"
+          className="rounded-none"
           value={filters.queryEndDate || ""}
           onChange={(event) =>
             setFilters({ queryEndDate: event.target.value })
@@ -42,15 +43,16 @@ export function AgtInvoiceFilters() {
 
       <SelectField
         label="Tipo"
-        value={filters.documentType || "ALL"}
+        value={filters.documentType || ""}
         onValueChange={(documentType) => setFilters({ documentType })}
         options={DOCUMENT_TYPE_OPTIONS}
-        placeholder="Tipo"
+        placeholder="Tipo de documento"
+        className="rounded-none"
       />
 
       <Button
         type="button"
-        className="gap-2"
+        className="gap-2 rounded-none"
         onClick={() =>
           setFilters({
             queryStartDate: filters.queryStartDate,

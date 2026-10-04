@@ -8,7 +8,7 @@ export function MarketingCtaSection() {
             <p className="text-sm italic mb-4 opacity-90">
                 "Tecnologia a favor do seu crescimento."
             </p>
-            <h2 className="text-2xl font-bold mb-2">
+            <h2 className="text-2xl font-semibold mb-2">
                 Mindgest: o futuro da sua gestão empresarial começa agora.
             </h2>
             <Link href="/auth/register">

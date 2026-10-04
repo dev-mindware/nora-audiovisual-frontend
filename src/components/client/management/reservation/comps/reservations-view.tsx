@@ -69,14 +69,14 @@ export function ReservationsView() {
         );
     }
 
-    
+
 
     return (
         <Card className="w-full shadow-md border-muted">
             <CardHeader className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-6 border-b mb-6">
                 <div className="flex items-center gap-2">
                     <CalendarIcon className="h-5 w-5 text-primary" />
-                    <CardTitle className="text-xl font-bold">Calendário de Reservas</CardTitle>
+                    <CardTitle className="text-xl font-semibold">Calendário de Reservas</CardTitle>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3" data-tour="reservations-controls">

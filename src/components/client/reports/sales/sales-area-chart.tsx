@@ -74,7 +74,7 @@ export function SalesAreaChart({ data, period }: SalesAreaChartProps) {
                 <div className="space-y-1">
                     <div className="flex items-center justify-between gap-4">
                         <span className="text-xs text-muted-foreground">Receita Total:</span>
-                        <span className="text-sm font-bold text-primary">
+                        <span className="text-sm font-semibold text-primary">
                             {formatCurrency(data.totalRevenue)}
                         </span>
                     </div>

@@ -89,8 +89,26 @@ export function ClientModal({ action }: ClientModalProps) {
       id={action === "add" ? "add-client" : "edit-client"}
       title={action === "add" ? "Adicionar Cliente" : "Editar Cliente"}
       className="!max-h-[85vh] !w-max"
+      footer={
+        <div className="flex justify-end gap-3 w-full">
+          <Button type="button" variant="outline" onClick={handleCancel}>
+            Cancelar
+          </Button>
+          <ButtonSubmit
+            form="template-client-form"
+            className="w-max"
+            isLoading={isSubmitting || isAdding || isEditing}
+          >
+            {action === "add" ? "Adicionar" : "Guardar alterações"}
+          </ButtonSubmit>
+        </div>
+      }
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        id="template-client-form"
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-4"
+      >
         <div className="grid gap-4 sm:grid-cols-2">
           <Input
             label="Nome"
@@ -140,20 +158,7 @@ export function ClientModal({ action }: ClientModalProps) {
             startIcon="MapPin"
             {...register("address")}
             error={errors.address?.message}
-
           />
-        </div>
-
-        <div className="flex justify-end gap-4 mt-5">
-          <Button type="button" variant="outline" onClick={handleCancel}>
-            Cancelar
-          </Button>
-          <ButtonSubmit
-            className="w-max"
-            isLoading={isSubmitting || isAdding || isEditing}
-          >
-            {action === "add" ? "Adicionar" : "Guardar alterações"}
-          </ButtonSubmit>
         </div>
       </form>
     </GlobalModal>

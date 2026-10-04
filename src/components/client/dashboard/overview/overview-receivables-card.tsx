@@ -28,7 +28,7 @@ export function OverviewReceivablesCard({
             icon="CreditCard"
             href="/documents"
         >
-            <p className="text-2xl font-bold tracking-tight">
+            <p className="text-2xl font-semibold tracking-tight">
                 {formatCurrencyCompact(total, currency)}
             </p>
             {total === 0 && (

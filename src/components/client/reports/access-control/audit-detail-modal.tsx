@@ -30,7 +30,7 @@ export function AuditDetailModal() {
           </div>
 
           <div className="text-center space-y-1">
-            <h2 className="text-xl font-bold">Detalhes da Auditoria</h2>
+            <h2 className="text-xl font-semibold">Detalhes da Auditoria</h2>
             <div className="flex items-center justify-center gap-2 mt-1">
               <Badge variant={actionInfo.variant}>{actionInfo.label}</Badge>
               <Badge variant="outline">{ENTITY_LABELS[auditItem.entity] || auditItem.entity}</Badge>
@@ -100,7 +100,7 @@ export function AuditDetailModal() {
 
         {/* Changes comparative table */}
         <div className="space-y-3">
-          <h3 className="font-bold text-base text-foreground">Dados Alterados</h3>
+          <h3 className="font-semibold text-base text-foreground">Dados Alterados</h3>
           <AuditDiffTable
             action={auditItem.action}
             changes={auditItem.changes}

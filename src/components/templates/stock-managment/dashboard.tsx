@@ -31,7 +31,7 @@ export function InventoryDashboard() {
             </Badge>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">10.000</div>
+            <div className="text-3xl font-semibold">10.000</div>
             <div className="flex items-center mt-1 text-muted-foreground">
               <span className="text-lg">Stock elevado</span>
               <Icon name="TrendingUp" className="ml-1" size={14} />
@@ -53,7 +53,7 @@ export function InventoryDashboard() {
             </Badge>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">26</div>
+            <div className="text-3xl font-semibold">26</div>
             <div className="flex items-center mt-1 text-xs text-muted-foreground">
               <span className="text-lg">Queda leve</span>
               <Icon name="TrendingDown" className="ml-1" size={14} />
@@ -81,7 +81,7 @@ export function InventoryDashboard() {
             </Select>
           </CardHeader>
           <CardContent className="-mt-4">
-            <div className="text-2xl font-bold">170</div>
+            <div className="text-2xl font-semibold">170</div>
             <div className="mt-2">
               <p className="mb-2 text-xs font-medium">Principais items:</p>
               <div className="space-y-1">
@@ -117,7 +117,7 @@ export function InventoryDashboard() {
             </Badge>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">52.056.450,00 KZ</div>
+            <div className="text-3xl font-semibold">52.056.450,00 KZ</div>
             <div className="flex items-center mt-1 text-muted-foreground">
               <span className="text-lg">Quantia Habitual</span>
               <Icon name="TrendingUp" className="ml-2" size={14} />

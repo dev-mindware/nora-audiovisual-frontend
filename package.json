@@ -35,6 +35,8 @@
     "@radix-ui/react-tabs": "^1.1.12",
     "@radix-ui/react-tooltip": "^1.2.7",
     "@tanstack/ai-mcp": "^0.3.0",
+    "@tanstack/charts": "^0.18.0",
+    "@tanstack/react-charts": "^0.18.0",
     "@tanstack/react-query": "^5.90.21",
     "@tanstack/react-table": "^8.21.3",
     "@vercel/analytics": "^1.6.1",

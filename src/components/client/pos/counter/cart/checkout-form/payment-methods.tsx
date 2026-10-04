@@ -118,7 +118,7 @@ export function PaymentMethods({
           </div>
           <div
             className={cn(
-              "flex justify-between bg-muted text-sm font-bold p-2 rounded-md",
+              "flex justify-between bg-muted text-sm font-semibold p-2 rounded-md",
               change >= 0 ? "text-green-700" : "text-red-700",
             )}
             data-tour="pos-payment-change"

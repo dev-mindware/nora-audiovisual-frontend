@@ -81,7 +81,7 @@ export function PaginatedSelect({
     <div className={cn("flex flex-col gap-1.5", fullWidth ? "w-full" : "w-full sm:w-auto")}>
       {label && <Label className="text-sm font-medium">{label}</Label>}
       <Select value={value || ""} onValueChange={onChange} disabled={disabled}>
-        <SelectTrigger className={cn(fullWidth ? "w-full" : "w-full sm:w-[200px]", className)}>
+        <SelectTrigger className={cn(fullWidth ? "w-full" : "w-full", className)}>
           {isLoading && !value ? (
             <Skeleton className="h-4 w-24" />
           ) : selectedLabel ? (
@@ -162,7 +162,7 @@ export function PaginatedSelect({
         </SelectContent>
       </Select>
       {error && (
-        <p className="text-[10px] font-bold text-destructive uppercase tracking-widest mt-1">
+        <p className="text-[10px] font-semibold text-destructive uppercase tracking-widest mt-1">
           {error}
         </p>
       )}

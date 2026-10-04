@@ -22,7 +22,7 @@ export function DetailsStoreModal() {
           </div>
 
           <div className="text-center space-y-1 mt-4">
-            <h2 className="text-2xl font-bold">{currentStore.name}</h2>
+            <h2 className="text-2xl font-semibold">{currentStore.name}</h2>
             <Badge variant={currentStore.isActive ? "success" : "destructive"}>
               {currentStore.isActive === true ? "Activo" : "Inactivo"}
             </Badge>

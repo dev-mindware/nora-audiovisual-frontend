@@ -47,13 +47,13 @@ export function OverviewMonthlyGoal({ goal }: OverviewMonthlyGoalProps) {
                             strokeDashoffset={CIRCUMFERENCE * (1 - percentage / 100)}
                         />
                     </svg>
-                    <span className="absolute inset-0 flex items-center justify-center text-lg font-bold">
+                    <span className="absolute inset-0 flex items-center justify-center text-lg font-semibold">
                         {percentage}%
                     </span>
                 </div>
 
                 <div className="min-w-0 flex-1 space-y-1.5">
-                    <p className="text-lg font-bold tracking-tight">
+                    <p className="text-lg font-semibold tracking-tight">
                         {formatCurrencyCompact(goal.current, goal.currency)}
                         <span className="text-sm font-normal text-muted-foreground">
                             {" "}
