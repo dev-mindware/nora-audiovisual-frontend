@@ -89,6 +89,11 @@ export function CheckoutPageContent() {
     toast.success(`${label} copiado para a área de transferência!`);
   };
 
+  const isCapacityAddOn = (code: string) => {
+    const upper = code.toUpperCase();
+    return upper.includes('STORAGE') || upper.includes('USERS') || upper.includes('MEMBER');
+  };
+
   const handleToggleAddOn = (addOnCode: string) => {
     setSelectedAddOns((prev) => {
       const next = { ...prev };
@@ -102,6 +107,22 @@ export function CheckoutPageContent() {
   };
 
   const handleUpdateAddOnQty = (addOnCode: string, qty: number) => {
+    if (!isCapacityAddOn(addOnCode)) {
+      if (qty <= 0) {
+        setSelectedAddOns((prev) => {
+          const next = { ...prev };
+          delete next[addOnCode];
+          return next;
+        });
+      } else {
+        setSelectedAddOns((prev) => ({
+          ...prev,
+          [addOnCode]: 1,
+        }));
+      }
+      return;
+    }
+
     if (qty <= 0) {
       setSelectedAddOns((prev) => {
         const next = { ...prev };
@@ -457,27 +478,33 @@ export function CheckoutPageContent() {
 
                           <div className="flex shrink-0 items-center gap-3">
                             {isChecked && (
-                              <div className="flex items-center border border-border rounded-xs">
-                                <button
-                                  type="button"
-                                  onClick={() => handleUpdateAddOnQty(add.code, qty - 1)}
-                                  className="h-7 w-7 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
-                                  aria-label={`Diminuir quantidade de ${add.name}`}
-                                >
-                                  −
-                                </button>
-                                <span className="w-7 text-center text-xs font-medium">
-                                  {qty}
+                              isCapacityAddOn(add.code) ? (
+                                <div className="flex items-center border border-border rounded-xs">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdateAddOnQty(add.code, qty - 1)}
+                                    className="h-7 w-7 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
+                                    aria-label={`Diminuir quantidade de ${add.name}`}
+                                  >
+                                    −
+                                  </button>
+                                  <span className="w-7 text-center text-xs font-medium">
+                                    {qty}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleUpdateAddOnQty(add.code, qty + 1)}
+                                    className="h-7 w-7 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
+                                    aria-label={`Aumentar quantidade de ${add.name}`}
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                              ) : (
+                                <span className="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded bg-primary/10 text-primary border border-primary/20">
+                                  Ativo
                                 </span>
-                                <button
-                                  type="button"
-                                  onClick={() => handleUpdateAddOnQty(add.code, qty + 1)}
-                                  className="h-7 w-7 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
-                                  aria-label={`Aumentar quantidade de ${add.name}`}
-                                >
-                                  +
-                                </button>
-                              </div>
+                              )
                             )}
                             <span className="text-xs font-semibold text-foreground">
                               {formatKz(itemPrice * (isChecked ? qty : 1))}
@@ -735,7 +762,7 @@ export function CheckoutPageContent() {
                         className="flex items-center justify-between gap-4 text-xs"
                       >
                         <span className="text-muted-foreground">
-                          {item.name} × {qty}
+                          {item.name} {isCapacityAddOn(code) ? `× ${qty}` : ''}
                         </span>
                         <span className="font-semibold text-foreground">{formatKz(itemPrice)}</span>
                       </div>

@@ -13,6 +13,7 @@ import {
   Palette,
   Route,
   Columns3,
+  History,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores';
 import { ProfileSettingsTab } from './profile-settings-tab';
@@ -22,6 +23,7 @@ import { SubscriptionSettingsTab } from './subscription-settings-tab';
 import { SecuritySettingsTab } from './security-settings-tab';
 import { MindgestSettingsTab } from './mindgest-settings-tab';
 import { TeamPageContent } from './team-page-content';
+import { OrganizationAuditTab } from './organization-audit-tab';
 import { Appearance } from '@/components/templates/definitions/contents/appearance';
 import { OnboardingPreferences } from '@/components/templates/definitions/contents/onboarding-preferences';
 
@@ -33,17 +35,18 @@ type SettingsTab =
   | 'subscription'
   | 'security'
   | 'mindgest'
-  | 'team';
+  | 'team'
+  | 'audit';
 
 const ROLE_ALLOWED_TABS: Record<string, SettingsTab[]> = {
-  OWNER: ['profile', 'kanban', 'appearance', 'guides', 'subscription', 'security', 'mindgest', 'team'],
-  ADMIN: ['profile', 'kanban', 'appearance', 'guides', 'subscription', 'security', 'mindgest', 'team'],
-  MANAGER: ['profile', 'kanban', 'appearance', 'guides', 'subscription', 'security', 'mindgest', 'team'],
+  OWNER: ['profile', 'kanban', 'appearance', 'guides', 'subscription', 'security', 'mindgest', 'team', 'audit'],
+  MANAGER: ['profile', 'kanban', 'appearance', 'guides', 'subscription', 'security', 'mindgest', 'team', 'audit'],
+  ADMIN: ['profile', 'security', 'appearance'],
   PRODUCER: ['profile', 'kanban', 'appearance', 'guides'],
-  FINANCE: ['profile', 'appearance', 'guides', 'mindgest'],
-  CREW: ['profile', 'appearance', 'guides'],
-  EDITOR: ['profile', 'appearance', 'guides'],
-  MEMBER: ['profile', 'appearance', 'guides'],
+  FINANCE: ['profile', 'appearance', 'guides', 'mindgest', 'subscription'],
+  CREW: ['profile', 'appearance', 'guides', 'security'],
+  EDITOR: ['profile', 'appearance', 'guides', 'security'],
+  MEMBER: ['profile', 'appearance', 'guides', 'security'],
   CLIENT: ['profile', 'appearance', 'guides'],
 };
 
@@ -54,7 +57,7 @@ export function SettingsPageContent() {
   const userRole = (user?.role || 'MEMBER').toUpperCase();
 
   const allowedTabs = ROLE_ALLOWED_TABS[userRole] || ['profile', 'appearance', 'guides'];
-  const canManageOrg = ['OWNER', 'ADMIN', 'MANAGER', 'PRODUCER', 'FINANCE'].includes(userRole);
+  const canManageOrg = ['OWNER', 'MANAGER', 'PRODUCER', 'FINANCE'].includes(userRole);
 
   const rawTabParam = searchParams.get('tab');
   // Compatibilidade com links antigos que usavam ?tab=organization
@@ -165,6 +168,15 @@ export function SettingsPageContent() {
                 <Users className="h-3.5 w-3.5" /> Equipa &amp; Permissões
               </TabsTrigger>
             )}
+
+            {allowedTabs.includes('audit') && (
+              <TabsTrigger
+                value="audit"
+                className="data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-none text-xs gap-1.5 py-1.5 px-3 rounded-xs font-medium"
+              >
+                <History className="h-3.5 w-3.5" /> Auditoria &amp; Governança
+              </TabsTrigger>
+            )}
           </TabsList>
         </div>
 
@@ -223,6 +235,12 @@ export function SettingsPageContent() {
         {allowedTabs.includes('team') && (
           <TabsContent value="team" className="mt-0 focus-visible:outline-none">
             <TeamPageContent />
+          </TabsContent>
+        )}
+
+        {allowedTabs.includes('audit') && (
+          <TabsContent value="audit" className="mt-0 focus-visible:outline-none">
+            <OrganizationAuditTab />
           </TabsContent>
         )}
       </Tabs>

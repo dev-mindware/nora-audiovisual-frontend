@@ -21,3 +21,5 @@ export * from './subscriptions';
 export * from './admin';
 export * from './nora';
 export * from './finance';
+export * from './insights';
+export * from './automate';

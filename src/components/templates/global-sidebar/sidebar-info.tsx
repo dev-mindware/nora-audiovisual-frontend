@@ -64,18 +64,19 @@ export function SidebarCompanyInfo() {
               disabled={isSwitching}
             >
               <div className="flex items-center justify-center aspect-square size-8 overflow-hidden shrink-0">
-                {isPlatformAdmin ? (
-                  <div className="flex items-center justify-center bg-primary text-primary-foreground size-full">
-                    <Icon name="ShieldCheck" className="size-4" />
-                  </div>
-                ) : (
-                  <BrandLogo variant="symbol" size="sm" />
-                )}
+                <BrandLogo variant="symbol" size="sm" />
               </div>
               <div className="grid flex-1 text-sm leading-tight text-left">
-                <span className="font-semibold truncate text-foreground">
-                  {orgName}
-                </span>
+                <div className="flex items-center gap-1.5 truncate">
+                  <span className="font-semibold truncate text-foreground">
+                    {orgName}
+                  </span>
+                  {isPlatformAdmin && (
+                    <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded bg-primary/10 text-primary border border-primary/20 shrink-0 leading-none">
+                      ADMIN
+                    </span>
+                  )}
+                </div>
                 <span className="text-[11px] truncate text-muted-foreground">
                   {orgSubtitle}
                 </span>

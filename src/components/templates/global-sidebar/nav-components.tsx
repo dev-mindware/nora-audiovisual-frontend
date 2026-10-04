@@ -87,8 +87,33 @@ export function NavMenu({ items }: { items: MenuItem[] }) {
                                     : "hover:bg-sidebar-accent "
                                 )}
                               >
-                                <Link href={sub.url} onClick={handleMobileClick}>
-                                  <span>{sub.name}</span>
+                                <Link
+                                  href={sub.url}
+                                  onClick={handleMobileClick}
+                                  className="flex items-center justify-between w-full gap-2"
+                                >
+                                  <div className="flex items-center gap-1.5 truncate">
+                                    <span className="truncate">{sub.name}</span>
+                                    {sub.subtitle && (
+                                      <span className="text-[10px] text-muted-foreground font-normal">
+                                        ({sub.subtitle})
+                                      </span>
+                                    )}
+                                  </div>
+                                  {sub.badge && (
+                                    <span
+                                      className={cn(
+                                        "px-1.5 py-0.2 text-[9px] font-semibold uppercase tracking-wider rounded border leading-none shrink-0",
+                                        sub.badgeVariant === "active"
+                                          ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                                          : sub.badgeVariant === "trial"
+                                          ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"
+                                          : "bg-muted text-muted-foreground border-border"
+                                      )}
+                                    >
+                                      {sub.badge}
+                                    </span>
+                                  )}
                                 </Link>
                               </SidebarMenuSubButton>
                             </SidebarMenuSubItem>

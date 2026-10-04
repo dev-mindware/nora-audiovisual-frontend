@@ -68,18 +68,8 @@ export interface PlatformStorageControl {
   updatedAt: string;
 }
 
-export interface AuditLogItem {
-  id: string;
-  organizationId: string;
-  organizationName?: string;
-  userId: string;
-  userName?: string;
-  action: string;
-  resource: string;
-  resourceId?: string;
-  ipAddress?: string;
-  createdAt: string;
-}
+import { AuditLogItem, InvestigativeAuditEvent } from '@/types/audit';
+export type { AuditLogItem, InvestigativeAuditEvent };
 
 export const adminService = {
   listTenants: async (params?: Record<string, unknown>): Promise<{ tenants: TenantAdminItem[]; total: number }> => {

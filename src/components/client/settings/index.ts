@@ -6,3 +6,4 @@ export * from './profile-settings-tab';
 export * from './organization-settings-tab';
 export * from './subscription-settings-tab';
 export * from './security-settings-tab';
+export * from './organization-audit-tab';

@@ -1,9 +1,12 @@
 import { Icon } from "@/components";
 import { Role, PlanType } from "@/types";
 
-type SubMenuItem = {
+export type SubMenuItem = {
   name: string;
   url: string;
+  subtitle?: string;
+  badge?: string;
+  badgeVariant?: "active" | "trial" | "pro";
   roles?: Role[];
   minPlan?: PlanType;
 };
@@ -116,10 +119,33 @@ export const menuItems: MenuStructure = {
       roles: ["OWNER", "MANAGER", "PRODUCER", "FINANCE"],
     },
     {
-      name: "Nora AI Studio",
+      name: "Nora Suite",
       url: "/ai",
       icon: <Icon name="Sparkles" className="w-5 h-5 text-primary" />,
       roles: ["OWNER", "MANAGER", "PRODUCER", "CREW", "FINANCE"],
+      items: [
+        {
+          name: "Nora AI",
+          subtitle: "Pensar",
+          url: "/ai",
+          badge: "Activo",
+          badgeVariant: "active",
+        },
+        {
+          name: "Nora Insights",
+          subtitle: "Perceber",
+          url: "/insights",
+          badge: "Activo",
+          badgeVariant: "active",
+        },
+        {
+          name: "Nora Automate",
+          subtitle: "Executar",
+          url: "/automate",
+          badge: "Disponível",
+          badgeVariant: "pro",
+        },
+      ],
     },
     {
       name: "Planos & Add-Ons",

@@ -35,8 +35,11 @@ export const PRIVATE_ROUTE_PREFIXES = [
   "/files",
   "/deliverables",
   "/budgets",
+  "/finance",
   "/crm",
   "/ai",
+  "/insights",
+  "/automate",
   "/subscriptions",
   "/settings",
 ] as const;
