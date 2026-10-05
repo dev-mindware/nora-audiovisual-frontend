@@ -1,11 +1,5 @@
 // Core Client Exports
-export * from './items';
-export * from './documents';
 export * from './dashboard';
-export * from './categories';
-export * from './entities';
-export * from './pos';
-export * from './suppliers';
 
 // Nora Audiovisual Domain Exports
 export * from './projects';

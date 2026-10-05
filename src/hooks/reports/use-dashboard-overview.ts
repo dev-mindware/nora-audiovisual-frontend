@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useQueryState } from "nuqs";
 import { reportsService } from "@/services/reports-service";
 import { useAuth } from "../auth/use-auth";
-import { currentStoreStore } from "@/stores";
 import type { DashboardOverview, DashboardPeriodType } from "@/types";
 
 export const DASHBOARD_PERIODS: {
@@ -40,12 +39,11 @@ export function useDashboardPeriod() {
 
 export function useDashboardOverview() {
   const { user } = useAuth();
-  const { currentStore } = currentStoreStore();
   const { period, setPeriod } = useDashboardPeriod();
 
   // OWNER vê o consolidado da empresa; os restantes vêem o âmbito da sua loja.
   const isOwner = user?.role === "OWNER";
-  const storeId = isOwner ? undefined : currentStore?.id || user?.store?.id;
+  const storeId = isOwner ? undefined : user?.store?.id;
 
   const { data, isLoading, isError, refetch } = useQuery<DashboardOverview>({
     queryKey: ["dashboard-overview", period, storeId ?? "global"],
