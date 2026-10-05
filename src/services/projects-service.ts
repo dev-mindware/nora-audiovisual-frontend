@@ -102,7 +102,7 @@ export const projectsService = {
       version?: number;
     }
   ): Promise<ProjectTask> => {
-    const res = await api.patch(`/projects/${projectId}/tasks/${taskId}/move`, data);
+    const res = await api.post(`/projects/${projectId}/tasks/${taskId}/move`, data);
     return res.data?.data || res.data;
   },
 

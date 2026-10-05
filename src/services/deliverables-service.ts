@@ -28,6 +28,29 @@ export interface CreateReviewCommentPayload {
   content: string;
 }
 
+function formatTimecode(seconds: number): string {
+  const total = Math.max(0, seconds || 0);
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const sec = (total % 60).toFixed(2).padStart(5, "0");
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${sec}`;
+}
+
+// A API devolve `text`/`status`; a UI trabalha com `content`/`resolved`.
+function mapReviewComment(c: any): ReviewComment {
+  return {
+    id: c.id,
+    reviewId: c.reviewId,
+    authorName: c.authorName ?? c.author?.name ?? "",
+    authorRole: c.authorRole,
+    timecodeSeconds: c.timecodeSeconds,
+    timecodeFormatted: c.timecodeFormatted ?? formatTimecode(c.timecodeSeconds),
+    content: c.content ?? c.text ?? "",
+    resolved: c.resolved ?? c.status === "RESOLVED",
+    createdAt: c.createdAt,
+  };
+}
+
 export const deliverablesService = {
   listAll: async (params: DeliverableFilters = {}): Promise<{ data: Deliverable[]; total?: number; meta?: any }> => {
     try {
@@ -67,16 +90,22 @@ export const deliverablesService = {
   },
 
   getVideoReview: async (reviewId: string): Promise<VideoReview> => {
-    const res = await api.get(`/reviews/${reviewId}`);
-    return res.data?.data || res.data;
+    // A API expõe os comentários da revisão em /reviews/video/:id/comments.
+    const res = await api.get(`/reviews/video/${reviewId}/comments`);
+    const raw = res.data?.data || res.data;
+    const comments: ReviewComment[] = (Array.isArray(raw) ? raw : []).map(mapReviewComment);
+    return { id: reviewId, comments } as VideoReview;
   },
 
   addReviewComment: async (
     reviewId: string,
     data: { content: string; timecodeSeconds: number; authorName?: string }
   ): Promise<ReviewComment> => {
-    const res = await api.post(`/reviews/${reviewId}/comments`, data);
-    return res.data?.data || res.data;
+    const res = await api.post(`/reviews/video/${reviewId}/comments`, {
+      text: data.content,
+      timecodeSeconds: data.timecodeSeconds,
+    });
+    return mapReviewComment(res.data?.data || res.data);
   },
 
   resolveComment: async (commentId: string): Promise<{ success: boolean }> => {
