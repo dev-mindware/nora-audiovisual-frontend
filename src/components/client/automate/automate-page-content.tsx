@@ -1,408 +1,263 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { automateService, WorkflowItem, WorkflowExecutionItem } from '@/services/automate-service';
-import {
-  Zap,
-  Play,
-  Clock,
-  Mail,
-  CheckCircle2,
-  AlertTriangle,
-  ArrowRight,
-  Sparkles,
-  RefreshCw,
-  Send,
-  Eye,
-  FileText,
-  Sliders,
-  Bell,
-  Check,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { ListSkeleton } from '@/components';
 import { format } from 'date-fns';
-import { SucessMessage, ErrorMessage } from '@/utils/messages';
+import { Plus, Play, FlaskConical, Trash2, Zap, RefreshCw } from 'lucide-react';
+import { Button, Switch, EmptyState, ListSkeleton } from '@/components';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  useWorkflows,
+  useWorkflowExecutions,
+  useToggleWorkflow,
+  useDeleteWorkflow,
+  useTestWorkflow,
+  useExecuteWorkflow,
+} from '@/hooks/automate';
+import type { ExecutionStatus, WorkflowItem, WorkflowTestResult } from '@/services/automate-service';
+import { WorkflowModal, TRIGGER_LABELS, ACTION_LABELS } from './workflow-modal';
 
-const DYNAMIC_TAGS = [
-  { tag: '{{client_name}}', label: 'Nome do Cliente', example: 'Banco BFA' },
-  { tag: '{{project_title}}', label: 'Título do Projeto', example: 'Comercial TV Verão' },
-  { tag: '{{budget_total}}', label: 'Valor da Proposta', example: '3.500.000 Kz' },
-  { tag: '{{producer_name}}', label: 'Nome do Produtor', example: 'Pedro Bento' },
-  { tag: '{{organization_name}}', label: 'Nome da Produtora', example: 'Luanda Filmes Studio' },
-  { tag: '{{valid_until}}', label: 'Data de Validade', example: '25/10/2026' },
-];
+const STATUS_STYLES: Record<ExecutionStatus, { label: string; className: string }> = {
+  RUNNING: { label: 'A executar', className: 'bg-blue-500/10 text-blue-600 border-blue-500/20' },
+  SUCCESS: { label: 'Sucesso', className: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' },
+  PARTIAL: { label: 'Parcial', className: 'bg-amber-500/10 text-amber-600 border-amber-500/20' },
+  FAILED: { label: 'Falhou', className: 'bg-red-500/10 text-red-600 border-red-500/20' },
+  SKIPPED: { label: 'Ignorada', className: 'bg-muted text-muted-foreground border-border' },
+};
+
+const SKIP_REASONS: Record<string, string> = {
+  AUTOMATION_MAX_DEPTH: 'Limite de encadeamento de automações atingido',
+  QUOTA_EXCEEDED: 'Quota mensal de execuções esgotada',
+  AUTOMATION_QUOTA_EXCEEDED: 'Quota mensal de execuções esgotada',
+  WORKFLOW_NOT_ACTIVE: 'Fluxo inactivo',
+};
 
 export function AutomatePageContent() {
-  const [selectedWorkflowId, setSelectedWorkflowId] = useState<string>('wf-1');
-  const [isSimulating, setIsSimulating] = useState(false);
-  const [testEmail, setTestEmail] = useState('produtor@estudio.ao');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [toDelete, setToDelete] = useState<WorkflowItem | null>(null);
+  const [toRun, setToRun] = useState<WorkflowItem | null>(null);
+  const [testResult, setTestResult] = useState<{ workflow: WorkflowItem; result: WorkflowTestResult } | null>(null);
 
-  const { data: workflows = [], isLoading: isLoadingWorkflows } = useQuery<WorkflowItem[]>({
-    queryKey: ['automate-workflows'],
-    queryFn: () => automateService.listWorkflows(),
-  });
+  const { data: workflows = [], isLoading } = useWorkflows();
+  const { data: executions = [], isFetching, refetch } = useWorkflowExecutions();
+  const { mutate: toggle, isPending: isToggling } = useToggleWorkflow();
+  const { mutate: remove } = useDeleteWorkflow();
+  const { mutateAsync: test, isPending: isTesting } = useTestWorkflow();
+  const { mutate: execute, isPending: isExecuting } = useExecuteWorkflow();
 
-  const { data: executions = [], isLoading: isLoadingExecutions, refetch: refetchExecutions } = useQuery<WorkflowExecutionItem[]>({
-    queryKey: ['automate-executions'],
-    queryFn: () => automateService.listExecutions(),
-  });
+  if (isLoading) return <ListSkeleton rows={5} cols={4} />;
 
-  const activeWorkflow = workflows.find((w) => w.id === selectedWorkflowId) || workflows[0];
+  const active = workflows.filter((w) => w.status === 'ACTIVE').length;
 
-  const [subject, setSubject] = useState(activeWorkflow?.config?.emailSubject || '');
-  const [body, setBody] = useState(activeWorkflow?.config?.emailBody || '');
-
-  // Atualiza os inputs quando troca o workflow selecionado
-  const handleSelectWorkflow = (wf: WorkflowItem) => {
-    setSelectedWorkflowId(wf.id);
-    setSubject(wf.config?.emailSubject || '');
-    setBody(wf.config?.emailBody || '');
+  const runTest = async (workflow: WorkflowItem) => {
+    const result = await test(workflow.id);
+    setTestResult({ workflow, result });
   };
-
-  const insertTag = (tag: string) => {
-    setBody((prev) => prev + ' ' + tag);
-  };
-
-  // Preview com substituição dinâmica
-  const renderedSubject = (subject || activeWorkflow?.config?.emailSubject || '')
-    .replace(/\{\{client_name\}\}/g, 'Banco BFA')
-    .replace(/\{\{project_title\}\}/g, 'Comercial TV Verão')
-    .replace(/\{\{budget_total\}\}/g, '3.500.000 Kz')
-    .replace(/\{\{producer_name\}\}/g, 'Pedro Bento')
-    .replace(/\{\{organization_name\}\}/g, 'Luanda Filmes Studio')
-    .replace(/\{\{valid_until\}\}/g, '25/10/2026');
-
-  const renderedBody = (body || activeWorkflow?.config?.emailBody || '')
-    .replace(/\{\{client_name\}\}/g, 'Banco BFA')
-    .replace(/\{\{project_title\}\}/g, 'Comercial TV Verão')
-    .replace(/\{\{budget_total\}\}/g, '3.500.000 Kz')
-    .replace(/\{\{producer_name\}\}/g, 'Pedro Bento')
-    .replace(/\{\{organization_name\}\}/g, 'Luanda Filmes Studio')
-    .replace(/\{\{valid_until\}\}/g, '25/10/2026');
-
-  const handleRunSimulation = async () => {
-    try {
-      setIsSimulating(true);
-      await automateService.executeWorkflow(activeWorkflow.id, {
-        testRecipient: testEmail,
-      });
-      SucessMessage(`Disparo de teste simulado com sucesso para ${testEmail}!`);
-      await refetchExecutions();
-    } catch {
-      SucessMessage(`Disparo de teste simulado com sucesso para ${testEmail}!`);
-    } finally {
-      setIsSimulating(false);
-    }
-  };
-
-  if (isLoadingWorkflows) {
-    return <ListSkeleton rows={5} cols={4} />;
-  }
 
   return (
     <div className="space-y-8 mt-6">
-      {/* Header Executivo & Status */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 rounded-2xl border border-border bg-card/60 backdrop-blur-md">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 rounded-2xl border border-border bg-card/60">
         <div className="space-y-1">
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-primary/20 bg-primary/10 text-[11px] font-semibold text-primary uppercase tracking-wider">
             <Zap className="size-3" />
-            Nora Automate • Automação de Produção
+            Nora Automate
           </div>
-          <h2 className="text-xl font-bold tracking-tight text-foreground">
-            Automações Comerciais e Operacionais do Estúdio
-          </h2>
+          <h2 className="text-xl font-bold tracking-tight text-foreground">Automações da produtora</h2>
           <p className="text-xs text-muted-foreground">
-            Elimine trabalho repetitivo de follow-up, envio de contratos e notificações da folha de chamada com disparos automáticos baseados em eventos.
+            {workflows.length} fluxos · {active} activos. Os fluxos disparam com eventos reais (orçamento aprovado, pagamento confirmado, …).
           </p>
         </div>
-
-        <div className="flex items-center gap-2">
-          <span className="px-3 py-1 rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
-            <CheckCircle2 className="size-3.5" />
-            Motor Activo • 1.500 execuções/mês
-          </span>
-        </div>
+        <Button onClick={() => setIsModalOpen(true)} className="gap-1.5">
+          <Plus className="size-4" />
+          Novo fluxo
+        </Button>
       </div>
 
-      {/* KPI Cards Rápidos */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-4 rounded-xl border border-border bg-card shadow-xs space-y-1">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-            Fluxos Configurados
-          </span>
-          <p className="text-2xl font-bold text-foreground">{workflows.length} fluxos</p>
-        </div>
-
-        <div className="p-4 rounded-xl border border-border bg-card shadow-xs space-y-1">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-            Disparos Este Mês
-          </span>
-          <p className="text-2xl font-bold text-foreground">129 execuções</p>
-        </div>
-
-        <div className="p-4 rounded-xl border border-border bg-card shadow-xs space-y-1">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-emerald-500">
-            Taxa de Entrega
-          </span>
-          <p className="text-2xl font-bold text-foreground">99.2%</p>
-        </div>
-
-        <div className="p-4 rounded-xl border border-border bg-card shadow-xs space-y-1">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-primary">
-            Tempo Poupado à Equipa
-          </span>
-          <p className="text-2xl font-bold text-foreground">~26 horas</p>
-        </div>
-      </div>
-
-      {/* Seletor de Templates / Fluxos */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {workflows.map((wf) => {
-          const isSelected = wf.id === activeWorkflow?.id;
-          return (
-            <div
-              key={wf.id}
-              onClick={() => handleSelectWorkflow(wf)}
-              className={`p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between space-y-3 ${
-                isSelected
-                  ? 'border-primary bg-primary/5 shadow-xs ring-1 ring-primary/20'
-                  : 'border-border bg-card hover:border-primary/40 hover:bg-muted/30'
-              }`}
-            >
+      {workflows.length === 0 ? (
+        <EmptyState
+          title="Ainda não tem fluxos de automação"
+          description="Crie o primeiro fluxo para notificar a equipa, criar tarefas ou chamar um webhook quando algo acontece."
+          icon="Zap"
+          action={<Button onClick={() => setIsModalOpen(true)}>Criar fluxo</Button>}
+        />
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {workflows.map((wf) => (
+            <div key={wf.id} className="p-5 rounded-2xl border border-border bg-card flex flex-col justify-between gap-4">
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-2">
                   <span className="px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider rounded bg-muted text-muted-foreground border border-border">
-                    {wf.triggerType}
+                    {TRIGGER_LABELS[wf.triggerType] ?? wf.triggerType}
                   </span>
-                  <span className="size-2 rounded-full bg-emerald-500" />
+                  <Switch
+                    checked={wf.status === 'ACTIVE'}
+                    disabled={isToggling}
+                    onCheckedChange={(checked) => toggle({ id: wf.id, active: checked })}
+                    aria-label={wf.status === 'ACTIVE' ? 'Desactivar fluxo' : 'Activar fluxo'}
+                  />
                 </div>
                 <h3 className="text-sm font-bold text-foreground leading-snug">{wf.name}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
-                  {wf.description}
-                </p>
-              </div>
-
-              <div className="pt-2 border-t border-border/50 flex items-center justify-between text-xs text-muted-foreground">
-                <span>{wf.executionsCount || 0} disparos</span>
-                <span className="text-primary font-medium flex items-center gap-1">
-                  Editar Fluxo <ArrowRight className="size-3" />
-                </span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Diagrama Visual de Fluxo */}
-      {activeWorkflow && (
-        <div className="p-6 rounded-2xl border border-border bg-card/80 space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-              <Sliders className="size-4 text-primary" />
-              Diagrama do Fluxo: {activeWorkflow.name}
-            </h3>
-            <span className="text-xs text-muted-foreground">Execução sequencial garantida</span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-2">
-            {/* Passo 1: Gatilho */}
-            <div className="p-4 rounded-xl border border-border bg-background space-y-1 relative">
-              <span className="text-[10px] font-bold uppercase text-primary tracking-wider">
-                1. Gatilho (Trigger)
-              </span>
-              <p className="text-xs font-semibold text-foreground">{activeWorkflow.triggerType}</p>
-              <p className="text-[11px] text-muted-foreground">Detectado em tempo real</p>
-            </div>
-
-            {/* Passo 2: Condição */}
-            <div className="p-4 rounded-xl border border-border bg-background space-y-1">
-              <span className="text-[10px] font-bold uppercase text-amber-500 tracking-wider">
-                2. Condição (If)
-              </span>
-              <p className="text-xs font-semibold text-foreground">Sem resposta após envio</p>
-              <p className="text-[11px] text-muted-foreground">Validação de estado</p>
-            </div>
-
-            {/* Passo 3: Delay */}
-            <div className="p-4 rounded-xl border border-border bg-background space-y-1">
-              <span className="text-[10px] font-bold uppercase text-blue-500 tracking-wider">
-                3. Espera (Delay)
-              </span>
-              <p className="text-xs font-semibold text-foreground">
-                {activeWorkflow.config?.delayHours ? `${activeWorkflow.config.delayHours} horas` : 'Imediato'}
-              </p>
-              <p className="text-[11px] text-muted-foreground">Fila assíncrona</p>
-            </div>
-
-            {/* Passo 4: Ação */}
-            <div className="p-4 rounded-xl border border-border bg-background space-y-1">
-              <span className="text-[10px] font-bold uppercase text-emerald-500 tracking-wider">
-                4. Ação (Action)
-              </span>
-              <p className="text-xs font-semibold text-foreground">Disparo de Email</p>
-              <p className="text-[11px] text-muted-foreground">Comprovativo com token</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Editor de Template de Email & Pré-visualização ao Vivo */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Editor */}
-        <div className="p-6 rounded-2xl border border-border bg-card space-y-4">
-          <div className="space-y-1">
-            <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-              <Mail className="size-4 text-primary" />
-              Editor de Template com Variáveis Dinâmicas
-            </h3>
-            <p className="text-xs text-muted-foreground">
-              Clique nas tags abaixo para inserir dados dinâmicos do cliente, proposta ou produtor.
-            </p>
-          </div>
-
-          {/* Tags dinâmicas */}
-          <div className="flex flex-wrap gap-1.5 pt-1">
-            {DYNAMIC_TAGS.map((t) => (
-              <button
-                key={t.tag}
-                type="button"
-                onClick={() => insertTag(t.tag)}
-                className="px-2 py-1 text-[11px] font-mono rounded-md border border-border bg-background hover:border-primary/50 text-foreground transition-colors"
-                title={`Exemplo: ${t.example}`}
-              >
-                + {t.tag}
-              </button>
-            ))}
-          </div>
-
-          <div className="space-y-3 pt-2">
-            <div>
-              <label className="text-xs font-medium text-foreground block mb-1">
-                Assunto do Email
-              </label>
-              <Input
-                value={subject || activeWorkflow?.config?.emailSubject || ''}
-                onChange={(e) => setSubject(e.target.value)}
-                placeholder="Ex: Seguimento da sua proposta comercial"
-                className="text-xs font-medium"
-              />
-            </div>
-
-            <div>
-              <label className="text-xs font-medium text-foreground block mb-1">
-                Corpo da Mensagem (Texto / Markdown)
-              </label>
-              <textarea
-                value={body || activeWorkflow?.config?.emailBody || ''}
-                onChange={(e) => setBody(e.target.value)}
-                rows={9}
-                className="w-full rounded-md border border-border bg-background p-3 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary font-mono leading-relaxed"
-                placeholder="Escreva a mensagem personalizada..."
-              />
-            </div>
-          </div>
-
-          {/* Teste de Disparo */}
-          <div className="pt-3 border-t border-border flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-            <Input
-              value={testEmail}
-              onChange={(e) => setTestEmail(e.target.value)}
-              placeholder="Email para teste..."
-              className="text-xs max-w-xs"
-            />
-            <Button
-              onClick={handleRunSimulation}
-              disabled={isSimulating}
-              size="sm"
-              className="text-xs gap-1.5 font-medium shrink-0"
-            >
-              <Send className="size-3.5" />
-              {isSimulating ? 'Disparando...' : 'Testar Disparo Agora'}
-            </Button>
-          </div>
-        </div>
-
-        {/* Live Preview */}
-        <div className="p-6 rounded-2xl border border-border bg-muted/20 space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
-              <Eye className="size-4 text-primary" />
-              Pré-Visualização ao Vivo do Email Renderizado
-            </h3>
-            <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-muted text-muted-foreground border border-border">
-              Layout Final do Cliente
-            </span>
-          </div>
-
-          <div className="p-5 rounded-xl border border-border bg-card shadow-sm space-y-4 text-xs">
-            <div className="space-y-1.5 border-b border-border/60 pb-3">
-              <div className="flex items-center justify-between text-muted-foreground text-[11px]">
-                <span>De: <strong className="text-foreground">noreply@nora-audiovisual.ao</strong></span>
-                <span>Data: <strong className="text-foreground">{format(new Date(), 'dd/MM/yyyy')}</strong></span>
-              </div>
-              <div className="text-muted-foreground text-[11px]">
-                Para: <strong className="text-foreground">cliente@empresa.ao (Banco BFA)</strong>
-              </div>
-              <div className="text-foreground font-semibold pt-1">
-                Assunto: {renderedSubject}
-              </div>
-            </div>
-
-            <div className="text-foreground whitespace-pre-line leading-relaxed text-xs">
-              {renderedBody}
-            </div>
-
-            <div className="pt-4 border-t border-border/40 text-[10px] text-muted-foreground font-mono">
-              Enviado automaticamente pelo Nora Automate • Luanda Filmes Studio
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Histórico e Telemetria de Execuções Recentes */}
-      <div className="p-6 rounded-2xl border border-border bg-card space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-sm font-bold text-foreground">Telemetria de Execuções Recentes</h3>
-            <p className="text-xs text-muted-foreground">Histórico de disparos efetuados pelo motor de automação com métricas de tempo de resposta.</p>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => refetchExecutions()}
-            className="text-xs gap-1.5 border-border"
-          >
-            <RefreshCw className="size-3.5" />
-            Atualizar Telemetria
-          </Button>
-        </div>
-
-        <div className="divide-y divide-border border-y border-border">
-          {executions.map((exec) => (
-            <div key={exec.id} className="py-3 flex items-center justify-between text-xs">
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-foreground">{exec.workflowName}</span>
-                  <span className="px-2 py-0.5 text-[9px] font-bold uppercase rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                    {exec.status}
-                  </span>
+                {wf.description && <p className="text-xs text-muted-foreground line-clamp-2">{wf.description}</p>}
+                <div className="flex flex-wrap gap-1.5">
+                  {wf.actions.map((a, i) => (
+                    <span key={i} className="px-2 py-0.5 text-[10px] rounded border border-border text-muted-foreground">
+                      {ACTION_LABELS[a.type] ?? a.type}
+                    </span>
+                  ))}
                 </div>
-                <span className="text-[11px] font-mono text-muted-foreground">
-                  Gatilho: {exec.trigger} • Duração: {exec.durationMs}ms
-                </span>
               </div>
 
-              <div className="text-right font-mono text-muted-foreground text-[11px]">
-                {format(new Date(exec.startedAt), 'dd/MM/yyyy HH:mm:ss')}
+              <div className="pt-3 border-t border-border/50 flex items-center gap-2">
+                <Button variant="outline" size="sm" className="gap-1.5 text-xs" disabled={isTesting} onClick={() => runTest(wf)}>
+                  <FlaskConical className="size-3.5" />
+                  Simular
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 text-xs"
+                  disabled={wf.status !== 'ACTIVE' || isExecuting}
+                  onClick={() => setToRun(wf)}
+                >
+                  <Play className="size-3.5" />
+                  Executar
+                </Button>
+                <Button variant="ghost" size="sm" className="ml-auto text-destructive" onClick={() => setToDelete(wf)} aria-label="Remover fluxo">
+                  <Trash2 className="size-3.5" />
+                </Button>
               </div>
             </div>
           ))}
         </div>
+      )}
+
+      <div className="p-6 rounded-2xl border border-border bg-card space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-sm font-bold text-foreground">Execuções recentes</h3>
+            <p className="text-xs text-muted-foreground">Resultado real de cada acção, incluindo falhas e execuções ignoradas.</p>
+          </div>
+          <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => refetch()} disabled={isFetching}>
+            <RefreshCw className={`size-3.5 ${isFetching ? 'animate-spin' : ''}`} />
+            Actualizar
+          </Button>
+        </div>
+
+        {executions.length === 0 ? (
+          <p className="text-xs text-muted-foreground py-4">Ainda não existem execuções.</p>
+        ) : (
+          <div className="divide-y divide-border border-y border-border">
+            {executions.map((exec) => {
+              const style = STATUS_STYLES[exec.status] ?? STATUS_STYLES.SKIPPED;
+              const results = exec.outputResult?.results ?? [];
+              return (
+                <div key={exec.id} className="py-3 flex items-start justify-between gap-4 text-xs">
+                  <div className="space-y-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-semibold text-foreground">{exec.workflow?.name ?? 'Fluxo removido'}</span>
+                      <span className={`px-2 py-0.5 text-[9px] font-bold uppercase rounded border ${style.className}`}>{style.label}</span>
+                    </div>
+                    <span className="block text-[11px] text-muted-foreground">
+                      Origem: {exec.triggeredBy?.startsWith('USER') ? 'Manual' : exec.triggeredBy === 'SYSTEM_EVENT' ? 'Evento do sistema' : (exec.triggeredBy ?? '—')}
+                    </span>
+                    {results.map((r, i) => (
+                      <span key={i} className={`block text-[11px] ${r.status === 'FAILED' ? 'text-red-600' : 'text-muted-foreground'}`}>
+                        {ACTION_LABELS[r.actionType] ?? r.actionType}: {r.status === 'SUCCESS' ? 'concluída' : `falhou — ${r.error}`}
+                      </span>
+                    ))}
+                    {exec.status === 'SKIPPED' && exec.error && (
+                      <span className="block text-[11px] text-muted-foreground">{SKIP_REASONS[exec.error] ?? exec.error}</span>
+                    )}
+                  </div>
+                  <div className="text-right font-mono text-muted-foreground text-[11px] shrink-0">
+                    {format(new Date(exec.executedAt), 'dd/MM/yyyy HH:mm:ss')}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
+
+      <WorkflowModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
+      <AlertDialog open={!!toDelete} onOpenChange={(open) => !open && setToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remover fluxo?</AlertDialogTitle>
+            <AlertDialogDescription>
+              O fluxo “{toDelete?.name}” e o seu histórico de execuções serão removidos. Esta acção não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (toDelete) remove(toDelete.id);
+                setToDelete(null);
+              }}
+            >
+              Remover
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={!!toRun} onOpenChange={(open) => !open && setToRun(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Executar agora?</AlertDialogTitle>
+            <AlertDialogDescription>
+              As acções de “{toRun?.name}” serão executadas de verdade (notificações, emails, tarefas ou webhook) e contam para a quota
+              mensal. Use “Simular” para ver o que aconteceria sem efeitos.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (toRun) execute(toRun.id);
+                setToRun(null);
+              }}
+            >
+              Executar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={!!testResult} onOpenChange={(open) => !open && setTestResult(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Simulação: {testResult?.workflow.name}</AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-2 text-sm">
+                <p>
+                  {testResult?.result.wouldExecute
+                    ? 'O fluxo seria executado. Nada foi enviado nem contabilizado.'
+                    : `O fluxo não seria executado (${SKIP_REASONS[testResult?.result.reason ?? ''] ?? testResult?.result.reason}).`}
+                </p>
+                <ul className="list-disc pl-5">
+                  {testResult?.result.plannedActions.map((a, i) => (
+                    <li key={i}>{ACTION_LABELS[a.type] ?? a.type}</li>
+                  ))}
+                </ul>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Fechar</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

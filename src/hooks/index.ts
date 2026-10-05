@@ -24,3 +24,4 @@ export { useAddClient, useUpdateClient, useToggleStatusClient, useGetClients } f
 export * from "./entities/clients-filters";
 export * from "./dashboard";
 export * from "./crm";
+export * from "./automate";
