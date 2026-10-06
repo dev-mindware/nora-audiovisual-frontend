@@ -3,7 +3,6 @@ import type {
   OnboardingTourMode,
 } from "@/constants/onboarding-tours";
 import type { OnboardingTourSeenStatus } from "@/stores/onboarding";
-import { api } from "./api";
 
 export type OnboardingTourStatus =
   | "in_progress"
@@ -40,43 +39,77 @@ export type UpdateOnboardingTourPayload = {
   tourVersion: number;
 };
 
-function unwrapResponse(
-  response: OnboardingPreferencesResponse | { data: OnboardingPreferencesResponse },
-) {
-  return "data" in response ? response.data : response;
+/**
+ * A API do Nora não tem módulo de onboarding: preferências e progresso dos tours
+ * são conveniências por navegador e ficam apenas em localStorage.
+ */
+const STORAGE_KEY = "nora-onboarding";
+
+const DEFAULTS: OnboardingPreferencesResponse = {
+  preferences: { autoStartEnabled: true, tourButtonEnabled: true },
+  tours: {},
+};
+
+function read(): OnboardingPreferencesResponse {
+  try {
+    const raw = typeof window !== "undefined" ? window.localStorage.getItem(STORAGE_KEY) : null;
+    if (!raw) return structuredClone(DEFAULTS);
+    const parsed = JSON.parse(raw) as Partial<OnboardingPreferencesResponse>;
+    return {
+      preferences: { ...DEFAULTS.preferences, ...parsed.preferences },
+      tours: parsed.tours ?? {},
+      updatedAt: parsed.updatedAt,
+    };
+  } catch {
+    return structuredClone(DEFAULTS);
+  }
+}
+
+function write(value: OnboardingPreferencesResponse) {
+  try {
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ ...value, updatedAt: new Date().toISOString() }),
+    );
+  } catch {
+    // armazenamento indisponível (modo privado): o progresso simplesmente não persiste
+  }
 }
 
 export const onboardingService = {
   async getPreferences() {
-    const response = await api.get<
-      OnboardingPreferencesResponse | { data: OnboardingPreferencesResponse }
-    >("/onboarding");
-    return unwrapResponse(response.data);
+    return read();
   },
 
   async updatePreferences(payload: UpdateOnboardingPreferencesPayload) {
-    const response = await api.patch<
-      OnboardingPreferencesResponse["preferences"]
-    >("/onboarding/preferences", payload);
-    return response.data;
+    const current = read();
+    current.preferences = { ...current.preferences, ...payload };
+    write(current);
+    return current.preferences;
   },
 
-  async updateTour(
-    tourId: OnboardingTourId,
-    payload: UpdateOnboardingTourPayload,
-  ) {
-    const response = await api.put<OnboardingTourProgress>(
-      `/onboarding/tours/${tourId}`,
-      payload,
-    );
-    return response.data;
+  async updateTour(tourId: OnboardingTourId, payload: UpdateOnboardingTourPayload) {
+    const current = read();
+    const now = new Date().toISOString();
+    const progress: OnboardingTourProgress = {
+      ...current.tours[tourId],
+      ...payload,
+      updatedAt: now,
+    };
+    current.tours[tourId] = progress;
+    write(current);
+    return progress;
   },
 
   async resetTour(tourId: OnboardingTourId) {
-    await api.delete(`/onboarding/tours/${tourId}`);
+    const current = read();
+    delete current.tours[tourId];
+    write(current);
   },
 
   async resetAllTours() {
-    await api.delete("/onboarding/tours");
+    const current = read();
+    current.tours = {};
+    write(current);
   },
 };
