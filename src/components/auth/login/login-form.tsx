@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { ErrorMessage } from "@/utils/messages";
+import { ErrorMessage, InfoMessage } from "@/utils/messages";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormData, loginSchema } from "@/schemas";
+import { useState } from "react";
 import { ButtonSubmit, Input } from "@/components/ui";
 import { loginAction } from "@/actions/login";
 import { useAuthStore } from "@/stores";
@@ -18,6 +19,7 @@ export function LoginForm() {
   const router = useRouter();
   const { setUser, setIsAuthenticating } = useAuthStore();
   const { setActiveOrganization, setOrganizations, clearTenant } = useTenantStore();
+  const [mfaRequired, setMfaRequired] = useState(false);
 
   const {
     register,
@@ -28,9 +30,15 @@ export function LoginForm() {
     mode: "onChange",
   });
 
-  async function handleLogin({ email, password }: LoginFormData) {
+  async function handleLogin({ email, password, mfaCode }: LoginFormData) {
     try {
-      const res = await loginAction({ email, password });
+      const res = await loginAction({ email, password, mfaCode });
+
+      if (res.mfaRequired) {
+        setMfaRequired(true);
+        InfoMessage(res.message || "Introduza o código MFA.");
+        return;
+      }
 
       if (!res.user) {
         ErrorMessage(res.message || "Erro ao tentar fazer login.");
@@ -117,6 +125,19 @@ export function LoginForm() {
               </Link>
             </div>
           </div>
+
+          {mfaRequired && (
+            <Input
+              label="Código de verificação (MFA)"
+              startIcon="ShieldCheck"
+              type="text"
+              inputMode="numeric"
+              placeholder="123456 ou código de recuperação"
+              {...register("mfaCode")}
+              autoComplete="one-time-code"
+              autoFocus
+            />
+          )}
 
           <ButtonSubmit
             isLoading={isSubmitting}

@@ -12,9 +12,12 @@ import {
   CardContent,
   CardFooter,
 } from '@/components/ui';
-import { Shield, KeyRound, Smartphone, CheckCircle2, Lock } from 'lucide-react';
+import { Shield, KeyRound } from 'lucide-react';
 import { SessionsPageContent } from './sessions-page-content';
 import { toast } from 'sonner';
+import { authService } from '@/services/auth-service';
+import { getApiErrorMessage } from '@/utils';
+import { MfaSettingsCard } from './mfa-settings-card';
 
 export function SecuritySettingsTab() {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -28,20 +31,20 @@ export function SecuritySettingsTab() {
       toast.error('A nova palavra-passe e a confirmação não coincidem.');
       return;
     }
-    if (newPassword.length < 6) {
-      toast.error('A palavra-passe deve ter pelo menos 6 caracteres.');
+    if (newPassword.length < 15) {
+      toast.error('A nova palavra-passe deve ter pelo menos 15 caracteres.');
       return;
     }
 
     setIsChangingPass(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 600));
-      toast.success('Palavra-passe alterada com sucesso!');
+      await authService.changePassword({ currentPassword, newPassword });
+      toast.success('Palavra-passe alterada. As outras sessões foram terminadas.');
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-    } catch {
-      toast.error('Falha ao atualizar a palavra-passe.');
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, 'Falha ao atualizar a palavra-passe.'));
     } finally {
       setIsChangingPass(false);
     }
@@ -113,33 +116,7 @@ export function SecuritySettingsTab() {
         </Card>
       </form>
 
-      {/* Two-Factor Authentication (2FA) */}
-      <Card className="p-0 gap-0">
-        <CardHeader className="p-6 pb-4 border-b border-border flex flex-row items-center justify-between space-y-0">
-          <div className="flex items-center gap-2">
-            <Smartphone className="h-4 w-4 text-primary" />
-            <CardTitle className="text-sm font-semibold text-foreground">Autenticação de Dois Fatores (2FA)</CardTitle>
-          </div>
-          <Badge variant="outline">
-            Opcional
-          </Badge>
-        </CardHeader>
-
-        <CardContent className="p-6 space-y-4">
-          <CardDescription className="text-xs leading-relaxed">
-            Adicione uma camada extra de proteção à sua conta exigindo um código gerado pela aplicação autenticadora ao iniciar sessão.
-          </CardDescription>
-
-          <div>
-            <Button
-              variant="outline"
-              onClick={() => toast.info('Configuração de 2FA em validação.')}
-            >
-              Configurar 2FA (Google Authenticator)
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <MfaSettingsCard />
 
       {/* Active Sessions */}
       <div className="space-y-3">

@@ -11,7 +11,9 @@ export const loginSchema = z.object({
     .string()
     .trim()
     .min(1, "A palavra-passe é obrigatória")
-    .refine((val) => !/\s/.test(val), "Não pode conter espaços")
+    .refine((val) => !/\s/.test(val), "Não pode conter espaços"),
+
+  mfaCode: z.string().trim().max(32).optional(),
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;

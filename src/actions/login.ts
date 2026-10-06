@@ -16,16 +16,19 @@ interface LoginActionResult {
   redirectPath?: string;
   message?: string;
   token?: string;
+  mfaRequired?: boolean;
 }
 
 export async function loginAction({
   email,
   password,
+  mfaCode,
 }: z.infer<typeof loginSchema>): Promise<LoginActionResult> {
   try {
     const res = await api.post("/auth/login", {
       email,
       password,
+      ...(mfaCode ? { mfaCode } : {}),
     });
 
     const responseData = res.data?.data || res.data;
@@ -89,6 +92,16 @@ export async function loginAction({
     };
   } catch (error: any) {
     let messageError = "Credenciais inválidas ou erro ao contactar a API.";
+
+    // Segundo factor: a API responde MFA_REQUIRED quando a palavra-passe está certa mas falta o código
+    if (error?.response?.data?.code === "MFA_REQUIRED") {
+      return {
+        user: null,
+        mfaRequired: true,
+        redirectPath: "/auth/login",
+        message: "Introduza o código de verificação da sua aplicação autenticadora.",
+      };
+    }
 
     if (error?.response?.data?.message) {
       messageError = error.response.data.message;

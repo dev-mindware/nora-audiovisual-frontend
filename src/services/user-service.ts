@@ -1,36 +1,14 @@
 import type { User } from "@/types";
 import { api } from "./api";
 
-export interface UpdateUserPayload {
-  name?: string;
-  phone?: string;
-  role?: string;
-  companyId?: string;
-  storeId?: string;
-  storeIds?: string[];
-  barcode?: string;
-}
-
 export interface UpdateUserProfilePayload {
-  name?: string;
-  email?: string;
-  phone?: string;
-  barcode?: string;
-}
-
-export interface ChangeUserPasswordPayload {
-  newPassword?: string;
+  name: string;
 }
 
 export const userService = {
-  updateUser: async (id: string, data: UpdateUserPayload) => {
-    return api.put<User>(`/users/${id}`, data);
-  },
+  /** O próprio utilizador actualiza o seu perfil (a API só permite o nome). */
   updateProfile: async (data: UpdateUserProfilePayload) => {
-    return api.put<User>(`/users/profile`, data);
-  },
-  changePassword: async (id: string, data: ChangeUserPasswordPayload) => {
-    return api.patch<User>(`/users/${id}/change-password`, data);
+    return api.patch<{ data: Pick<User, "id" | "name" | "email"> }>("/auth/me", data);
   },
   getUserById: async (id: string) => {
     return api.get<User>(`/users/${id}`);
