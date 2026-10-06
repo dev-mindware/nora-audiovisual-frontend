@@ -68,27 +68,7 @@ export const noraSubscriptionsService = {
           description: p.description,
           priceMonthly: Number(p.priceMonthly ?? p.pricing?.monthly ?? 0),
           priceAnnual: Number(p.priceAnnual ?? p.pricing?.annual ?? 0),
-          features: p.features || (p.code === 'INICIAL' ? [
-            'Até 5 Projetos Ativos',
-            'Gestão de 50 Equipamentos',
-            '50 GB Armazenamento Cloud',
-            'Portal do Cliente com Aprovação',
-            'Orçamentos Oficiais em Kwanzas (AOA)',
-          ] : p.code === 'PROFISSIONAL' ? [
-            'Até 20 Projetos Ativos',
-            'Gestão de 200 Equipamentos',
-            '250 GB Armazenamento Cloud',
-            'Relatórios Avançados de Margem e Custos',
-            'Portal do Cliente com Aprovações',
-            'Equipa Técnica (até 10 utilizadores)',
-          ] : [
-            'Até 100 Projetos Ativos',
-            'Equipamentos Ilimitados no Catálogo',
-            '1.000 GB (1 TB) Armazenamento',
-            'Equipa Técnica até 50 Utilizadores',
-            'Relatórios Financeiros e Auditoria',
-            'Suporte Dedicado & SLA Prioritário',
-          ]),
+          features: Array.isArray(p.features) ? p.features : [],
           maxProjects: p.maxProjects,
           maxEquipment: p.maxEquipment,
           maxStorageGb: p.maxStorageGb,
@@ -96,59 +76,9 @@ export const noraSubscriptionsService = {
         }));
       }
       return [];
-    } catch {
-      return [
-        {
-          id: 'plan-inicial',
-          code: 'INICIAL',
-          name: 'Nora Inicial',
-          tier: 'INICIAL',
-          description: 'Ideal para profissionais independentes e pequenas produtoras audiovisuais.',
-          priceMonthly: 19900,
-          priceAnnual: 199000,
-          features: [
-            'Até 5 Projetos Ativos',
-            'Gestão de 50 Equipamentos',
-            '50 GB Armazenamento Cloud',
-            'Portal do Cliente com Aprovação',
-            'Orçamentos comerciais em Kwanzas',
-          ],
-        },
-        {
-          id: 'plan-prof',
-          code: 'PROFISSIONAL',
-          name: 'Nora Profissional',
-          tier: 'PROFISSIONAL',
-          description: 'Para produtoras em crescimento com múltiplos projetos simultâneos e equipa técnica.',
-          priceMonthly: 39900,
-          priceAnnual: 399000,
-          features: [
-            'Até 20 Projetos Ativos',
-            'Gestão de 200 Equipamentos',
-            '250 GB Armazenamento Cloud',
-            'Relatórios Avançados de Margem e Custos',
-            'Equipa Técnica (até 10 utilizadores)',
-            'Portal do Cliente com Revisão',
-          ],
-        },
-        {
-          id: 'plan-business',
-          code: 'BUSINESS',
-          name: 'Nora Business',
-          tier: 'BUSINESS',
-          description: 'Escala total para grandes produtoras audiovisuais com inventário e projetos massivos.',
-          priceMonthly: 79900,
-          priceAnnual: 799000,
-          features: [
-            'Até 100 Projetos Ativos',
-            'Equipamentos Ilimitados no Catálogo',
-            '1.000 GB (1 TB) Armazenamento Cloud',
-            'Equipa Técnica até 50 Utilizadores',
-            'Relatórios Financeiros e Auditoria',
-            'Suporte Dedicado e SLA Prioritário',
-          ],
-        },
-      ];
+    } catch (error) {
+      // Sem valores de reserva: preços, limites e subscrições vêm sempre da API (fonte de verdade).
+      throw error;
     }
   },
 
@@ -168,63 +98,9 @@ export const noraSubscriptionsService = {
         }));
       }
       return [];
-    } catch {
-      return [
-        {
-          id: 'addon-insights',
-          code: 'NORA_INSIGHTS',
-          name: 'Nora Insights',
-          description: 'Relatórios avançados de margem, rentabilidade por produção e análise de custos.',
-          priceMonthly: 7900,
-          type: 'FUNCTIONAL',
-          unit: 'MÊS',
-        },
-        {
-          id: 'addon-automate',
-          code: 'NORA_AUTOMATE',
-          name: 'Nora Automate',
-          description: 'Automações avançadas de ordens de rodagem, notificações de call sheet e webhooks.',
-          priceMonthly: 9900,
-          type: 'FUNCTIONAL',
-          unit: 'MÊS',
-        },
-        {
-          id: 'addon-ai',
-          code: 'NORA_AI',
-          name: 'Nora AI +500 Créditos',
-          description: 'Pacote de 500 créditos mensais para geração de call sheets, decupagem e orçamentos.',
-          priceMonthly: 9900,
-          type: 'FUNCTIONAL',
-          unit: '500_CRÉDITOS',
-        },
-        {
-          id: 'addon-storage',
-          code: 'STORAGE_100GB',
-          name: 'Armazenamento Extra +100 GB',
-          description: '100 GB de armazenamento cloud de alta velocidade para cópias, proxies e masters.',
-          priceMonthly: 4900,
-          type: 'CAPACITY',
-          unit: '100GB',
-        },
-        {
-          id: 'addon-users',
-          code: 'USERS_5',
-          name: 'Assentos Adicionais +5 Utilizadores',
-          description: '+5 membros na equipa técnica com permissões granulares e acesso simultâneo.',
-          priceMonthly: 13900,
-          type: 'CAPACITY',
-          unit: '5_USERS',
-        },
-        {
-          id: 'addon-equip-100',
-          code: 'EQUIPMENT_100',
-          name: 'Inventário de Equipamentos +100',
-          description: 'Expansão de catálogo para mais 100 itens com códigos QR e manutenção.',
-          priceMonthly: 4900,
-          type: 'CAPACITY',
-          unit: '100_ITEMS',
-        },
-      ];
+    } catch (error) {
+      // Sem valores de reserva: preços, limites e subscrições vêm sempre da API (fonte de verdade).
+      throw error;
     }
   },
 
@@ -245,10 +121,10 @@ export const noraSubscriptionsService = {
           proofUrl: data.proofUrl,
           plan: {
             id: data.plan?.id || data.plan?.code || 'plan',
-            code: data.plan?.code || 'PROFISSIONAL',
-            name: data.plan?.name || 'Nora Profissional',
-            priceMonthly: Number(data.plan?.prices?.monthly || data.plan?.priceMonthly || 39900),
-            priceAnnual: Number(data.plan?.prices?.annual || data.plan?.priceAnnual || 399000),
+            code: data.plan?.code ?? '',
+            name: data.plan?.name ?? '',
+            priceMonthly: Number(data.plan?.prices?.monthly ?? data.plan?.priceMonthly ?? 0),
+            priceAnnual: Number(data.plan?.prices?.annual ?? data.plan?.priceAnnual ?? 0),
             features: [],
           },
           items: (data.addOns || []).map((a: any) => ({
@@ -258,9 +134,9 @@ export const noraSubscriptionsService = {
             price: Number(a.unitPrice || 0),
           })),
           entitlements: data.entitlements ? {
-            maxProjects: data.entitlements.maxProjects ?? 20,
-            maxEquipment: data.entitlements.maxEquipment ?? 200,
-            storageGb: data.entitlements.storageGb ?? 250,
+            maxProjects: data.entitlements.maxProjects ?? 0,
+            maxEquipment: data.entitlements.maxEquipment ?? 0,
+            storageGb: data.entitlements.storageGb ?? 0,
             aiCredits: data.entitlements.aiCredits ?? 0,
             usedProjects: data.entitlements.usedProjects ?? 0,
             usedEquipment: data.entitlements.usedEquipment ?? 0,
@@ -269,41 +145,10 @@ export const noraSubscriptionsService = {
           } : undefined,
         };
       }
-      throw new Error('No data');
-    } catch {
-      return {
-        id: 'sub-active-1',
-        organizationId: 'org-demo',
-        status: 'ACTIVE',
-        billingCycle: 'MONTHLY',
-        currentPeriodStart: new Date(Date.now() - 15 * 86400000).toISOString(),
-        currentPeriodEnd: new Date(Date.now() + 15 * 86400000).toISOString(),
-        cancelAtPeriodEnd: false,
-        plan: {
-          id: 'plan-prof',
-          code: 'PROFISSIONAL',
-          name: 'Nora Profissional',
-          tier: 'PROFISSIONAL',
-          priceMonthly: 39900,
-          priceAnnual: 399000,
-          maxProjects: 20,
-          maxEquipment: 200,
-          maxStorageGb: 250,
-          includedAiCredits: 0,
-          features: [],
-        },
-        items: [],
-        entitlements: {
-          maxProjects: 20,
-          maxEquipment: 200,
-          storageGb: 250,
-          aiCredits: 0,
-          usedProjects: 4,
-          usedEquipment: 18,
-          usedStorageGb: 32,
-          usedAiCredits: 0,
-        },
-      };
+      throw new Error('Subscrição não encontrada.');
+    } catch (error) {
+      // Sem valores de reserva: preços, limites e subscrições vêm sempre da API (fonte de verdade).
+      throw error;
     }
   },
 

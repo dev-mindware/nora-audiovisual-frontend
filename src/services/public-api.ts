@@ -1,17 +1,13 @@
 import axios from "axios";
+import { API_URL } from "@/lib/api-url";
 
 /**
- * Public API client for unauthenticated requests
- * Used for public endpoints like document verification
+ * Cliente da API para pedidos públicos sem sessão (portal do cliente por token, estúdio público).
+ * Não envia chaves: nada de segredos num bundle de navegador.
  */
 export const publicApi = axios.create({
-  baseURL:
-    process.env.NEXT_PUBLIC_API_URL || "https://mindgest-api.onrender.com/api",
-  headers: {
-    "Content-Type": "application/json",
-    ...(process.env.NEXT_PUBLIC_API_KEY ? { "x-api-key": process.env.NEXT_PUBLIC_API_KEY } : {}),
-  },
+  baseURL: API_URL,
+  headers: { "Content-Type": "application/json" },
 });
 
-// No authentication interceptors for public API
 export default publicApi;

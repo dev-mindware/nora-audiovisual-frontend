@@ -4,8 +4,9 @@ export const resetAccessTokenCache = () => {
 
 import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 import { useTenantStore } from '@/stores/tenant';
+import { API_URL } from '@/lib/api-url';
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3010/api';
+const baseURL = API_URL;
 
 export const api = axios.create({
   baseURL,

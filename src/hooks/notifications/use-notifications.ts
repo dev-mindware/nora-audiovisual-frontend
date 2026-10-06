@@ -1,6 +1,5 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { io, Socket } from "socket.io-client";
 import { useModal } from "@/stores/modal/use-modal-store";
 import { playSoundEffect, primeAudioPlayback } from "@/utils";
 import {
@@ -15,8 +14,6 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { notificationAlertState } from "./notification-alert-state";
-
-let socket: Socket;
 
 export function useNotifications(
   initialFilters: Omit<NotificationParams, "skip" | "take"> = {},
@@ -145,7 +142,9 @@ export function useNotifications(
       return allPages.length * TAKE;
     },
     staleTime: 1000 * 60,
-    refetchInterval: 1000 * 5,
+    // Polling (a API não expõe WebSocket); pausa quando o separador está em segundo plano
+    refetchInterval: 1000 * 15,
+    refetchIntervalInBackground: false,
   });
 
   const notifications = useMemo(() => {
@@ -171,87 +170,6 @@ export function useNotifications(
       alertForNewNotification(notification);
     });
   }, [notifications, alertForNewNotification]);
-
-  useEffect(() => {
-    let isSubscribed = true;
-    let activeSocket: Socket | null = null;
-
-    const setupSocket = async () => {
-      try {
-        const rawUrl =
-          process.env.NEXT_PUBLIC_API_URL || "https://mindgest.mindware-vps.cloud/api";
-        let socketUrl = rawUrl;
-        try {
-          const parsed = new URL(rawUrl);
-          socketUrl = `${parsed.origin}/notifications`;
-        } catch {
-          socketUrl = `${rawUrl.replace(/\/api\/?$/, "")}/notifications`;
-        }
-
-        let token: string | null = null;
-        try {
-          const { getAccessToken } = await import("@/actions/token");
-          token = await getAccessToken();
-        } catch (tokenErr) {
-          console.warn("Could not retrieve access token for socket:", tokenErr);
-        }
-
-        if (!isSubscribed) return;
-
-        activeSocket = io(socketUrl, {
-          transports: ["websocket", "polling"],
-          auth: token ? { token } : undefined,
-          query: token ? { token } : undefined,
-        });
-
-        activeSocket.on("connect", () => {
-          console.log("Connected to notification socket");
-        });
-
-        const handleIncomingNotification = (newNotification: NotificationType) => {
-          if (!newNotification || !newNotification.id) return;
-
-          queryClient.invalidateQueries({ queryKey: ["opening-requests"] });
-          queryClient.invalidateQueries({ queryKey: ["notifications"] });
-          alertForNewNotification(newNotification);
-
-          queryClient.setQueryData<any>(
-            queryKey,
-            (oldData: any) => {
-              if (!oldData || !Array.isArray(oldData.pages)) return oldData;
-              const newPages = [...oldData.pages];
-              if (newPages.length > 0) {
-                const firstPage = (Array.isArray(newPages[0]?.data) ? newPages[0].data : []) as NotificationType[];
-                if (firstPage.some((n) => n.id === newNotification.id)) {
-                  return oldData;
-                }
-
-                newPages[0] = {
-                  ...newPages[0],
-                  data: [newNotification, ...firstPage],
-                };
-              }
-              return { ...oldData, pages: newPages };
-            },
-          );
-        };
-
-        activeSocket.on("notification", handleIncomingNotification);
-        activeSocket.on("new_notification", handleIncomingNotification);
-      } catch (err) {
-        console.warn("Socket initialization error:", err);
-      }
-    };
-
-    void setupSocket();
-
-    return () => {
-      isSubscribed = false;
-      if (activeSocket) {
-        activeSocket.disconnect();
-      }
-    };
-  }, [alertForNewNotification, queryClient, queryKey]);
 
   // Mutations
   const { mutateAsync: markAsRead } = useMutation({

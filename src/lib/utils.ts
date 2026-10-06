@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { API_URL, API_ORIGIN } from "./api-url";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -18,10 +19,8 @@ export function getApiAssetUrlCandidates(path?: string | null) {
     return [cleanPath];
   }
 
-  const apiUrl =
-    process.env.NEXT_PUBLIC_API_URL || "https://mindgest.mindware-vps.cloud/api";
-  const apiBaseUrl = apiUrl.replace(/\/$/, "");
-  const assetBaseUrl = apiBaseUrl.replace(/\/api\/?$/, "");
+  const apiBaseUrl = API_URL;
+  const assetBaseUrl = API_ORIGIN;
   const candidates: string[] = [];
 
   const addCandidate = (candidate: string) => {
