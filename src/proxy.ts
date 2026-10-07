@@ -15,8 +15,7 @@ import { verifyRole } from "@/lib/session";
 function isPublicRoute(pathname: string): boolean {
   if (PUBLIC_ROUTES.includes(pathname as any)) return true;
 
-  return PUBLIC_ROUTES.some((route) => {
-    if (route === "/") return false;
+  return PUBLIC_ROUTES.some((route: string) => {
     if (!pathname.startsWith(route)) return false;
     const nextChar = pathname[route.length];
     return !nextChar || nextChar === "/" || nextChar === "?";

@@ -10,6 +10,7 @@ import {
   ChevronRight,
   ChevronLeft,
   Sparkles,
+  Wand2,
 } from "lucide-react";
 import { registerAction } from "@/actions/register";
 import { registerActionSchema, type RegisterActionInput } from "@/schemas";
@@ -103,6 +104,29 @@ export function RegisterFlow() {
 
   const watchedPassword = watch("password");
   const watchedPlanCode = watch("planCode");
+
+  const generateStrongPassword = () => {
+    const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const lower = "abcdefghijklmnopqrstuvwxyz";
+    const numbers = "0123456789";
+    const symbols = "!@#$%^&*";
+    const all = upper + lower + numbers + symbols;
+
+    const pass = [
+      upper[Math.floor(Math.random() * upper.length)],
+      lower[Math.floor(Math.random() * lower.length)],
+      numbers[Math.floor(Math.random() * numbers.length)],
+      symbols[Math.floor(Math.random() * symbols.length)],
+    ];
+
+    for (let i = 4; i < 16; i++) {
+      pass.push(all[Math.floor(Math.random() * all.length)]);
+    }
+
+    const shuffled = pass.sort(() => 0.5 - Math.random()).join("");
+    setValue("password", shuffled, { shouldValidate: true });
+    SucessMessage("Palavra-passe forte gerada com sucesso!");
+  };
 
   const handleNext = async () => {
     if (step === 1) {
@@ -237,17 +261,41 @@ export function RegisterFlow() {
               autoComplete="email"
             />
 
-            <div className="flex flex-col space-y-2">
-              <Input
-                type="password"
-                label="Palavra-passe"
-                startIcon="Lock"
-                placeholder="Mínimo 15 caracteres (NIST SP 800-63B)"
-                {...register("password")}
-                error={errors.password?.message}
-                autoComplete="new-password"
-              />
+            <div className="space-y-2">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-sm font-medium text-foreground">
+                  Palavra-passe
+                </label>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <Input
+                      type="password"
+                      startIcon="Lock"
+                      placeholder="Mínimo de 8 caracteres"
+                      {...register("password")}
+                      autoComplete="new-password"
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="shrink-0 h-10 w-10"
+                    title="Gerar palavra-passe forte"
+                    onClick={generateStrongPassword}
+                  >
+                    <Wand2 className="size-4 text-primary" />
+                  </Button>
+                </div>
+              </div>
+
               <PasswordStrengthBar password={watchedPassword || ""} />
+
+              {errors.password?.message && (
+                <p className="text-xs text-destructive font-medium">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
           </div>
         )}
