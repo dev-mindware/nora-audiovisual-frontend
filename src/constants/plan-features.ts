@@ -49,7 +49,7 @@ export const includedInAllPlans: PlanBenefit[] = [
 export const planFeatureMatrix: Record<string, PlanFeatureGroup> = {
   INICIAL: {
     features: [
-      "Até 5 Projetos Ativos em Simultâneo",
+      "Até 5 Projectos Activos em Simultâneo",
       "Até 50 Equipamentos no Catálogo",
       "50 GB de Armazenamento Cloud",
       "Call Sheets & Folhas de Rodagem Digitais",
@@ -59,11 +59,11 @@ export const planFeatureMatrix: Record<string, PlanFeatureGroup> = {
   },
   PROFISSIONAL: {
     features: [
-      "Até 20 Projetos Ativos em Simultâneo",
+      "Até 20 Projectos Activos em Simultâneo",
       "Até 200 Equipamentos com Deteção de Conflitos",
       "250 GB de Armazenamento Cloud",
       "Client Portal & Timecode Review Player",
-      "Integração Fiscal Mindgest (Faturação AGT)",
+      "Integração Fiscal Mindgest (Facturação AGT)",
       "Gestão de Sets & Calendário de Estúdio",
       "Relatórios Financeiros Avançados",
       "500 Créditos Nora AI Mensais",
@@ -71,11 +71,11 @@ export const planFeatureMatrix: Record<string, PlanFeatureGroup> = {
   },
   BUSINESS: {
     features: [
-      "Projetos e Equipamentos Ilimitados",
+      "Projectos e Equipamentos Ilimitados",
       "1 TB de Armazenamento Cloud de Alta Velocidade",
       "Multi-set & Gestão de Pós-Produção Completa",
       "Kanbans por Departamento (Câmara, Som, Luz, Arte)",
-      "Automação de Faturação & Multi-utilizador Avançado",
+      "Automação de Facturação & Multi-utilizador Avançado",
       "Suporte Prioritário & SLA Dedicado",
       "2.000 Créditos Nora AI Mensais",
     ],
@@ -83,7 +83,7 @@ export const planFeatureMatrix: Record<string, PlanFeatureGroup> = {
   // Aliases de compatibilidade
   Base: {
     features: [
-      "Até 5 Projetos Ativos em Simultâneo",
+      "Até 5 Projectos Activos em Simultâneo",
       "Até 50 Equipamentos no Catálogo",
       "50 GB de Armazenamento Cloud",
       "Call Sheets & Folhas de Rodagem Digitais",
@@ -92,17 +92,17 @@ export const planFeatureMatrix: Record<string, PlanFeatureGroup> = {
   },
   Smart: {
     features: [
-      "Até 20 Projetos Ativos em Simultâneo",
+      "Até 20 Projectos Activos em Simultâneo",
       "Até 200 Equipamentos com Deteção de Conflitos",
       "250 GB de Armazenamento Cloud",
       "Client Portal & Timecode Review Player",
-      "Integração Fiscal Mindgest (Faturação AGT)",
+      "Integração Fiscal Mindgest (Facturação AGT)",
       "500 Créditos Nora AI Mensais",
     ],
   },
   Pro: {
     features: [
-      "Projetos e Equipamentos Ilimitados",
+      "Projectos e Equipamentos Ilimitados",
       "1 TB de Armazenamento Cloud",
       "Gestão de Estúdios e Sets Avançada",
       "Integração Fiscal Mindgest e Automações",

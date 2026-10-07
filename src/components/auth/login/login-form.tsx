@@ -85,11 +85,11 @@ export function LoginForm() {
       {/* Header com badge de produção audiovisual */}
       <div className="flex flex-col gap-2.5 text-left">
         <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
             Iniciar Sessão
           </h1>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Introduza as suas credenciais para aceder aos seus projetos, folhas de chamada e equipamentos.
+            Introduza as suas credenciais para aceder aos seus projectos, folhas de chamada e equipamentos.
           </p>
         </div>
       </div>

@@ -24,7 +24,7 @@ export function SuccessResetModal() {
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600">
             <CheckCircle2 className="h-7 w-7" />
           </div>
-          <span className="text-xl font-bold tracking-tight">Palavra-passe alterada</span>
+          <span className="text-xl font-semibold tracking-tight">Palavra-passe alterada</span>
         </div>
       }
       description={

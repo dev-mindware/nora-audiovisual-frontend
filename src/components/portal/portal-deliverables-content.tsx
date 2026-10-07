@@ -329,7 +329,7 @@ export function PortalDeliverablesContent() {
                       </span>
                       <span className="text-muted-foreground/40">•</span>
                       <span className="text-xs font-mono text-muted-foreground">
-                        {selectedDeliverable.project?.title || 'Projeto'}
+                        {selectedDeliverable.project?.title || 'Projecto'}
                       </span>
                     </div>
 

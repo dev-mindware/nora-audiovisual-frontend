@@ -105,6 +105,7 @@ export function StudioBookingModal({ isOpen, onClose, resource }: BookingModalPr
             size="sm"
             onClick={handleCancel}
             disabled={isPending}
+            className="min-h-[44px] sm:min-h-0"
           >
             Cancelar
           </Button>
@@ -112,6 +113,7 @@ export function StudioBookingModal({ isOpen, onClose, resource }: BookingModalPr
             form="studio-booking-form"
             size="sm"
             isLoading={isPending}
+            className="min-h-[44px] sm:min-h-0"
           >
             Confirmar Marcação
           </ButtonSubmit>
@@ -128,7 +130,7 @@ export function StudioBookingModal({ isOpen, onClose, resource }: BookingModalPr
           control={control}
           render={({ field }) => (
             <PaginatedSelect
-              label="Projeto / Produção Associada"
+              label="Projecto / Produção Associada"
               options={projectOptions}
               value={field.value || ''}
               onChange={field.onChange}
@@ -136,7 +138,7 @@ export function StudioBookingModal({ isOpen, onClose, resource }: BookingModalPr
               isLoading={isLoadingProjects}
               searchValue={projectSearch}
               onSearchChange={setProjectSearch}
-              searchPlaceholder="Pesquisar projeto..."
+              searchPlaceholder="Pesquisar projecto..."
               pagination={{ page: 1, totalPages: 1 }}
               onPageChange={() => { }}
             />

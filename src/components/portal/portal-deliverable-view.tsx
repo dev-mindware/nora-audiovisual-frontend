@@ -296,7 +296,7 @@ export function PortalDeliverableView({ token }: PortalDeliverableViewProps) {
             <Film className="mx-auto h-10 w-10 text-primary/50 mb-3" />
             <CardTitle className="text-base font-semibold text-foreground">Pacote de Entregáveis Pronto</CardTitle>
             <CardDescription className="text-xs text-muted-foreground mt-1 max-w-md mx-auto">
-              Este pacote reúne arquivos de áudio, documentação ou renders prontos para download e validação.
+              Este pacote reúne ficheiros de áudio, documentação ou renders prontos para descarregamento e validação.
             </CardDescription>
           </Card>
         )}
@@ -306,7 +306,7 @@ export function PortalDeliverableView({ token }: PortalDeliverableViewProps) {
           <CardHeader className="p-5 border-b border-border">
             <CardTitle className="text-sm font-semibold uppercase tracking-wider text-foreground flex items-center justify-between">
               <span className="flex items-center gap-2">
-                <Download className="h-4 w-4 text-primary" /> Arquivos Disponíveis no Pacote
+                <Download className="h-4 w-4 text-primary" /> Ficheiros Disponíveis no Pacote
               </span>
               {deliverable.access?.canDownloadMaster ? (
                 <span className="text-[11px] font-semibold text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded">
@@ -330,7 +330,7 @@ export function PortalDeliverableView({ token }: PortalDeliverableViewProps) {
                         {asset.filename}
                       </span>
                       <Badge variant="outline" className="text-[10px] py-0 px-1.5 font-mono text-muted-foreground">
-                        {asset.fileType === 'VIDEO' ? '720p Proxy Ativo' : 'WebP Otimizado'}
+                        {asset.fileType === 'VIDEO' ? '720p Proxy Activo' : 'WebP Optimizado'}
                       </Badge>
                     </div>
                     <span className="text-xs text-muted-foreground">
@@ -349,7 +349,7 @@ export function PortalDeliverableView({ token }: PortalDeliverableViewProps) {
                   ) : (
                     <div
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xs border border-amber-500/30 bg-amber-500/10 text-amber-500 text-xs font-medium shrink-0 cursor-help"
-                      title="O download do arquivo original em alta resolução está protegido até a aprovação formal e regularização financeira."
+                      title="O descarregamento do ficheiro original em alta resolução está protegido até à aprovação formal e regularização financeira."
                     >
                       <Lock className="h-3.5 w-3.5" /> Bloqueado até Aprovação
                     </div>

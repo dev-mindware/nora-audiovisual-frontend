@@ -5,7 +5,7 @@ import { DynamicRoleDashboard, DashboardLayoutSkeleton } from '@/components/clie
 export default function DashboardPage() {
   return (
     <Suspense fallback={<DashboardLayoutSkeleton />}>
-      <PageWrapper subRoute="Dashboard Geral" onboardingTourId="dashboard">
+      <PageWrapper subRoute="Painel Operacional" onboardingTourId="dashboard">
         <DynamicRoleDashboard />
       </PageWrapper>
     </Suspense>

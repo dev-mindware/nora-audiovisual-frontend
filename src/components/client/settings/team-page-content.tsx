@@ -96,51 +96,70 @@ export function TeamPageContent() {
     }
   };
 
-  const filteredMembers = members.filter((m) => {
-    if (!search) return true;
-    const term = search.toLowerCase();
-    const nameMatch = m.user?.name?.toLowerCase().includes(term);
-    const emailMatch = m.user?.email?.toLowerCase().includes(term);
-    const roleMatch = m.role?.name?.toLowerCase().includes(term);
-    return Boolean(nameMatch || emailMatch || roleMatch);
-  });
+  const filteredMembers = members
+    .filter((m) => m.role?.code !== 'CLIENT')
+    .filter((m) => {
+      if (!search) return true;
+      const term = search.toLowerCase();
+      const nameMatch = m.user?.name?.toLowerCase().includes(term);
+      const emailMatch = m.user?.email?.toLowerCase().includes(term);
+      const roleMatch = m.role?.name?.toLowerCase().includes(term);
+      return Boolean(nameMatch || emailMatch || roleMatch);
+    });
 
   return (
     <div className="space-y-6 w-full">
       {/* Cabeçalho */}
       <TitleList
         title="Equipa & Acessos de Produção"
-        subtitle="Produtores, gestores de estúdio, operadores e editores com acesso à organização."
+        subtitle="Produtores, directores, gestores de estúdio, operadores e editores com acesso operacional à produtora."
       >
         <Button
           onClick={() => setInviteModalOpen(true)}
-          className="bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-semibold h-9 px-4 uppercase tracking-wide"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 text-xs font-semibold min-h-[44px] sm:min-h-0 sm:h-9 px-4 uppercase tracking-wide w-full sm:w-auto"
         >
-          <UserPlus className="mr-1.5 h-3.5 w-3.5" /> Convidar Membro
+          <UserPlus className="mr-1.5 h-3.5 w-3.5" /> Convidar Membro de Produção
         </Button>
       </TitleList>
 
+      {/* Nota de esclarecimento e separação: Clientes vs Equipa */}
+      <div className="rounded-none border border-border/70 bg-muted/20 p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+        <div className="flex items-center gap-2.5 text-muted-foreground">
+          <ShieldCheck className="h-4 w-4 shrink-0 text-primary" />
+          <span>
+            <strong className="text-foreground font-semibold">Clientes Externos:</strong> Os clientes não integram a equipa técnica. Os seus acessos e permissões ao Portal são geridos na carteira de clientes.
+          </span>
+        </div>
+        <a
+          href="/crm"
+          className="inline-flex items-center gap-1 font-semibold text-primary hover:underline shrink-0 text-xs py-1"
+        >
+          <Users className="h-3.5 w-3.5" /> Ir para Clientes &amp; CRM →
+        </a>
+      </div>
+
       {/* Barra de Filtro Minimalista */}
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="relative w-full sm:w-72">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Procurar membro por nome ou email..."
-            className="pl-9 h-10 text-xs rounded-none border-border bg-background"
+            className="pl-9 h-11 sm:h-10 text-base sm:text-xs rounded-none border-border bg-background"
           />
           {Boolean(search) && (
             <button
               onClick={() => setSearch('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground min-h-[44px] min-w-[44px] flex items-center justify-center sm:min-h-0 sm:min-w-0"
+              aria-label="Limpar pesquisa"
             >
               <X className="h-3.5 w-3.5" />
             </button>
           )}
         </div>
 
-        <span className="text-xs text-muted-foreground font-mono hidden sm:inline-block">
+        <span className="text-xs text-muted-foreground font-mono">
           {filteredMembers.length} {filteredMembers.length === 1 ? 'colaborador' : 'colaboradores'}
         </span>
       </div>
@@ -239,7 +258,7 @@ export function TeamPageContent() {
                             : 'border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400'
                       }`}
                     >
-                      {isActive ? 'Ativo' : isSuspended ? 'Suspenso' : 'Convidado'}
+                      {isActive ? 'Activo' : isSuspended ? 'Suspenso' : 'Convidado'}
                     </Badge>
 
                     {isOwner ? (
@@ -252,7 +271,7 @@ export function TeamPageContent() {
                         size="sm"
                         disabled={isActing}
                         onClick={() => handleToggleSuspend(member)}
-                        className={`rounded-none text-xs h-8 px-3 border-border ${
+                        className={`rounded-none text-xs min-h-[38px] sm:min-h-0 sm:h-8 px-3 border-border ${
                           member.status === 'ACTIVE'
                             ? 'text-destructive hover:bg-destructive/10'
                             : 'text-foreground hover:bg-muted'
@@ -266,7 +285,7 @@ export function TeamPageContent() {
                           </>
                         ) : (
                           <>
-                            <UserCheck className="mr-1.5 h-3.5 w-3.5" /> Reativar
+                            <UserCheck className="mr-1.5 h-3.5 w-3.5" /> Reactivar
                           </>
                         )}
                       </Button>
@@ -281,57 +300,58 @@ export function TeamPageContent() {
 
       {/* Modal de Convidar */}
       {isInviteModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
-          <div className="w-full max-w-md bg-card border border-border rounded-none p-6 shadow-2xl space-y-4">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-xs p-0 sm:p-4">
+          <div className="w-full sm:max-w-md bg-card border-t sm:border border-border rounded-t-lg sm:rounded-none p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-2 border-b border-border/60">
-              <h3 className="text-base font-semibold tracking-tight text-foreground">Convidar Colaborador</h3>
+              <h3 className="text-base font-semibold tracking-tight text-foreground">Convidar Membro de Produção</h3>
               <button
                 onClick={() => setInviteModalOpen(false)}
-                className="text-muted-foreground hover:text-foreground text-sm"
+                className="text-muted-foreground hover:text-foreground text-sm min-h-[44px] min-w-[44px] flex items-center justify-center"
+                aria-label="Fechar modal"
               >
                 ✕
               </button>
             </div>
 
             <p className="text-xs text-muted-foreground">
-              O convidado receberá um convite por email com link para aceder à produtora no Nora Audiovisual.
+              O profissional receberá um convite por correio electrónico para integrar a equipa da produtora no Nora Audiovisual.
             </p>
 
             <form onSubmit={handleInvite} className="space-y-4 pt-2">
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-foreground">Email Profissional</label>
+                <label className="text-xs font-medium text-foreground">Correio Electrónico Profissional</label>
                 <input
                   type="email"
-                  placeholder="colaborador@estudio.ao"
+                  placeholder="colaborador@produtora.ao"
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
-                  className="w-full h-10 px-3.5 rounded-none border border-border bg-background text-foreground text-sm focus:outline-none focus:border-foreground"
+                  className="w-full h-11 sm:h-10 px-3.5 rounded-none border border-border bg-background text-foreground text-base sm:text-sm focus:outline-none focus:border-foreground"
                   required
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-foreground">Função / Perfil</label>
+                <label className="text-xs font-medium text-foreground">Função na Equipa / Perfil Operacional</label>
                 <select
                   value={inviteRole}
                   onChange={(e) => setInviteRole(e.target.value)}
-                  className="w-full h-10 px-3.5 rounded-none border border-border bg-background text-foreground text-sm focus:outline-none focus:border-foreground"
+                  className="w-full h-11 sm:h-10 px-3.5 rounded-none border border-border bg-background text-foreground text-base sm:text-sm focus:outline-none focus:border-foreground"
                 >
                   <option value="PRODUCER">Produtor Executivo (PRODUCER)</option>
                   <option value="MANAGER">Gestor de Operações (MANAGER)</option>
-                  <option value="FINANCE">Financeiro & Faturação (FINANCE)</option>
+                  <option value="FINANCE">Financeiro &amp; Facturação (FINANCE)</option>
                   <option value="EDITOR">Editor / Pós-Produção (EDITOR)</option>
-                  <option value="CREW">Equipa Técnica / Set (CREW)</option>
+                  <option value="CREW">Equipa Técnica / Rodagem (CREW)</option>
                 </select>
               </div>
 
-              <div className="flex justify-end gap-2 pt-3">
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-3">
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => setInviteModalOpen(false)}
-                  className="rounded-none text-xs border-border h-9"
+                  className="rounded-none text-xs border-border min-h-[44px] sm:min-h-0 sm:h-9 w-full sm:w-auto"
                 >
                   Cancelar
                 </Button>
@@ -339,7 +359,7 @@ export function TeamPageContent() {
                   type="submit"
                   size="sm"
                   disabled={isInviting}
-                  className="rounded-none text-xs font-medium h-9 bg-primary text-primary-foreground hover:bg-primary/90"
+                  className="rounded-none text-xs font-medium min-h-[44px] sm:min-h-0 sm:h-9 bg-primary text-primary-foreground hover:bg-primary/90 w-full sm:w-auto"
                 >
                   {isInviting ? (
                     <>
@@ -357,3 +377,5 @@ export function TeamPageContent() {
     </div>
   );
 }
+
+

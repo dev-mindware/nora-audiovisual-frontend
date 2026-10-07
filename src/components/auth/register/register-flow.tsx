@@ -186,7 +186,7 @@ export function RegisterFlow() {
       {/* Header */}
       <div className="flex flex-col gap-2 text-left">
         <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
             Criar Conta Nora
           </h1>
           <p className="text-sm text-muted-foreground leading-relaxed">

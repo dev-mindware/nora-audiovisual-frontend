@@ -64,9 +64,9 @@ export function AdminDashboardView() {
   }
 
   const areaSeries = [
-    { key: 'revenue', label: 'Volume Faturado', color: 'var(--primary)' },
+    { key: 'revenue', label: 'Volume Facturado', color: 'var(--primary)' },
     { key: 'expenses', label: 'Despesas Globais', color: 'var(--destructive)' },
-    { key: 'projectsActive', label: 'Projetos Concorrentes', color: '#3b82f6' },
+    { key: 'projectsActive', label: 'Projectos Concorrentes', color: '#3b82f6' },
   ];
 
   const donutSlices = (data.charts.distribution || []).map((d, idx) => ({
@@ -213,8 +213,8 @@ export function AdminDashboardView() {
       <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <MindgestAreaChart
-            title="Atividade Operacional & Financeira"
-            description="Acompanhamento consolidado de projetos ativos e faturamento"
+            title="Actividade Operacional & Financeira"
+            description="Acompanhamento consolidado de projectos activos e facturação"
             icon="Activity"
             data={data.charts.primaryEvolution}
             series={areaSeries}
@@ -238,12 +238,12 @@ export function AdminDashboardView() {
       <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-3">
         <div>
           <MindgestUrgentItems
-            title="Projetos em Destaque"
+            title="Projectos em Destaque"
             icon="FolderKanban"
             items={data.urgentItems}
             href="/projects"
-            actionLabel="Ver projetos"
-            emptyMessage="Nenhum projeto em estado crítico."
+            actionLabel="Ver projectos"
+            emptyMessage="Nenhum projecto em estado crítico."
           />
         </div>
         <div>

@@ -6,7 +6,11 @@ import {
   ItemStatusBadge,
   Button,
 } from '@/components';
-import { UniversalTable } from '@/components/custom/universal-table';
+import {
+  UniversalTable,
+  FilterSectionConfig,
+  SortOption,
+} from '@/components/custom/universal-table';
 import { FilterPopover } from '@/components/shared';
 import { useBudgets, useSendBudget, useDuplicateBudget, useChangeBudgetStatus, useBudgetsFilters } from '@/hooks/budgets';
 import { Budget } from '@/types';
@@ -26,7 +30,13 @@ const STATUS_OPTIONS = [
   { value: 'SENT', label: 'Proposta Enviada' },
   { value: 'APPROVED', label: 'Aprovado' },
   { value: 'REJECTED', label: 'Recusado' },
-  { value: 'CONVERTED_TO_PROJECT', label: 'Convertido em Projeto' },
+  { value: 'CONVERTED_TO_PROJECT', label: 'Convertido em Projecto' },
+];
+
+const SORT_OPTIONS: SortOption[] = [
+  { value: 'createdAt', label: 'Data de Criação' },
+  { value: 'total', label: 'Valor Orçado' },
+  { value: 'status', label: 'Estado' },
 ];
 
 export function BudgetsPageContent() {
@@ -38,8 +48,14 @@ export function BudgetsPageContent() {
     filters,
     search,
     status,
+    startDate,
+    endDate,
+    sortBy,
+    sortOrder,
     setSearch,
     setStatus,
+    setSort,
+    setDateRange,
     resetFilters,
   } = useBudgetsFilters();
 
@@ -108,13 +124,14 @@ export function BudgetsPageContent() {
       },
       {
         id: 'actions',
-        header: 'Ação',
+        header: 'Acções',
+        enableHiding: false,
         cell: ({ row }) => {
           const item = row.original;
           return (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                <Button variant="ghost" size="sm" className="h-9 w-9 sm:h-8 sm:w-8 p-0 min-h-[36px] min-w-[36px]">
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -136,7 +153,7 @@ export function BudgetsPageContent() {
                       setIsInvoiceModalOpen(true);
                     }}
                   >
-                    <FileCheck className="mr-2 h-4 w-4" /> Emitir Fatura Mindgest
+                    <FileCheck className="mr-2 h-4 w-4" /> Emitir Factura Mindgest
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuItem onClick={() => duplicateBudget(item.id)}>
@@ -151,11 +168,47 @@ export function BudgetsPageContent() {
     [sendBudget, duplicateBudget, changeStatus]
   );
 
+  // Configuração das secções para o MobileFilterBottomSheet
+  const mobileSections: FilterSectionConfig[] = useMemo(
+    () => [
+      {
+        id: 'status',
+        title: 'Estado da Proposta / Orçamento',
+        options: STATUS_OPTIONS.filter((s) => s.value !== 'ALL').map((s) => ({
+          label: s.label,
+          value: s.value,
+        })),
+        multiple: false,
+      },
+    ],
+    []
+  );
+
+  const appliedMobileFilters: Record<string, string[]> = useMemo(
+    () => ({
+      status: status && status !== 'ALL' ? [status] : [],
+    }),
+    [status]
+  );
+
+  const handleApplyMobileFilters = (newFilters: Record<string, string[]>) => {
+    const nextStatus = newFilters.status?.[0] || 'ALL';
+    setStatus(nextStatus);
+  };
+
   return (
     <div className="mt-6 space-y-6">
-      {/* Mindgest Filters Bar */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-baseline">
-        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+      {/* UniversalTable Unificada - Barra Única sem Repetições */}
+      <UniversalTable<Budget>
+        data={budgets}
+        columns={columns}
+        isLoading={isLoading}
+        searchKey="title"
+        searchPlaceholder="Pesquisar por cliente ou referência de proposta..."
+        searchValue={search}
+        onSearchChange={setSearch}
+        pageSize={filters.limit || 10}
+        customFilters={
           <FilterPopover
             icon="Tag"
             label="Estado"
@@ -163,45 +216,49 @@ export function BudgetsPageContent() {
             value={status}
             onChange={(val) => setStatus(val || 'ALL')}
           />
-          {(status !== 'ALL' || search) && (
+        }
+        mobileSections={mobileSections}
+        appliedMobileFilters={appliedMobileFilters}
+        onApplyMobileFilters={(newFilters, extra) => {
+          handleApplyMobileFilters(newFilters);
+          if (extra?.sortBy && extra?.sortOrder) {
+            setSort(extra.sortBy, extra.sortOrder);
+          }
+          if (extra?.startDate !== undefined || extra?.endDate !== undefined) {
+            setDateRange(extra.startDate, extra.endDate);
+          }
+        }}
+        onClearFilters={resetFilters}
+        sortFilter={{
+          options: SORT_OPTIONS,
+          sortBy,
+          sortOrder,
+          onSortChange: (sb, so) => setSort(sb, so),
+        }}
+        dateRangeFilter={{
+          startDate,
+          endDate,
+          onChange: (start, end) => setDateRange(start, end),
+        }}
+        toolbar={{
+          actions: (
             <Button
-              variant="ghost"
+              onClick={() => setIsModalOpen(true)}
               size="sm"
-              onClick={resetFilters}
-              className="text-xs text-muted-foreground hover:text-foreground h-9"
+              className="h-10 sm:h-9 min-h-[44px] sm:min-h-0 text-xs gap-1.5 shrink-0 rounded-none px-3.5"
             >
-              Limpar filtros
+              <Plus className="h-4 w-4" /> Novo Orçamento
             </Button>
-          )}
-        </div>
-
-        <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
-          <Button
-            onClick={() => setIsModalOpen(true)}
-            size="sm"
-            className="h-10 text-xs gap-1.5 shrink-0"
-          >
-            <Plus className="h-4 w-4" /> Novo Orçamento
-          </Button>
-        </div>
-      </div>
-
-      {/* UniversalTable */}
-      <UniversalTable<Budget>
-        data={budgets}
-        columns={columns}
-        isLoading={isLoading}
-        searchKey="title"
-        searchPlaceholder="Pesquisar por cliente ou referência de proposta..."
-        pageSize={filters.limit || 10}
+          ),
+        }}
         emptyState={{
           title: 'Sem Orçamentos',
           description:
             search || status !== 'ALL'
               ? 'Nenhum orçamento encontrado com os critérios filtrados.'
-              : 'Crie uma nova proposta comercial para seus projetos audiovisuais.',
+              : 'Crie uma nova proposta comercial para os seus projectos audiovisuais.',
           action: (
-            <Button size="sm" onClick={() => setIsModalOpen(true)} className="text-xs">
+            <Button size="sm" onClick={() => setIsModalOpen(true)} className="text-xs min-h-[44px] sm:min-h-0">
               <Plus className="mr-1.5 h-3.5 w-3.5" /> Criar Orçamento
             </Button>
           ),

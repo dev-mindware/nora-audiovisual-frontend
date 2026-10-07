@@ -10,6 +10,8 @@ export interface BudgetFilters {
   limit?: number;
   dateFrom?: string;
   dateTo?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
 }
 
 export interface CreateBudgetPayload {

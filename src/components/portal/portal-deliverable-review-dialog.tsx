@@ -268,7 +268,7 @@ export function PortalDeliverableReviewDialog({
             {deliverable.project && (
               <DialogDescription className="text-xs text-muted-foreground flex items-center gap-1.5 font-mono">
                 <Film className="h-3 w-3 text-primary" />
-                Projeto: {deliverable.project.title}
+                Projecto: {deliverable.project.title}
               </DialogDescription>
             )}
           </div>

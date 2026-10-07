@@ -72,7 +72,7 @@ export function SidebarCompanyInfo() {
                     {orgName}
                   </span>
                   {isPlatformAdmin && (
-                    <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded bg-primary/10 text-primary border border-primary/20 shrink-0 leading-none">
+                    <span className="px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider rounded bg-primary/10 text-primary border border-primary/20 shrink-0 leading-none">
                       ADMIN
                     </span>
                   )}

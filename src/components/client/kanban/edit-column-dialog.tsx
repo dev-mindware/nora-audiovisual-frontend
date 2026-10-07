@@ -229,7 +229,7 @@ export function EditColumnDialog({
                     Coluna Padrão de Entrada
                   </Label>
                   <p className="text-[11px] text-muted-foreground">
-                    Novas tarefas criadas no projeto entrarão automaticamente nesta coluna.
+                    Novas tarefas criadas no projecto entrarão automaticamente nesta coluna.
                   </p>
                 </div>
                 <Switch

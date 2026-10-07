@@ -5,9 +5,9 @@ import { ProjectsPageContent } from '@/components/client';
 export default function ProjectsPage() {
   return (
     <Suspense>
-      <PageWrapper subRoute="Projetos" routeLabel="Produção">
+      <PageWrapper subRoute="Projectos" routeLabel="Produção">
         <TitleList
-          title="Projetos & Produções"
+          title="Projectos & Produções"
           suTitle="Gestão integrada de rodagens, fases criativas, ordens de serviço e prazos"
         />
         <ProjectsPageContent />

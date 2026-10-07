@@ -92,7 +92,7 @@ export function AdminTenantsPageContent() {
         const m = item.metrics;
         return (
           <div className="text-xs text-muted-foreground">
-            {m?.membersCount || 0} membros • {m?.projectsCount || 0} projetos • {m?.storageUsedGb || 0} GB
+            {m?.membersCount || 0} membros • {m?.projectsCount || 0} projectos • {m?.storageUsedGb || 0} GB
           </div>
         );
       },

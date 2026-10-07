@@ -6,7 +6,6 @@ export * from './projects';
 export * from './equipment';
 export * from './studio';
 export * from './kanban';
-export * from './files';
 export * from './deliverables';
 export * from './budgets';
 export * from './crm';

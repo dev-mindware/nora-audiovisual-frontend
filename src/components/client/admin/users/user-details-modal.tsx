@@ -139,14 +139,14 @@ export function UserDetailsModal() {
             <Monitor className="h-5 w-5 text-muted-foreground" />
             <div>
               <span className="font-semibold text-foreground text-sm">{user.activeSessionsCount || 0}</span>
-              <p className="text-muted-foreground text-xs">Sessões Ativas</p>
+              <p className="text-muted-foreground text-xs">Sessões Activas</p>
             </div>
           </div>
           <div className="p-3 rounded-lg border border-border bg-muted/10 flex items-center gap-3">
             <Layers className="h-5 w-5 text-muted-foreground" />
             <div>
               <span className="font-semibold text-foreground text-sm">{user.activeProjectsCount || 0}</span>
-              <p className="text-muted-foreground text-xs">Projetos Atribuídos</p>
+              <p className="text-muted-foreground text-xs">Projectos Atribuídos</p>
             </div>
           </div>
         </div>

@@ -161,7 +161,7 @@ export function SubscriptionsPageContent() {
         <Card className="lg:col-span-2 flex flex-col justify-between p-0 gap-0">
           <CardHeader className="p-6 pb-4 border-b border-border flex flex-row items-center justify-between space-y-0">
             <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Quotas &amp; Capacidades Ativas da Produtora
+              Quotas &amp; Capacidades Activas da Produtora
             </span>
             <span className="text-xs text-muted-foreground">Recálculo em tempo real</span>
           </CardHeader>
@@ -172,7 +172,7 @@ export function SubscriptionsPageContent() {
               <div className="flex items-center justify-between text-xs">
                 <span className="font-semibold text-foreground flex items-center gap-1.5">
                   <FolderKanban className="h-3.5 w-3.5 text-muted-foreground" />
-                  Projetos Ativos em Simultâneo
+                  Projectos Activos em Simultâneo
                 </span>
                 <span className="font-mono text-muted-foreground">
                   {entitlements?.usedProjects || 8} / {entitlements?.maxProjects || 25}

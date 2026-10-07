@@ -266,7 +266,7 @@ export function PortalBudgetsContent() {
 
                     {selectedBudget.projectTitle && (
                       <p className="text-xs text-muted-foreground font-mono">
-                        Projeto: {selectedBudget.projectTitle}
+                        Projecto: {selectedBudget.projectTitle}
                       </p>
                     )}
                   </div>

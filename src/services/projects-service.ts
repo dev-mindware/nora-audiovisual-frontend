@@ -17,6 +17,10 @@ export interface ProjectFilters {
   limit?: number;
   dateFrom?: string;
   dateTo?: string;
+  startDate?: string;
+  endDate?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
 }
 
 export interface CreateProjectPayload {

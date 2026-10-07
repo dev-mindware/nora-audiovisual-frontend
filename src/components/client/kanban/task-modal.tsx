@@ -22,10 +22,10 @@ interface TaskModalProps {
 }
 
 const DEPARTMENTS = [
-  { value: 'DIRECTION', label: 'Direção' },
+  { value: 'DIRECTION', label: 'Direcção' },
   { value: 'CAMERA', label: 'Câmara & Imagem' },
-  { value: 'SOUND', label: 'Som Direto / Áudio' },
-  { value: 'LIGHTING', label: 'Iluminação & Elétrica' },
+  { value: 'SOUND', label: 'Som Directo / Áudio' },
+  { value: 'LIGHTING', label: 'Iluminação & Eléctrica' },
   { value: 'PRODUCTION', label: 'Produção & Logística' },
   { value: 'EDITING', label: 'Edição & Montagem' },
   { value: 'COLOR', label: 'Color Grading' },
@@ -124,6 +124,7 @@ export function TaskModal({ isOpen, onClose, projectId }: TaskModalProps) {
             size="sm"
             onClick={handleCancel}
             disabled={isPending}
+            className="min-h-[44px] sm:min-h-0"
           >
             Cancelar
           </Button>
@@ -131,6 +132,7 @@ export function TaskModal({ isOpen, onClose, projectId }: TaskModalProps) {
             form="create-task-form"
             size="sm"
             isLoading={isPending}
+            className="min-h-[44px] sm:min-h-0"
           >
             Adicionar Tarefa
           </ButtonSubmit>

@@ -24,7 +24,7 @@ export function SubscriptionInfo() {
     return (
       <Card className="border-dashed border-2">
         <CardHeader>
-          <CardTitle>Nenhum plano ativo</CardTitle>
+          <CardTitle>Nenhum plano activo</CardTitle>
           <CardDescription>
             Ainda não existe uma subscrição activa.
           </CardDescription>
@@ -69,7 +69,7 @@ export function SubscriptionInfo() {
             variant={isExpired ? "destructive" : isTrial ? "secondary" : isPending ? "pending" : "default"}
             className="px-3 py-1"
           >
-            {isExpired ? "Expirado" : isTrial ? "Período de Teste" : isPending ? "Pendente" : "Ativo"}
+            {isExpired ? "Expirado" : isTrial ? "Período de Teste" : isPending ? "Pendente" : "Activo"}
           </Badge>
         </CardHeader>
 

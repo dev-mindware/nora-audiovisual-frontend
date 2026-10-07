@@ -183,7 +183,7 @@ export function ChatTab({
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleKeyDown}
                         className="w-full min-h-[100px] max-h-[160px] p-4 pr-12 bg-transparent border-0 resize-none focus:outline-none text-sm placeholder:text-muted-foreground font-medium"
-                        placeholder={limitReached ? "Limite semanal de mensagens atingido" : "Pergunte sobre projetos, call sheets, equipamento, orçamentos..."}
+                        placeholder={limitReached ? "Limite semanal de mensagens atingido" : "Pergunte sobre projectos, call sheets, equipamento, orçamentos..."}
                         disabled={isPending || limitReached}
                     />
                     <div className="absolute left-4 bottom-3 flex gap-3 text-[10px] text-muted-foreground font-medium">

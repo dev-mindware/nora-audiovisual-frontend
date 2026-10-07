@@ -21,6 +21,22 @@ export function useProjectsFilters() {
     'clientId',
     parseAsString.withDefault('').withOptions({ shallow: true })
   );
+  const [startDate, setStartDateState] = useQueryState(
+    'startDate',
+    parseAsString.withDefault('').withOptions({ shallow: true })
+  );
+  const [endDate, setEndDateState] = useQueryState(
+    'endDate',
+    parseAsString.withDefault('').withOptions({ shallow: true })
+  );
+  const [sortBy, setSortByState] = useQueryState(
+    'sortBy',
+    parseAsString.withDefault('createdAt').withOptions({ shallow: true })
+  );
+  const [sortOrder, setSortOrderState] = useQueryState(
+    'sortOrder',
+    parseAsString.withDefault('desc').withOptions({ shallow: true })
+  );
   const [page, setPageState] = useQueryState(
     'page',
     parseAsInteger.withDefault(1).withOptions({ shallow: true })
@@ -62,6 +78,24 @@ export function useProjectsFilters() {
     [setClientIdState, setPageState]
   );
 
+  const setSort = useCallback(
+    (newSortBy: string, newSortOrder: 'asc' | 'desc') => {
+      setSortByState(newSortBy);
+      setSortOrderState(newSortOrder);
+      setPageState(1);
+    },
+    [setSortByState, setSortOrderState, setPageState]
+  );
+
+  const setDateRange = useCallback(
+    (start?: string, end?: string) => {
+      setStartDateState(start || '');
+      setEndDateState(end || '');
+      setPageState(1);
+    },
+    [setStartDateState, setEndDateState, setPageState]
+  );
+
   const setPage = useCallback(
     (val: number) => {
       setPageState(val);
@@ -82,14 +116,34 @@ export function useProjectsFilters() {
     setStageState('ALL');
     setStatusState('ALL');
     setClientIdState('');
+    setStartDateState('');
+    setEndDateState('');
+    setSortByState('createdAt');
+    setSortOrderState('desc');
     setPageState(1);
-  }, [setSearchState, setStageState, setStatusState, setClientIdState, setPageState]);
+  }, [
+    setSearchState,
+    setStageState,
+    setStatusState,
+    setClientIdState,
+    setStartDateState,
+    setEndDateState,
+    setSortByState,
+    setSortOrderState,
+    setPageState,
+  ]);
 
   const filters: ProjectFilters = {
     search: search || undefined,
     stage: stage !== 'ALL' ? stage : undefined,
     status: status !== 'ALL' ? status : undefined,
     clientId: clientId || undefined,
+    startDate: startDate || undefined,
+    endDate: endDate || undefined,
+    dateFrom: startDate || undefined,
+    dateTo: endDate || undefined,
+    sortBy: sortBy || 'createdAt',
+    sortOrder: (sortOrder === 'asc' ? 'asc' : 'desc') as 'asc' | 'desc',
     page,
     limit,
   };
@@ -100,12 +154,18 @@ export function useProjectsFilters() {
     stage,
     status,
     clientId,
+    startDate,
+    endDate,
+    sortBy,
+    sortOrder: (sortOrder === 'asc' ? 'asc' : 'desc') as 'asc' | 'desc',
     page,
     limit,
     setSearch,
     setStage,
     setStatus,
     setClientId,
+    setSort,
+    setDateRange,
     setPage,
     setLimit,
     resetFilters,

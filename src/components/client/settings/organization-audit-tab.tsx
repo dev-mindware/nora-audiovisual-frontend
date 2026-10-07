@@ -29,7 +29,7 @@ import { AuditTimelineView } from '../admin/audit/audit-timeline-view';
 
 const CATEGORIES: { label: string; value: AuditCategory | 'ALL' }[] = [
   { label: 'Todas as Categorias', value: 'ALL' },
-  { label: 'Projetos', value: 'PROJECTS' },
+  { label: 'Projectos', value: 'PROJECTS' },
   { label: 'Comercial & Orçamentos', value: 'COMMERCIAL' },
   { label: 'Finanças & Pagamentos', value: 'FINANCE' },
   { label: 'Equipa & Membros', value: 'USERS' },
@@ -168,7 +168,7 @@ export function OrganizationAuditTab() {
           Auditoria &amp; Governança do Estúdio
         </h3>
         <p className="text-xs text-muted-foreground mt-0.5">
-          Rastreie com precisão todas as alterações efetuadas em orçamentos, projetos, equipamentos e permissões da sua produtora.
+          Rastreie com precisão todas as alterações efectuadas em orçamentos, projectos, equipamentos e permissões da sua produtora.
         </p>
       </div>
 
@@ -178,28 +178,28 @@ export function OrganizationAuditTab() {
           <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Acontecimentos Registados
           </span>
-          <p className="text-2xl font-bold text-foreground">{metrics.total}</p>
+          <p className="text-2xl font-semibold text-foreground">{metrics.total}</p>
         </div>
 
         <div className="p-4 rounded-xl border border-border bg-card shadow-xs space-y-1">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-amber-500">
-            Ações de Alta Severidade
+            Acções de Alta Severidade
           </span>
-          <p className="text-2xl font-bold text-foreground">{metrics.critical}</p>
+          <p className="text-2xl font-semibold text-foreground">{metrics.critical}</p>
         </div>
 
         <div className="p-4 rounded-xl border border-border bg-card shadow-xs space-y-1">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Membros que Interagiram
           </span>
-          <p className="text-2xl font-bold text-foreground">{metrics.uniqueActors}</p>
+          <p className="text-2xl font-semibold text-foreground">{metrics.uniqueActors}</p>
         </div>
 
         <div className="p-4 rounded-xl border border-border bg-card shadow-xs space-y-1">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Dispositivos Distintos
           </span>
-          <p className="text-2xl font-bold text-foreground">{metrics.uniqueDevices}</p>
+          <p className="text-2xl font-semibold text-foreground">{metrics.uniqueDevices}</p>
         </div>
       </div>
 
@@ -209,7 +209,7 @@ export function OrganizationAuditTab() {
           <SearchHandlerWrapper
             search={search}
             setSearch={setSearch}
-            placeholder="Pesquisar por projeto, orçamento, membro ou ação..."
+            placeholder="Pesquisar por projecto, orçamento, membro ou acção..."
             className="w-full md:max-w-md"
           />
 

@@ -368,7 +368,7 @@ export function StudioPageContent() {
                           )}
                         </div>
                         <p className="text-xs text-muted-foreground mt-0.5">
-                          {b.projectTitle ? `Projeto: ${b.projectTitle}` : 'Reserva Direta de Estúdio'} •{' '}
+                          {b.projectTitle ? `Projecto: ${b.projectTitle}` : 'Reserva Directa de Estúdio'} •{' '}
                           <span className="font-mono text-foreground/80">
                             {new Date(b.startTime).toLocaleDateString('pt-PT')} ({new Date(b.startTime).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })} - {new Date(b.endTime).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })})
                           </span>

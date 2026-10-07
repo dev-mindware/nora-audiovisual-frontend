@@ -136,16 +136,16 @@ export function SettingsPageContent() {
             {allowedTabs.includes('subscription') && (
               <TabsTrigger
                 value="subscription"
-                className="data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-none text-xs gap-1.5 py-1.5 px-3 rounded-xs font-medium"
+                className="data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-none text-xs gap-1.5 min-h-[44px] sm:min-h-0 py-2 sm:py-1.5 px-3 rounded-xs font-medium"
               >
-                <CreditCard className="h-3.5 w-3.5" /> Subscrição &amp; Faturação
+                <CreditCard className="h-3.5 w-3.5" /> Subscrição &amp; Facturação
               </TabsTrigger>
             )}
 
             {allowedTabs.includes('security') && (
               <TabsTrigger
                 value="security"
-                className="data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-none text-xs gap-1.5 py-1.5 px-3 rounded-xs font-medium"
+                className="data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-none text-xs gap-1.5 min-h-[44px] sm:min-h-0 py-2 sm:py-1.5 px-3 rounded-xs font-medium"
               >
                 <Shield className="h-3.5 w-3.5" /> Segurança &amp; Acessos
               </TabsTrigger>
@@ -154,18 +154,18 @@ export function SettingsPageContent() {
             {allowedTabs.includes('mindgest') && (
               <TabsTrigger
                 value="mindgest"
-                className="data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-none text-xs gap-1.5 py-1.5 px-3 rounded-xs font-medium"
+                className="data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-none text-xs gap-1.5 min-h-[44px] sm:min-h-0 py-2 sm:py-1.5 px-3 rounded-xs font-medium"
               >
-                <FileCheck className="h-3.5 w-3.5" /> Faturação Fiscal AGT
+                <FileCheck className="h-3.5 w-3.5" /> Facturação Fiscal AGT
               </TabsTrigger>
             )}
 
             {allowedTabs.includes('team') && (
               <TabsTrigger
                 value="team"
-                className="data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-none text-xs gap-1.5 py-1.5 px-3 rounded-xs font-medium"
+                className="data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-none text-xs gap-1.5 min-h-[44px] sm:min-h-0 py-2 sm:py-1.5 px-3 rounded-xs font-medium"
               >
-                <Users className="h-3.5 w-3.5" /> Equipa &amp; Permissões
+                <Users className="h-3.5 w-3.5" /> Equipa de Produção
               </TabsTrigger>
             )}
 

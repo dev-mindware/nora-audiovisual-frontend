@@ -95,7 +95,7 @@ export function AdminUsersPageContent() {
     },
     {
       key: 'activeProjectsCount',
-      header: 'Projetos',
+      header: 'Projectos',
       render: (_, item) => (
         <span className="text-xs text-foreground">{item.activeProjectsCount ?? 0}</span>
       ),

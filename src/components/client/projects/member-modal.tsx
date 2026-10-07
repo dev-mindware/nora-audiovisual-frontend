@@ -16,19 +16,19 @@ import { addMemberSchema, MemberFormData } from '@/schemas';
 import { Users, Sparkles } from 'lucide-react';
 
 const AUDIOVISUAL_ROLES = [
-  { label: 'Diretor / Realizador', value: 'Diretor / Realizador' },
-  { label: 'Diretor de Fotografia (DoP)', value: 'Diretor de Fotografia (DoP)' },
+  { label: 'Director / Realizador', value: 'Director / Realizador' },
+  { label: 'Director de Fotografia (DoP)', value: 'Director de Fotografia (DoP)' },
   { label: 'Operador de Câmara', value: 'Operador de Câmara' },
   { label: '1º Assistente de Câmara (Focus Puller)', value: '1º Assistente de Câmara (Focus Puller)' },
   { label: '2º Assistente de Câmara (Loader/Clapper)', value: '2º Assistente de Câmara (Loader/Clapper)' },
-  { label: 'Gaffer / Chefe Eletricista', value: 'Gaffer / Chefe Eletricista' },
+  { label: 'Gaffer / Chefe Eléctrico', value: 'Gaffer / Chefe Eléctrico' },
   { label: 'Maquinista Chefe (Key Grip)', value: 'Maquinista Chefe (Key Grip)' },
-  { label: 'Técnico de Som Direto', value: 'Técnico de Som Direto' },
+  { label: 'Técnico de Som Directo', value: 'Técnico de Som Directo' },
   { label: 'Microfonista (Boom Operator)', value: 'Microfonista (Boom Operator)' },
-  { label: 'Diretor de Produção', value: 'Diretor de Produção' },
+  { label: 'Director de Produção', value: 'Director de Produção' },
   { label: 'Chefe de Produção', value: 'Chefe de Produção' },
   { label: 'Assistente de Produção', value: 'Assistente de Produção' },
-  { label: 'Diretor de Arte', value: 'Diretor de Arte' },
+  { label: 'Director de Arte', value: 'Director de Arte' },
   { label: 'Figurinista / Styling', value: 'Figurinista / Styling' },
   { label: 'Caracterização / Maquilhagem', value: 'Caracterização / Maquilhagem' },
   { label: 'Editor / Montador', value: 'Editor / Montador' },
@@ -121,7 +121,7 @@ export function MemberModal({ isOpen, onClose, projectId }: MemberModalProps) {
       onClose={handleCancel}
       size="md"
       title="Escalar Membro da Equipa"
-      description="Atribua um profissional da organização a uma função técnica no projeto."
+      description="Atribua um profissional da organização a uma função técnica no projecto."
       icon={<Users className="h-5 w-5" />}
       footer={
         <>
@@ -129,14 +129,16 @@ export function MemberModal({ isOpen, onClose, projectId }: MemberModalProps) {
             type="button"
             variant="outline"
             onClick={handleCancel}
+            className="min-h-[44px] sm:min-h-0"
           >
             Cancelar
           </Button>
           <ButtonSubmit
             form="member-form"
             isLoading={isPending}
+            className="min-h-[44px] sm:min-h-0"
           >
-            Escalar no Projeto
+            Escalar no Projecto
           </ButtonSubmit>
         </>
       }
@@ -152,7 +154,7 @@ export function MemberModal({ isOpen, onClose, projectId }: MemberModalProps) {
               options={userOptions}
               onChange={onChange}
               isLoading={loadingUsers}
-              placeholder="Selecione um profissional..."
+              placeholder="Seleccione um profissional..."
               fullWidth
               searchValue={userSearch}
               onSearchChange={setUserSearch}
@@ -167,15 +169,15 @@ export function MemberModal({ isOpen, onClose, projectId }: MemberModalProps) {
         <RHFSelect
           control={control}
           name="projectRole"
-          label="Função Técnica / Role Audiovisual *"
+          label="Função Técnica Audiovisual *"
           options={AUDIOVISUAL_ROLES}
         />
 
         <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-400 flex items-start gap-2">
           <Sparkles className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
           <span>
-            O membro escalado terá acesso visual e operacional às tarefas do Kanban, folhas de rodagem e acervo de
-            arquivos do projeto conforme suas permissões de organização.
+            O membro escalado terá acesso visual e operacional às tarefas do Quadro Kanban, folhas de rodagem e acervo de
+            ficheiros do projecto conforme as suas permissões de organização.
           </span>
         </div>
       </form>

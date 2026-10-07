@@ -59,7 +59,7 @@ export function LoginHeroComposition() {
         <div className="absolute top-44 right-16 z-30">
           <HeroStatsWidget
             icon={Film}
-            label="Projetos Ativos"
+            label="Projectos Activos"
             value="18"
             trend="+24%"
             delay="delay-150"

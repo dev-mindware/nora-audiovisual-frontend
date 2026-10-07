@@ -17,6 +17,22 @@ export function useCrmFilters() {
     'status',
     parseAsString.withDefault('ALL').withOptions({ shallow: true })
   );
+  const [startDate, setStartDateState] = useQueryState(
+    'startDate',
+    parseAsString.withDefault('').withOptions({ shallow: true })
+  );
+  const [endDate, setEndDateState] = useQueryState(
+    'endDate',
+    parseAsString.withDefault('').withOptions({ shallow: true })
+  );
+  const [sortBy, setSortByState] = useQueryState(
+    'sortBy',
+    parseAsString.withDefault('createdAt').withOptions({ shallow: true })
+  );
+  const [sortOrder, setSortOrderState] = useQueryState(
+    'sortOrder',
+    parseAsString.withDefault('desc').withOptions({ shallow: true })
+  );
   const [page, setPageState] = useQueryState(
     'page',
     parseAsInteger.withDefault(1).withOptions({ shallow: true })
@@ -50,6 +66,24 @@ export function useCrmFilters() {
     [setStatusState, setPageState]
   );
 
+  const setSort = useCallback(
+    (newSortBy: string, newSortOrder: 'asc' | 'desc') => {
+      setSortByState(newSortBy);
+      setSortOrderState(newSortOrder);
+      setPageState(1);
+    },
+    [setSortByState, setSortOrderState, setPageState]
+  );
+
+  const setDateRange = useCallback(
+    (start?: string, end?: string) => {
+      setStartDateState(start || '');
+      setEndDateState(end || '');
+      setPageState(1);
+    },
+    [setStartDateState, setEndDateState, setPageState]
+  );
+
   const setPage = useCallback(
     (val: number) => {
       setPageState(val);
@@ -69,13 +103,30 @@ export function useCrmFilters() {
     setSearchState('');
     setTypeState('ALL');
     setStatusState('ALL');
+    setStartDateState('');
+    setEndDateState('');
+    setSortByState('createdAt');
+    setSortOrderState('desc');
     setPageState(1);
-  }, [setSearchState, setTypeState, setStatusState, setPageState]);
+  }, [
+    setSearchState,
+    setTypeState,
+    setStatusState,
+    setStartDateState,
+    setEndDateState,
+    setSortByState,
+    setSortOrderState,
+    setPageState,
+  ]);
 
   const filters: ClientFilters = {
     search: search || undefined,
     type: type !== 'ALL' ? type : undefined,
     status: status !== 'ALL' ? status : undefined,
+    dateFrom: startDate || undefined,
+    dateTo: endDate || undefined,
+    sortBy: sortBy || 'createdAt',
+    sortOrder: (sortOrder === 'asc' ? 'asc' : 'desc') as 'asc' | 'desc',
     page,
     limit,
   };
@@ -85,11 +136,17 @@ export function useCrmFilters() {
     search,
     type,
     status,
+    startDate,
+    endDate,
+    sortBy,
+    sortOrder: (sortOrder === 'asc' ? 'asc' : 'desc') as 'asc' | 'desc',
     page,
     limit,
     setSearch,
     setType,
     setStatus,
+    setSort,
+    setDateRange,
     setPage,
     setLimit,
     resetFilters,

@@ -16,7 +16,7 @@ import { Camera } from 'lucide-react';
 
 const CATEGORY_OPTIONS = [
   { label: 'Câmara / Corpo', value: 'CAMERA' },
-  { label: 'Lente / Ótica', value: 'LENS' },
+  { label: 'Lente / Óptica', value: 'LENS' },
   { label: 'Iluminação / Luz', value: 'LIGHTING' },
   { label: 'Áudio / Microfone', value: 'AUDIO' },
   { label: 'Grip / Tripé / Suporte', value: 'GRIP' },
@@ -88,7 +88,7 @@ export function EquipmentModal({ isOpen, onClose }: EquipmentModalProps) {
       onClose={handleCancel}
       size="lg"
       title="Novo Equipamento Audiovisual"
-      description="Cadastre itens do inventário de estúdio, iluminação, câmaras e áudio."
+      description="Registe artigos do inventário de estúdio, iluminação, câmaras e áudio."
       icon={<Camera className="h-5 w-5" />}
       footer={
         <>
@@ -96,14 +96,16 @@ export function EquipmentModal({ isOpen, onClose }: EquipmentModalProps) {
             type="button"
             variant="outline"
             onClick={handleCancel}
+            className="min-h-[44px] sm:min-h-0"
           >
             Cancelar
           </Button>
           <ButtonSubmit
             form="equipment-form"
             isLoading={isPending}
+            className="min-h-[44px] sm:min-h-0"
           >
-            Cadastrar Equipamento
+            Registar Equipamento
           </ButtonSubmit>
         </>
       }

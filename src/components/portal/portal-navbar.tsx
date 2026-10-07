@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Clapperboard, Video, FileSpreadsheet, LayoutDashboard, LogOut } from 'lucide-react';
+import { Clapperboard, Video, FileSpreadsheet, LayoutDashboard, LogOut, Building2 } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Button } from '@/components/ui/button';
 import { BrandLogo } from '@/components';
@@ -31,6 +31,13 @@ export function PortalNavbar() {
       href: '/portal',
       icon: LayoutDashboard,
       active: pathname === '/portal',
+    },
+    {
+      name: 'Agenda do Estúdio',
+      shortName: 'Estúdio',
+      href: '/portal/studio',
+      icon: Building2,
+      active: pathname.startsWith('/portal/studio'),
     },
     {
       name: 'Entregáveis & Copiões',

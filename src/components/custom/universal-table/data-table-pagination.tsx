@@ -46,8 +46,8 @@ export function DataTablePagination<TData>({
               table.setPageSize(Number(value))
             }}
           >
-            <SelectTrigger id={id} className="w-fit whitespace-nowrap rounded-none border-border h-8 text-xs">
-              <SelectValue placeholder="Select page size" />
+            <SelectTrigger id={id} className="w-fit whitespace-nowrap rounded-none border-border h-9 sm:h-8 text-xs">
+              <SelectValue placeholder="Seleccionar tamanho" />
             </SelectTrigger>
             <SelectContent className="[&_*[role=option]]:ps-2 [&_*[role=option]]:pe-8 rounded-none">
               {pageSizeOptions.map((pageSize) => (
@@ -103,10 +103,10 @@ export function DataTablePagination<TData>({
               <Button
                 size="icon"
                 variant="outline"
-                className="h-8 w-8 rounded-none border-border disabled:pointer-events-none disabled:opacity-40"
+                className="h-9 w-9 sm:h-8 sm:w-8 rounded-none border-border disabled:pointer-events-none disabled:opacity-40"
                 onClick={() => table.firstPage()}
                 disabled={!table.getCanPreviousPage()}
-                aria-label="Go to first page"
+                aria-label="Primeira página"
               >
                 <ChevronFirstIcon size={14} aria-hidden="true" />
               </Button>
@@ -115,10 +115,10 @@ export function DataTablePagination<TData>({
               <Button
                 size="icon"
                 variant="outline"
-                className="h-8 w-8 rounded-none border-border disabled:pointer-events-none disabled:opacity-40"
+                className="h-9 w-9 sm:h-8 sm:w-8 rounded-none border-border disabled:pointer-events-none disabled:opacity-40"
                 onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage()}
-                aria-label="Go to previous page"
+                aria-label="Página anterior"
               >
                 <ChevronLeftIcon size={14} aria-hidden="true" />
               </Button>
@@ -127,10 +127,10 @@ export function DataTablePagination<TData>({
               <Button
                 size="icon"
                 variant="outline"
-                className="h-8 w-8 rounded-none border-border disabled:pointer-events-none disabled:opacity-40"
+                className="h-9 w-9 sm:h-8 sm:w-8 rounded-none border-border disabled:pointer-events-none disabled:opacity-40"
                 onClick={() => table.nextPage()}
                 disabled={!table.getCanNextPage()}
-                aria-label="Go to next page"
+                aria-label="Página seguinte"
               >
                 <ChevronRightIcon size={14} aria-hidden="true" />
               </Button>
@@ -139,10 +139,10 @@ export function DataTablePagination<TData>({
               <Button
                 size="icon"
                 variant="outline"
-                className="h-8 w-8 rounded-none border-border disabled:pointer-events-none disabled:opacity-40"
+                className="h-9 w-9 sm:h-8 sm:w-8 rounded-none border-border disabled:pointer-events-none disabled:opacity-40"
                 onClick={() => table.lastPage()}
                 disabled={!table.getCanNextPage()}
-                aria-label="Go to last page"
+                aria-label="Última página"
               >
                 <ChevronLastIcon size={14} aria-hidden="true" />
               </Button>

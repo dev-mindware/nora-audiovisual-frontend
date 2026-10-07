@@ -59,13 +59,13 @@ export const menuItems: MenuStructure = {
       roles: ["ADMIN"],
     },
     {
-      name: "Dashboard",
+      name: "Painel Operacional",
       url: "/dashboard",
       icon: <Icon name="LayoutDashboard" className="w-5 h-5" />,
       roles: ["OWNER", "MANAGER", "PRODUCER", "FINANCE", "CREW", "EDITOR", "MEMBER"],
     },
     {
-      name: "Projetos",
+      name: "Projectos",
       url: "/projects",
       icon: <Icon name="Clapperboard" className="w-5 h-5" />,
       roles: ["OWNER", "MANAGER", "PRODUCER", "CREW", "FINANCE"],
@@ -83,15 +83,9 @@ export const menuItems: MenuStructure = {
       roles: ["OWNER", "MANAGER", "PRODUCER", "CREW"],
     },
     {
-      name: "Kanban de Produção",
+      name: "Quadro de Produção",
       url: "/kanban",
       icon: <Icon name="Kanban" className="w-5 h-5" />,
-      roles: ["OWNER", "MANAGER", "PRODUCER", "CREW"],
-    },
-    {
-      name: "Ficheiros & Media",
-      url: "/files",
-      icon: <Icon name="FolderKanban" className="w-5 h-5" />,
       roles: ["OWNER", "MANAGER", "PRODUCER", "CREW"],
     },
     {
@@ -113,7 +107,7 @@ export const menuItems: MenuStructure = {
       roles: ["OWNER", "MANAGER", "PRODUCER", "FINANCE"],
     },
     {
-      name: "Clientes CRM",
+      name: "Clientes & CRM",
       url: "/crm",
       icon: <Icon name="Users" className="w-5 h-5" />,
       roles: ["OWNER", "MANAGER", "PRODUCER", "FINANCE"],
@@ -126,21 +120,18 @@ export const menuItems: MenuStructure = {
       items: [
         {
           name: "Nora AI",
-          subtitle: "Pensar",
           url: "/ai",
           badge: "Activo",
           badgeVariant: "active",
         },
         {
           name: "Nora Insights",
-          subtitle: "Perceber",
           url: "/insights",
           badge: "Activo",
           badgeVariant: "active",
         },
         {
           name: "Nora Automate",
-          subtitle: "Executar",
           url: "/automate",
           badge: "Disponível",
           badgeVariant: "pro",
@@ -148,7 +139,7 @@ export const menuItems: MenuStructure = {
       ],
     },
     {
-      name: "Planos & Add-Ons",
+      name: "Subscrições & Capacidade",
       url: "/subscriptions",
       icon: <Icon name="CreditCard" className="w-5 h-5" />,
       roles: ["OWNER", "MANAGER"],

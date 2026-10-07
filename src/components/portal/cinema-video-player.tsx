@@ -256,7 +256,7 @@ export function CinemaVideoPlayer({
         <div className="flex items-center gap-2 rounded-lg bg-black/75 px-3 py-1.5 backdrop-blur-md border border-white/10 font-mono text-xs text-white shadow-lg">
           <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
           <span className="text-zinc-400 font-medium">TC (25fps)</span>
-          <span className="font-bold tracking-wider text-amber-400">{formatSMPTE(currentTime)}</span>
+          <span className="font-semibold tracking-wider text-amber-400">{formatSMPTE(currentTime)}</span>
           <span className="text-zinc-500">/</span>
           <span className="text-zinc-400">{formatSMPTE(duration)}</span>
         </div>

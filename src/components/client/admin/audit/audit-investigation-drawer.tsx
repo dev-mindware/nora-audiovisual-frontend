@@ -127,7 +127,7 @@ export function AuditInvestigationDrawer({
             </span>
           </div>
 
-          <SheetTitle className="text-lg font-bold font-mono text-foreground break-all">
+          <SheetTitle className="text-lg font-semibold font-mono text-foreground break-all">
             {event.action}
           </SheetTitle>
 
@@ -157,7 +157,7 @@ export function AuditInvestigationDrawer({
                     {event.actor?.role || 'SYSTEM'}
                   </span>
                   {event.actor?.isPlatformAdmin && (
-                    <span className="px-1.5 py-0.5 text-[10px] font-bold uppercase rounded bg-primary/10 text-primary border border-primary/20">
+                    <span className="px-1.5 py-0.5 text-[10px] font-semibold uppercase rounded bg-primary/10 text-primary border border-primary/20">
                       ADMIN GLOBAL
                     </span>
                   )}
@@ -262,13 +262,13 @@ export function AuditInvestigationDrawer({
                         <span className="font-mono font-semibold text-primary">{field}</span>
                         <div className="grid grid-cols-2 gap-2 font-mono text-[11px]">
                           <div className="p-1.5 rounded bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 overflow-x-auto">
-                            <span className="text-[9px] uppercase font-bold text-muted-foreground block mb-0.5">
+                            <span className="text-[9px] uppercase font-semibold text-muted-foreground block mb-0.5">
                               Antes:
                             </span>
                             {beforeVal !== undefined ? JSON.stringify(beforeVal) : '—'}
                           </div>
                           <div className="p-1.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 overflow-x-auto">
-                            <span className="text-[9px] uppercase font-bold text-muted-foreground block mb-0.5">
+                            <span className="text-[9px] uppercase font-semibold text-muted-foreground block mb-0.5">
                               Depois:
                             </span>
                             {afterVal !== undefined ? JSON.stringify(afterVal) : '—'}

@@ -80,6 +80,15 @@ export function DataTable<TData>({
   searchPlaceholder,
   searchableColumns = [],
   filterableColumns = [],
+  customFilters,
+  mobileSections,
+  appliedMobileFilters,
+  onApplyMobileFilters,
+  onClearFilters,
+  searchValue,
+  onSearchChange,
+  sortFilter,
+  dateRangeFilter,
   enableSelection = false,
   enablePagination = true,
   enableSorting = true,
@@ -183,7 +192,16 @@ export function DataTable<TData>({
         table={table}
         searchableColumns={effectiveSearchableColumns}
         searchPlaceholder={searchPlaceholder}
+        searchValue={searchValue}
+        onSearchChange={onSearchChange}
         filterableColumns={filterableColumns}
+        customFilters={customFilters}
+        mobileSections={mobileSections}
+        appliedMobileFilters={appliedMobileFilters}
+        onApplyMobileFilters={onApplyMobileFilters}
+        onClearFilters={onClearFilters}
+        sortFilter={sortFilter}
+        dateRangeFilter={dateRangeFilter}
         enableColumnVisibility={enableColumnVisibility}
         onDelete={onDelete}
         toolbar={toolbar}

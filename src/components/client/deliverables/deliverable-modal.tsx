@@ -12,7 +12,7 @@ import {
 } from '@/components/ui';
 import { PaginatedSelect } from '@/components/shared';
 import { GlobalModal } from '@/components/modal';
-import { useCreateDeliverable } from '@/hooks/deliverables';
+import { useCreateDeliverable, useDeliverableTypes } from '@/hooks/deliverables';
 import { useProjects } from '@/hooks/projects';
 import { createDeliverableSchema, DeliverableFormData } from '@/schemas';
 import { DeliverableType } from '@/types';
@@ -28,6 +28,7 @@ export function DeliverableModal({ isOpen, onClose, defaultProjectId }: Delivera
   const { data: projectsData, isLoading: isLoadingProjects } = useProjects();
   const projects = projectsData?.data || [];
   const [projectSearch, setProjectSearch] = useState('');
+  const { types: deliverableTypes } = useDeliverableTypes();
 
   const {
     register,
@@ -75,10 +76,11 @@ export function DeliverableModal({ isOpen, onClose, defaultProjectId }: Delivera
         title: data.title,
         type: data.type as DeliverableType,
         notes: data.notes,
+        mediaUrl: data.mediaUrl,
         includedPhotosCount: isPhotoshoot ? Number(data.includedPhotosCount) : undefined,
         extraPhotoPrice: isPhotoshoot ? Number(data.extraPhotoPrice) : undefined,
         allowExtraPurchase: isPhotoshoot ? data.allowExtraPurchase : undefined,
-      });
+      } as any);
       handleCancel();
     } catch {
       // Handled in mutation
@@ -99,12 +101,14 @@ export function DeliverableModal({ isOpen, onClose, defaultProjectId }: Delivera
             type="button"
             variant="outline"
             onClick={handleCancel}
+            className="min-h-[44px] sm:min-h-0"
           >
             Cancelar
           </Button>
           <ButtonSubmit
             form="deliverable-form"
             isLoading={isPending}
+            className="min-h-[44px] sm:min-h-0"
           >
             Criar Entregável
           </ButtonSubmit>
@@ -117,16 +121,16 @@ export function DeliverableModal({ isOpen, onClose, defaultProjectId }: Delivera
           name="projectId"
           render={({ field: { onChange, value } }) => (
             <PaginatedSelect
-              label="Projeto Audiovisual *"
+              label="Projecto Audiovisual *"
               value={value}
               options={projectOptions}
               onChange={onChange}
               isLoading={isLoadingProjects}
-              placeholder="Selecione um projeto..."
+              placeholder="Seleccione um projecto..."
               fullWidth
               searchValue={projectSearch}
               onSearchChange={setProjectSearch}
-              searchPlaceholder="Pesquisar projeto..."
+              searchPlaceholder="Pesquisar projecto..."
               error={errors.projectId?.message}
               pagination={{ page: 1, totalPages: 1 }}
               onPageChange={() => {}}
@@ -136,7 +140,7 @@ export function DeliverableModal({ isOpen, onClose, defaultProjectId }: Delivera
 
         <Input
           label="Título do Entregável *"
-          placeholder="Ex: Corte do Diretor v2 / Ensaio Fotográfico Final"
+          placeholder="Ex: Corte do Director v2 / Ensaio Fotográfico Final"
           {...register('title')}
           error={errors.title?.message}
         />
@@ -145,16 +149,23 @@ export function DeliverableModal({ isOpen, onClose, defaultProjectId }: Delivera
           control={control}
           name="type"
           label="Tipo de Entregável"
-          options={[
-            { label: 'Master Final (4K / ProRes)', value: 'FINAL_MASTER' },
-            { label: 'Sessão Fotográfica (Fotos)', value: 'PHOTOSHOOT' },
-            { label: 'Primeiro Corte / Copião', value: 'ROUGH_CUT' },
-            { label: 'Teaser', value: 'TEASER' },
-            { label: 'Trailer Oficial', value: 'TRAILER' },
-            { label: 'Corte Redes Sociais (9:16 / 1:1)', value: 'SOCIAL_CUT' },
-            { label: 'Material Bruto / Dailies', value: 'RAW' },
-          ]}
+          options={deliverableTypes.map((t) => ({
+            label: t.name,
+            value: t.code,
+          }))}
         />
+
+        <div className="space-y-1">
+          <Input
+            label="Ligação / URL do Ficheiro de Vídeo ou Média"
+            placeholder="Ex: https://storage.../corte-v1.mp4"
+            {...register('mediaUrl')}
+            error={errors.mediaUrl?.message}
+          />
+          <p className="text-[11px] text-muted-foreground">
+            O vídeo fica imediatamente disponível para revisão com comentários ancorados por timecode.
+          </p>
+        </div>
 
         {/* Photoshoot specific package parameters */}
         {isPhotoshoot && (

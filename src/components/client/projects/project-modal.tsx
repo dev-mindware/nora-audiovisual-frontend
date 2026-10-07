@@ -95,7 +95,7 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
       isOpen={isOpen}
       onClose={handleCancel}
       size="lg"
-      title="Novo Projeto Audiovisual"
+      title="Novo Projecto Audiovisual"
       description="Defina os parâmetros de produção, fase e cliente associado."
       icon={<Clapperboard className="h-5 w-5" />}
       canClose
@@ -105,14 +105,16 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
             type="button"
             variant="outline"
             onClick={handleCancel}
+            className="min-h-[44px] sm:min-h-0"
           >
             Cancelar
           </Button>
           <ButtonSubmit
             form="project-form"
             isLoading={isPending}
+            className="min-h-[44px] sm:min-h-0"
           >
-            Criar Projeto
+            Criar Projecto
           </ButtonSubmit>
         </>
       }
@@ -135,7 +137,7 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
               options={clientOptions}
               onChange={onChange}
               isLoading={isLoadingClients}
-              placeholder="Selecione um cliente..."
+              placeholder="Seleccione um cliente..."
               fullWidth
               searchValue={clientSearch}
               onSearchChange={setClientSearch}
@@ -167,7 +169,7 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
             label="Estado Operacional"
             options={[
               { label: 'Planeamento', value: 'PLANNING' },
-              { label: 'Em Curso (Ativo)', value: 'ACTIVE' },
+              { label: 'Em Curso (Activo)', value: 'ACTIVE' },
               { label: 'Proposta / Lead', value: 'LEAD' },
               { label: 'Concluído', value: 'COMPLETED' },
             ]}
@@ -194,7 +196,7 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
             label="Notas / Briefing"
             {...register('description')}
             rows={3}
-            placeholder="Notas de direção, especificações de entrega, formato..."
+            placeholder="Notas de direcção, especificações de entrega, formato..."
             error={errors.description?.message}
           />
         </div>

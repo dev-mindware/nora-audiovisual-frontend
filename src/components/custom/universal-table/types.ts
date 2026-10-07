@@ -1,5 +1,7 @@
 import { ColumnDef, FilterFn, Row } from "@tanstack/react-table"
 import { ReactNode } from "react"
+import { SortOption } from "./sort-filter"
+import { FilterSectionConfig } from "./mobile-filter-bottom-sheet"
 
 export interface DataTableConfig<TData> {
   columns: ColumnDef<TData>[]
@@ -7,6 +9,8 @@ export interface DataTableConfig<TData> {
   searchKey?: string
   searchPlaceholder?: string
   searchableColumns?: string[]
+  searchValue?: string
+  onSearchChange?: (val: string) => void
   filterableColumns?: {
     id: string
     title: string
@@ -15,6 +19,19 @@ export interface DataTableConfig<TData> {
       value: string
     }[]
   }[]
+  customFilters?: ReactNode
+  mobileSections?: FilterSectionConfig[]
+  appliedMobileFilters?: Record<string, string[]>
+  onApplyMobileFilters?: (
+    filters: Record<string, string[]>,
+    extra?: {
+      sortBy?: string
+      sortOrder?: "asc" | "desc"
+      startDate?: string
+      endDate?: string
+    }
+  ) => void
+  onClearFilters?: () => void
   enableSelection?: boolean
   enablePagination?: boolean
   enableSorting?: boolean
@@ -32,6 +49,18 @@ export interface DataTableConfig<TData> {
     title?: string
     description?: string
     action?: ReactNode
+  }
+  sortFilter?: {
+    options: SortOption[]
+    sortBy: string
+    sortOrder: "asc" | "desc"
+    onSortChange: (sortBy: string, sortOrder: "asc" | "desc") => void
+  }
+  dateRangeFilter?: {
+    label?: string
+    startDate?: string
+    endDate?: string
+    onChange: (startDate?: string, endDate?: string) => void
   }
 }
 

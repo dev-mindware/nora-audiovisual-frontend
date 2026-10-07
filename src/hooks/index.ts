@@ -16,7 +16,6 @@ export * from "./ai";
 export * from "./deliverables";
 export * from "./subscriptions";
 export * from "./admin";
-export * from "./files";
 export { useAddClient, useUpdateClient, useToggleStatusClient, useGetClients } from "./entities/use-clients";
 export * from "./entities/clients-filters";
 export * from "./dashboard";

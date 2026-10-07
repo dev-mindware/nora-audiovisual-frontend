@@ -65,7 +65,7 @@ export function ExtraPhotosCheckoutModal({
   const handleStartCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!clientName.trim()) {
-      toast.error('Indique o seu nome completo para a fatura/recibo.');
+      toast.error('Indique o seu nome completo para a factura/recibo.');
       return;
     }
 
@@ -153,7 +153,7 @@ export function ExtraPhotosCheckoutModal({
               }).format(totalAmount / (extraPhotosCount || 1))}
             </span>
           </div>
-          <div className="border-t border-border/40 pt-2 flex items-center justify-between text-sm font-bold text-foreground">
+          <div className="border-t border-border/40 pt-2 flex items-center justify-between text-sm font-semibold text-foreground">
             <span>Total a Liquidar:</span>
             <span className="text-primary text-base">
               {new Intl.NumberFormat('pt-AO', {
@@ -263,7 +263,7 @@ export function ExtraPhotosCheckoutModal({
                   <div className="flex items-center justify-between py-1 border-b border-primary/15">
                     <span className="text-muted-foreground">Entidade:</span>
                     <div className="flex items-center gap-2">
-                      <span className="font-mono font-bold text-foreground">
+                      <span className="font-mono font-semibold text-foreground">
                         {checkoutData.paymentDetails.multicaixa.entity}
                       </span>
                       <button
@@ -288,7 +288,7 @@ export function ExtraPhotosCheckoutModal({
                   <div className="flex items-center justify-between py-1 border-b border-primary/15">
                     <span className="text-muted-foreground">Referência:</span>
                     <div className="flex items-center gap-2">
-                      <span className="font-mono font-bold text-foreground text-sm tracking-wider">
+                      <span className="font-mono font-semibold text-foreground text-sm tracking-wider">
                         {checkoutData.paymentDetails.multicaixa.reference}
                       </span>
                       <button
@@ -312,7 +312,7 @@ export function ExtraPhotosCheckoutModal({
 
                   <div className="flex items-center justify-between py-1">
                     <span className="text-muted-foreground">Montante:</span>
-                    <span className="font-bold text-foreground">
+                    <span className="font-semibold text-foreground">
                       {new Intl.NumberFormat('pt-AO', {
                         style: 'currency',
                         currency: 'AOA',
@@ -344,7 +344,7 @@ export function ExtraPhotosCheckoutModal({
                   <div className="flex items-center justify-between py-1 bg-muted/40 p-2 rounded-lg">
                     <div>
                       <span className="text-muted-foreground block text-[10px]">IBAN:</span>
-                      <span className="font-mono font-bold text-foreground text-xs break-all">
+                      <span className="font-mono font-semibold text-foreground text-xs break-all">
                         {checkoutData.paymentDetails.bankTransfer.iban}
                       </span>
                     </div>
@@ -394,7 +394,7 @@ export function ExtraPhotosCheckoutModal({
                 <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-600 mb-2">
                   <FileCheck className="h-4 w-4" />
                 </div>
-                <p className="font-bold">Comprovativo Enviado!</p>
+                <p className="font-semibold">Comprovativo Enviado!</p>
                 <p className="text-[11px] text-muted-foreground">
                   A nossa equipa financeira confirmará a receção e libertará o pacote final.
                 </p>

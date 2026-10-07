@@ -44,7 +44,7 @@ export function ProducerDashboardView() {
 
   const areaSeries = [
     { key: 'sets', label: 'Diárias de Rodagem', color: 'var(--primary)' },
-    { key: 'projectsActive', label: 'Projetos em Filmagem', color: '#3b82f6' },
+    { key: 'projectsActive', label: 'Projectos em Filmagem', color: '#3b82f6' },
   ];
 
   const donutSlices = (data.charts.distribution || []).map((d, idx) => ({
@@ -74,7 +74,7 @@ export function ProducerDashboardView() {
         <div className="lg:col-span-2">
           <MindgestAreaChart
             title="Intensidade de Rodagens & Sets"
-            description="Diárias agendadas e projetos simultâneos em set"
+            description="Diárias agendadas e projectos simultâneos em set"
             icon="Clapperboard"
             data={data.charts.primaryEvolution}
             series={areaSeries}

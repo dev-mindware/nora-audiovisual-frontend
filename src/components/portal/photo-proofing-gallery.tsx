@@ -139,7 +139,7 @@ export function PhotoProofingGallery({
           <div className="flex flex-wrap items-center gap-2 text-xs">
             <div className="flex items-center gap-1.5 rounded-xl bg-muted/60 px-3 py-1.5 font-medium border border-border/50">
               <span className="text-muted-foreground">Pacote contratado:</span>
-              <span className="font-bold text-foreground">{includedPhotosCount} fotos</span>
+              <span className="font-semibold text-foreground">{includedPhotosCount} fotos</span>
             </div>
             <div className="flex items-center gap-1.5 rounded-xl bg-rose-500/10 px-3 py-1.5 font-medium border border-rose-500/20 text-rose-500">
               <Heart className="h-3.5 w-3.5 fill-current" />
@@ -160,10 +160,10 @@ export function PhotoProofingGallery({
             <div className="flex items-center gap-2">
               <AlertCircle className="h-4 w-4 shrink-0 text-amber-500" />
               <div>
-                <span className="font-bold">Atenção:</span> Selecionou{' '}
-                <span className="font-bold text-foreground underline">{extraPhotosCount} foto(s) extra</span>{' '}
+                <span className="font-semibold">Atenção:</span> Selecionou{' '}
+                <span className="font-semibold text-foreground underline">{extraPhotosCount} foto(s) extra</span>{' '}
                 além das {includedPhotosCount} contratadas. Total adicional:{' '}
-                <span className="font-bold text-foreground">
+                <span className="font-semibold text-foreground">
                   {new Intl.NumberFormat('pt-AO', {
                     style: 'currency',
                     currency: 'AOA',

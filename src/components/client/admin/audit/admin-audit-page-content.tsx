@@ -36,7 +36,7 @@ const CATEGORIES: { label: string; value: AuditCategory | 'ALL' }[] = [
   { label: 'Autenticação', value: 'AUTHENTICATION' },
   { label: 'Organizações', value: 'ORGANIZATION' },
   { label: 'Utilizadores', value: 'USERS' },
-  { label: 'Projetos', value: 'PROJECTS' },
+  { label: 'Projectos', value: 'PROJECTS' },
   { label: 'Comercial', value: 'COMMERCIAL' },
   { label: 'Finanças', value: 'FINANCE' },
   { label: 'Recursos', value: 'RESOURCES' },
@@ -234,28 +234,28 @@ export function AdminAuditPageContent() {
           <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Eventos Registados
           </span>
-          <p className="text-2xl font-bold text-foreground">{metrics.total}</p>
+          <p className="text-2xl font-semibold text-foreground">{metrics.total}</p>
         </div>
 
         <div className="p-4 rounded-xl border border-border bg-card shadow-xs space-y-1">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-amber-500">
             Críticos / Alta Severidade
           </span>
-          <p className="text-2xl font-bold text-foreground">{metrics.critical}</p>
+          <p className="text-2xl font-semibold text-foreground">{metrics.critical}</p>
         </div>
 
         <div className="p-4 rounded-xl border border-border bg-card shadow-xs space-y-1">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Autenticação & Acessos
           </span>
-          <p className="text-2xl font-bold text-foreground">{metrics.authToday}</p>
+          <p className="text-2xl font-semibold text-foreground">{metrics.authToday}</p>
         </div>
 
         <div className="p-4 rounded-xl border border-border bg-card shadow-xs space-y-1">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Atores Distintos
           </span>
-          <p className="text-2xl font-bold text-foreground">{metrics.uniqueActors}</p>
+          <p className="text-2xl font-semibold text-foreground">{metrics.uniqueActors}</p>
         </div>
       </div>
 

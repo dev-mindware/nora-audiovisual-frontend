@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useProjects } from '@/hooks/projects';
-import { useDeliverablesList, usePublishDeliverable, useDeliverablesFilters } from '@/hooks/deliverables';
+import { useDeliverablesList, usePublishDeliverable, useDeliverablesFilters, useDeliverableTypes } from '@/hooks/deliverables';
 import {
   ItemStatusBadge,
   Button,
@@ -10,6 +10,7 @@ import {
 import { FilterPopover } from '@/components/shared';
 import { Deliverable, ReviewComment } from '@/types';
 import { DeliverableModal } from './deliverable-modal';
+import { DeliverableTypesModal } from './deliverable-types-modal';
 import { VideoReviewPlayer } from './video-review-player';
 import {
   Plus,
@@ -31,24 +32,17 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import { useMemo } from 'react';
 
 const DELIVERABLE_TYPE_LABELS: Record<string, string> = {
   FINAL_MASTER: 'Master Final',
   ROUGH_CUT: 'Copião / Primeiro Corte',
+  PHOTOSHOOT: 'Sessão Fotográfica',
   TEASER: 'Teaser',
   TRAILER: 'Trailer',
   SOCIAL_CUT: 'Corte Redes (9:16)',
   RAW: 'Material Bruto',
 };
-
-const TYPE_OPTIONS = [
-  { value: 'FINAL_MASTER', label: 'Master Final' },
-  { value: 'ROUGH_CUT', label: 'Copião / Primeiro Corte' },
-  { value: 'TEASER', label: 'Teaser' },
-  { value: 'TRAILER', label: 'Trailer' },
-  { value: 'SOCIAL_CUT', label: 'Corte Redes (9:16)' },
-  { value: 'RAW', label: 'Material Bruto' },
-];
 
 const STATUS_OPTIONS = [
   { value: 'DRAFT', label: 'Rascunho' },
@@ -61,6 +55,7 @@ const STATUS_OPTIONS = [
 export function DeliverablesPageContent() {
   const { data: projectsData } = useProjects();
   const projects = projectsData?.data || [];
+  const { types: deliverableTypes } = useDeliverableTypes();
 
   const {
     filters,
@@ -76,7 +71,20 @@ export function DeliverablesPageContent() {
   } = useDeliverablesFilters();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTypesModalOpen, setIsTypesModalOpen] = useState(false);
   const [activeReviewDeliverable, setActiveReviewDeliverable] = useState<Deliverable | null>(null);
+
+  const dynamicTypeOptions = useMemo(() => {
+    return deliverableTypes.map((t) => ({ value: t.code, label: t.name }));
+  }, [deliverableTypes]);
+
+  const typeLabelsMap = useMemo(() => {
+    const map: Record<string, string> = { ...DELIVERABLE_TYPE_LABELS };
+    for (const t of deliverableTypes) {
+      map[t.code] = t.name;
+    }
+    return map;
+  }, [deliverableTypes]);
 
   const { data, isLoading } = useDeliverablesList(filters);
   const { mutate: publishDeliverable } = usePublishDeliverable();
@@ -135,12 +143,12 @@ export function DeliverablesPageContent() {
               value={search || ''}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Pesquisar corte ou título..."
-              className="pl-9 h-10 text-xs rounded-none border-border bg-background"
+              className="pl-9 h-10 text-base sm:text-xs rounded-none border-border bg-background"
             />
             {Boolean(search) && (
               <button
                 onClick={() => setSearch('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground min-h-[44px] min-w-[36px] flex items-center justify-center"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -149,7 +157,7 @@ export function DeliverablesPageContent() {
 
           <FilterPopover
             icon="Clapperboard"
-            label="Projeto"
+            label="Projecto"
             options={projects.map((p) => ({ value: p.id, label: p.title }))}
             value={projectId && projectId !== 'ALL' ? projectId : null}
             onChange={(val) => setProjectId(val || '')}
@@ -158,7 +166,7 @@ export function DeliverablesPageContent() {
           <FilterPopover
             icon="Tag"
             label="Tipo de Corte"
-            options={TYPE_OPTIONS}
+            options={dynamicTypeOptions}
             value={type !== 'ALL' ? type : null}
             onChange={(val) => setType(val || '')}
           />
@@ -176,18 +184,29 @@ export function DeliverablesPageContent() {
               variant="ghost"
               size="sm"
               onClick={resetFilters}
-              className="rounded-none text-xs text-muted-foreground hover:text-foreground h-10 px-2"
+              className="rounded-none text-xs text-muted-foreground hover:text-foreground h-10 px-2 min-h-[44px] sm:min-h-0"
             >
               Limpar
             </Button>
           )}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsTypesModalOpen(true)}
+            className="rounded-none border-border h-11 sm:h-10 text-xs font-medium tracking-wide uppercase px-3.5 min-h-[44px] sm:min-h-0 gap-1.5"
+            title="Gerir e registar tipos de entregáveis"
+          >
+            <Layers className="h-3.5 w-3.5 text-primary" />
+            Tipos de Entregáveis
+          </Button>
+
           <Button
             onClick={() => setIsModalOpen(true)}
             size="sm"
-            className="rounded-none bg-primary text-primary-foreground hover:bg-primary/90 h-10 text-xs font-medium tracking-wide uppercase px-4"
+            className="rounded-none bg-primary text-primary-foreground hover:bg-primary/90 h-11 sm:h-10 text-xs font-medium tracking-wide uppercase px-4 min-h-[44px] sm:min-h-0"
           >
             <Plus className="mr-1.5 h-3.5 w-3.5" /> Novo Entregável
           </Button>
@@ -208,9 +227,9 @@ export function DeliverablesPageContent() {
               variant="outline"
               size="sm"
               onClick={() => setActiveReviewDeliverable(null)}
-              className="rounded-none text-xs h-8 border-border"
+              className="rounded-none text-xs h-9 sm:h-8 border-border min-h-[36px]"
             >
-              Fechar Player
+              Fechar Leitor
             </Button>
           </div>
 
@@ -287,7 +306,7 @@ export function DeliverablesPageContent() {
                         </span>
                       )}
                       <span>•</span>
-                      <span>{DELIVERABLE_TYPE_LABELS[item.type] || item.type}</span>
+                      <span>{typeLabelsMap[item.type] || item.type}</span>
                       <span>•</span>
                       <span className="font-mono flex items-center gap-1">
                         <Clock className="h-3 w-3 text-muted-foreground/70" />
@@ -304,7 +323,7 @@ export function DeliverablesPageContent() {
                     variant="outline"
                     size="sm"
                     onClick={() => setActiveReviewDeliverable(item)}
-                    className="rounded-none border-border text-foreground hover:bg-muted/50 h-8 text-xs font-medium gap-1.5 px-3"
+                    className="rounded-none border-border text-foreground hover:bg-muted/50 h-9 sm:h-8 text-xs font-medium gap-1.5 px-3 min-h-[36px]"
                   >
                     <Play className="h-3 w-3 text-primary fill-primary" /> Rever
                   </Button>
@@ -314,7 +333,7 @@ export function DeliverablesPageContent() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="rounded-none h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+                        className="rounded-none h-9 w-9 sm:h-8 sm:w-8 p-0 text-muted-foreground hover:text-foreground min-h-[36px] min-w-[36px]"
                       >
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
@@ -345,6 +364,11 @@ export function DeliverablesPageContent() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         defaultProjectId={projectId || undefined}
+      />
+
+      <DeliverableTypesModal
+        isOpen={isTypesModalOpen}
+        onClose={() => setIsTypesModalOpen(false)}
       />
     </div>
   );

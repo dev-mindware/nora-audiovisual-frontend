@@ -24,6 +24,7 @@ import {
   AlertCircle,
   Settings2,
   Sliders,
+  GripVertical,
 } from 'lucide-react';
 import {
   Select,
@@ -35,9 +36,9 @@ import {
 import Link from 'next/link';
 
 const DEPARTMENT_CONFIG: Record<TaskDepartment, { label: string; color: string }> = {
-  DIRECTION: { label: 'Direção', color: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30' },
+  DIRECTION: { label: 'Direcção', color: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30' },
   CAMERA: { label: 'Câmara', color: 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/30' },
-  SOUND: { label: 'Som Direto', color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30' },
+  SOUND: { label: 'Som Directo', color: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30' },
   LIGHTING: { label: 'Iluminação', color: 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border-orange-500/30' },
   PRODUCTION: { label: 'Produção', color: 'bg-muted text-foreground border-border' },
   EDITING: { label: 'Edição', color: 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30' },
@@ -47,9 +48,9 @@ const DEPARTMENT_CONFIG: Record<TaskDepartment, { label: string; color: string }
 
 const DEPARTMENT_OPTIONS = [
   { value: 'ALL', label: 'Todos os Departamentos' },
-  { value: 'DIRECTION', label: 'Direção' },
+  { value: 'DIRECTION', label: 'Direcção' },
   { value: 'CAMERA', label: 'Câmara' },
-  { value: 'SOUND', label: 'Som Direto' },
+  { value: 'SOUND', label: 'Som Directo' },
   { value: 'LIGHTING', label: 'Iluminação' },
   { value: 'PRODUCTION', label: 'Produção' },
   { value: 'EDITING', label: 'Edição' },
@@ -168,6 +169,66 @@ export function KanbanPageContent() {
     return activeColumns.filter((col) => (tasksByColumn[col.id]?.length || 0) > 0);
   }, [activeColumns, settings?.hideEmptyColumns, tasksByColumn]);
 
+  const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null);
+  const [dragOverColId, setDragOverColId] = useState<string | null>(null);
+
+  const handleDragStart = (e: React.DragEvent, task: ProjectTask, colId: string) => {
+    e.dataTransfer.setData(
+      'text/plain',
+      JSON.stringify({
+        taskId: task.id,
+        originColId: colId,
+        version: (task as any).version,
+      })
+    );
+    e.dataTransfer.effectAllowed = 'move';
+    setDraggedTaskId(task.id);
+  };
+
+  const handleDragOverColumn = (e: React.DragEvent, colId: string) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (dragOverColId !== colId) {
+      setDragOverColId(colId);
+    }
+  };
+
+  const handleDragLeaveColumn = (e: React.DragEvent) => {
+    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+      setDragOverColId(null);
+    }
+  };
+
+  const handleDropOnColumn = (e: React.DragEvent, targetCol: OrganizationKanbanColumn) => {
+    e.preventDefault();
+    setDragOverColId(null);
+    setDraggedTaskId(null);
+
+    try {
+      const rawData = e.dataTransfer.getData('text/plain');
+      if (!rawData) return;
+      const data = JSON.parse(rawData);
+
+      if (data.originColId === targetCol.id) {
+        return;
+      }
+
+      moveTask({
+        taskId: data.taskId,
+        columnId: targetCol.id,
+        status: targetCol.slug,
+        version: data.version,
+      });
+    } catch (err) {
+      console.error('Falha ao processar drop no kanban:', err);
+    }
+  };
+
+  const handleDragEnd = () => {
+    setDraggedTaskId(null);
+    setDragOverColId(null);
+  };
+
   const handleAdvance = (task: ProjectTask, currentColId: string) => {
     const currentIndex = activeColumns.findIndex((c) => c.id === currentColId);
     if (currentIndex >= 0 && currentIndex < activeColumns.length - 1) {
@@ -213,9 +274,9 @@ export function KanbanPageContent() {
               value={activeProjectId}
               onValueChange={(val) => setProjectIdParam(val)}
             >
-              <SelectTrigger className="h-10 text-xs font-semibold rounded-none border-border bg-card px-3 gap-2 min-w-[200px]">
+              <SelectTrigger className="h-11 sm:h-10 text-xs font-semibold rounded-none border-border bg-card px-3 gap-2 min-w-[200px] min-h-[44px] sm:min-h-0">
                 <Clapperboard className="h-4 w-4 text-primary shrink-0" />
-                <SelectValue placeholder="Selecione o projeto" />
+                <SelectValue placeholder="Seleccione o projecto" />
               </SelectTrigger>
               <SelectContent className="bg-card border-border text-foreground rounded-none">
                 {projects.map((p) => (
@@ -251,7 +312,7 @@ export function KanbanPageContent() {
                 setDepartment('ALL');
                 setPriority('ALL');
               }}
-              className="text-xs text-muted-foreground hover:text-foreground h-9 rounded-none border-border"
+              className="text-xs text-muted-foreground hover:text-foreground h-11 sm:h-9 rounded-none border-border min-h-[44px] sm:min-h-0"
             >
               Limpar
             </Button>
@@ -263,7 +324,7 @@ export function KanbanPageContent() {
             <Button
               variant="outline"
               size="sm"
-              className="rounded-none text-xs gap-1.5 h-9 border-border"
+              className="rounded-none text-xs gap-1.5 h-11 sm:h-9 border-border min-h-[44px] sm:min-h-0"
               title="Personalizar colunas e fluxo Kanban da organização"
             >
               <Settings2 className="h-3.5 w-3.5" />
@@ -274,14 +335,14 @@ export function KanbanPageContent() {
           <Button
             onClick={() => setIsTaskModalOpen(true)}
             disabled={!activeProjectId}
-            className="rounded-none text-xs gap-1.5 h-9"
+            className="rounded-none text-xs gap-1.5 h-11 sm:h-9 min-h-[44px] sm:min-h-0"
           >
             <Plus className="h-3.5 w-3.5" /> Nova Tarefa
           </Button>
         </div>
       </div>
 
-      {/* Kanban Board Grid */}
+      {/* Kanban Board Grid com Drag and Drop */}
       <div
         className="grid gap-4 overflow-x-auto pb-4"
         style={{
@@ -292,14 +353,20 @@ export function KanbanPageContent() {
           const colTasks = tasksByColumn[col.id] || [];
           const colorStyle = NOTION_KANBAN_COLORS[col.color] || NOTION_KANBAN_COLORS.gray;
           const isOverWip = col.wipLimit ? colTasks.length > col.wipLimit : false;
+          const isDropTarget = dragOverColId === col.id;
 
           return (
             <div
               key={col.id}
-              className={`flex flex-col rounded-none border bg-muted/20 p-3 shadow-none transition-colors ${
-                isOverWip
+              onDragOver={(e) => handleDragOverColumn(e, col.id)}
+              onDragLeave={handleDragLeaveColumn}
+              onDrop={(e) => handleDropOnColumn(e, col)}
+              className={`flex flex-col rounded-none border p-3 shadow-none transition-all duration-150 ${
+                isDropTarget
+                  ? 'border-primary ring-2 ring-primary/40 bg-primary/10 scale-[1.01]'
+                  : isOverWip
                   ? 'border-amber-400 dark:border-amber-700 bg-amber-500/5'
-                  : 'border-border'
+                  : 'border-border bg-muted/20'
               }`}
             >
               {/* Column Header */}
@@ -358,8 +425,14 @@ export function KanbanPageContent() {
                     A carregar tarefas...
                   </div>
                 ) : colTasks.length === 0 ? (
-                  <div className="flex h-32 flex-col items-center justify-center rounded-none border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
-                    <span>Sem tarefas</span>
+                  <div
+                    className={`flex h-32 flex-col items-center justify-center rounded-none border border-dashed p-4 text-center text-xs transition-colors ${
+                      isDropTarget
+                        ? 'border-primary/60 bg-primary/5 text-primary'
+                        : 'border-border text-muted-foreground'
+                    }`}
+                  >
+                    <span>{isDropTarget ? 'Solte a tarefa aqui' : 'Sem tarefas'}</span>
                   </div>
                 ) : (
                   colTasks.map((task) => {
@@ -374,15 +447,24 @@ export function KanbanPageContent() {
 
                     const canRegress = colIdx > 0;
                     const canAdvance = colIdx < visibleColumns.length - 1;
+                    const isBeingDragged = draggedTaskId === task.id;
 
                     return (
                       <div
                         key={task.id}
-                        className="group flex flex-col gap-2 rounded-none border border-border bg-card p-3 shadow-none transition-all hover:border-primary/50"
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, task, col.id)}
+                        onDragEnd={handleDragEnd}
+                        className={`group flex flex-col gap-2 rounded-none border bg-card p-3 shadow-none transition-all cursor-grab active:cursor-grabbing hover:border-primary/50 select-none ${
+                          isBeingDragged
+                            ? 'opacity-30 border-dashed border-primary scale-[0.98]'
+                            : 'border-border'
+                        }`}
                       >
-                        {/* Tags Top: Department & Priority */}
-                        {(cardProps.department || cardProps.priority) && (
-                          <div className="flex items-center justify-between">
+                        {/* Tags Top: Department, Grip & Priority */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <GripVertical className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-muted-foreground/80 transition-colors shrink-0" />
                             {cardProps.department && (
                               <Badge
                                 variant="outline"
@@ -391,17 +473,17 @@ export function KanbanPageContent() {
                                 {dept.label}
                               </Badge>
                             )}
-
-                            {cardProps.priority && (
-                              <div className="flex items-center gap-1.5" title={`Prioridade: ${priority.label}`}>
-                                <span className={`h-2 w-2 rounded-full ${priority.dotColor}`} />
-                                <span className="text-[10px] font-medium text-muted-foreground">
-                                  {priority.label}
-                                </span>
-                              </div>
-                            )}
                           </div>
-                        )}
+
+                          {cardProps.priority && (
+                            <div className="flex items-center gap-1.5" title={`Prioridade: ${priority.label}`}>
+                              <span className={`h-2 w-2 rounded-full ${priority.dotColor}`} />
+                              <span className="text-[10px] font-medium text-muted-foreground">
+                                {priority.label}
+                              </span>
+                            </div>
+                          )}
+                        </div>
 
                         <h4 className="text-xs font-semibold text-foreground leading-snug">
                           {task.title}

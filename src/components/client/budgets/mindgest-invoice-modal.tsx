@@ -61,10 +61,10 @@ export function MindgestInvoiceModal({
         <DialogHeader>
           <div className="flex items-center gap-2 text-primary">
             <FileCheck className="h-5 w-5" />
-            <DialogTitle className="text-lg font-semibold">Emitir Fatura no Mindgest</DialogTitle>
+            <DialogTitle className="text-lg font-semibold">Emitir Factura no Mindgest</DialogTitle>
           </div>
           <DialogDescription className="text-xs text-muted-foreground">
-            Disparo de emissão de fatura comercial com assinatura digital AGT.
+            Disparo de emissão de factura comercial com assinatura digital AGT.
           </DialogDescription>
         </DialogHeader>
 
@@ -77,7 +77,7 @@ export function MindgestInvoiceModal({
               A sua organização ainda não configurou as credenciais do Mindgest. Aceda às configurações para conectar a sua empresa emissora.
             </p>
             <Link href="/settings?tab=mindgest" onClick={onClose}>
-              <Button size="sm" variant="outline" className="text-xs mt-1 border-amber-500/30 text-amber-500">
+              <Button size="sm" variant="outline" className="text-xs mt-1 border-amber-500/30 text-amber-500 min-h-[44px] sm:min-h-0">
                 Configurar Mindgest Agora <ExternalLink className="ml-1 h-3 w-3" />
               </Button>
             </Link>
@@ -105,7 +105,7 @@ export function MindgestInvoiceModal({
                 <span className="font-mono">{formatKz(Number(budget.estimatedTax || 0))}</span>
               </div>
               <div className="flex items-center justify-between text-foreground font-semibold pt-2 border-t border-border/40 text-sm">
-                <span>Total a Faturar:</span>
+                <span>Total a Facturar:</span>
                 <span className="font-mono text-emerald-500">{formatKz(Number(budget.total || 0))}</span>
               </div>
             </div>
@@ -122,7 +122,7 @@ export function MindgestInvoiceModal({
             </div>
 
             <div className="space-y-2">
-              <label className="font-semibold text-foreground">Notas da Fatura (Opcional)</label>
+              <label className="font-semibold text-foreground">Notas da Factura (Opcional)</label>
               <Input
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
@@ -139,7 +139,7 @@ export function MindgestInvoiceModal({
         )}
 
         <DialogFooter className="flex items-center justify-end gap-2 pt-2">
-          <Button variant="outline" size="sm" onClick={onClose} disabled={isPending} className="text-xs">
+          <Button variant="outline" size="sm" onClick={onClose} disabled={isPending} className="text-xs min-h-[44px] sm:min-h-0">
             Cancelar
           </Button>
           {isConnected && (
@@ -147,7 +147,7 @@ export function MindgestInvoiceModal({
               size="sm"
               onClick={handleEmitInvoice}
               disabled={isPending}
-              className="text-xs gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white"
+              className="text-xs gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white min-h-[44px] sm:min-h-0"
             >
               {isPending ? (
                 <>
@@ -155,7 +155,7 @@ export function MindgestInvoiceModal({
                 </>
               ) : (
                 <>
-                  <FileCheck className="h-3.5 w-3.5" /> Confirmar &amp; Emitir Fatura
+                  <FileCheck className="h-3.5 w-3.5" /> Confirmar &amp; Emitir Factura
                 </>
               )}
             </Button>

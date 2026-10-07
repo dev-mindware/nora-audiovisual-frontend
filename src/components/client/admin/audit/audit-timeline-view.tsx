@@ -61,7 +61,7 @@ export function AuditTimelineView({ logs, onSelectEvent }: AuditTimelineViewProp
             >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-xs font-bold text-foreground">
+                  <span className="font-mono text-xs font-semibold text-foreground">
                     {log.action}
                   </span>
                   <span className="px-2 py-0.5 text-[10px] font-semibold uppercase rounded bg-muted text-muted-foreground border border-border">

@@ -17,6 +17,10 @@ export interface ClientFilters {
   status?: string;
   page?: number;
   limit?: number;
+  dateFrom?: string;
+  dateTo?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
 }
 
 export const clientsService = {

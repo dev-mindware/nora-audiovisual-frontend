@@ -155,7 +155,7 @@ export function PortalOverviewContent() {
                       {item.title}
                     </span>
                     <span className="text-[10px] text-muted-foreground font-mono">
-                      v{item.version} • {item.project?.title || 'Projeto'}
+                      v{item.version} • {item.project?.title || 'Projecto'}
                     </span>
                   </div>
 

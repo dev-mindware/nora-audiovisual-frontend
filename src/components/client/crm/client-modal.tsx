@@ -54,7 +54,7 @@ export function ClientModal({ isOpen, onClose, clientToEdit }: ClientModalProps)
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
-      toast.success(clientToEdit ? 'Cliente atualizado com sucesso!' : 'Cliente registado com sucesso!');
+      toast.success(clientToEdit ? 'Cliente actualizado com sucesso!' : 'Cliente registado com sucesso!');
       handleCancel();
     },
     onError: (err: any) => {
@@ -72,7 +72,7 @@ export function ClientModal({ isOpen, onClose, clientToEdit }: ClientModalProps)
       onClose={handleCancel}
       size="xl"
       title={clientToEdit ? 'Editar Cliente / Empresa' : 'Novo Cliente / Produtora Parceira'}
-      description="Cadastre os dados cadastrais, fiscais (NIF) e contactos operacionais do cliente."
+      description="Registe os dados cadastrais, fiscais (NIF) e contactos operacionais do cliente."
       icon={<Users className="h-5 w-5" />}
       footer={
         <>
@@ -82,6 +82,7 @@ export function ClientModal({ isOpen, onClose, clientToEdit }: ClientModalProps)
             size="sm"
             onClick={handleCancel}
             disabled={isSubmitting || saveMutation.isPending}
+            className="min-h-[44px] sm:min-h-0"
           >
             Cancelar
           </Button>
@@ -89,8 +90,9 @@ export function ClientModal({ isOpen, onClose, clientToEdit }: ClientModalProps)
             form="crm-client-form"
             size="sm"
             isLoading={isSubmitting || saveMutation.isPending}
+            className="min-h-[44px] sm:min-h-0"
           >
-            {clientToEdit ? 'Atualizar Cliente' : 'Registar Cliente'}
+            {clientToEdit ? 'Actualizar Cliente' : 'Registar Cliente'}
           </ButtonSubmit>
         </>
       }

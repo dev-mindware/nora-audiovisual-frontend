@@ -8,7 +8,7 @@ export default function InsightsPage() {
       <PageWrapper subRoute="Nora Insights" routeLabel="Nora Suite">
         <TitleList
           title="Nora Insights"
-          suTitle="Inteligência analítica, rentabilidade de projetos e ocupação operacional"
+          suTitle="Inteligência analítica, rentabilidade de projectos e ocupação operacional"
         />
         <InsightsPageContent />
       </PageWrapper>

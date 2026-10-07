@@ -196,7 +196,7 @@ export function PortalBudgetView({ token }: PortalBudgetViewProps) {
               <CardTitle className="text-base font-semibold text-foreground">Proposta Comercial Aceite</CardTitle>
               <CardDescription className="text-xs mt-1">
                 O aceite formal foi registado e a equipa de produção foi notificada para inicializar os preparativos do
-                projeto.
+                projecto.
               </CardDescription>
             </div>
           </Card>
@@ -236,11 +236,11 @@ export function PortalBudgetView({ token }: PortalBudgetViewProps) {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-foreground">Observações / NIF de Faturação (Opcional)</label>
+                <label className="text-xs font-semibold text-foreground">Observações / NIF de Facturação (Opcional)</label>
                 <Input
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Ex: Faturar em nome da Empresa X, NIF 540000000"
+                  placeholder="Ex: Facturar em nome da Empresa X, NIF 540000000"
                   className="bg-background border-border text-sm"
                 />
               </div>

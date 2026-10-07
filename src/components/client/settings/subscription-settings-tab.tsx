@@ -110,7 +110,7 @@ export function SubscriptionSettingsTab() {
             <div className="p-4 bg-muted/40 rounded-xs border border-border space-y-2">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-semibold text-foreground flex items-center gap-1.5">
-                  <FolderKanban className="h-3.5 w-3.5 text-muted-foreground" /> Projetos Simultâneos
+                  <FolderKanban className="h-3.5 w-3.5 text-muted-foreground" /> Projectos Simultâneos
                 </span>
                 <span className="font-mono text-muted-foreground">
                   {entitlements?.usedProjects || 8} / {entitlements?.maxProjects || 25}

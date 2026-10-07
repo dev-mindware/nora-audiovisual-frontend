@@ -172,7 +172,7 @@ export function FinancePageContent() {
               <span>Total Recebido</span>
               <TrendingUp className="h-4 w-4 text-emerald-500" />
             </CardDescription>
-            <CardTitle className="text-lg font-mono font-bold tracking-tight text-emerald-600 dark:text-emerald-400">
+            <CardTitle className="text-lg font-mono font-semibold tracking-tight text-emerald-600 dark:text-emerald-400">
               {formatKz(metrics.totalIncome)}
             </CardTitle>
           </CardHeader>
@@ -188,7 +188,7 @@ export function FinancePageContent() {
               <span>Despesas Aprovadas</span>
               <TrendingDown className="h-4 w-4 text-rose-500" />
             </CardDescription>
-            <CardTitle className="text-lg font-mono font-bold tracking-tight text-rose-600 dark:text-rose-400">
+            <CardTitle className="text-lg font-mono font-semibold tracking-tight text-rose-600 dark:text-rose-400">
               {formatKz(metrics.totalExpenses)}
             </CardTitle>
           </CardHeader>
@@ -205,7 +205,7 @@ export function FinancePageContent() {
               <DollarSign className="h-4 w-4 text-primary" />
             </CardDescription>
             <CardTitle
-              className={`text-lg font-mono font-bold tracking-tight ${
+              className={`text-lg font-mono font-semibold tracking-tight ${
                 metrics.netCashflow >= 0
                   ? 'text-foreground'
                   : 'text-rose-600 dark:text-rose-400'
@@ -226,7 +226,7 @@ export function FinancePageContent() {
               <span>Despesas Pendentes</span>
               <Clock className="h-4 w-4 text-amber-500" />
             </CardDescription>
-            <CardTitle className="text-lg font-mono font-bold tracking-tight text-amber-600 dark:text-amber-400">
+            <CardTitle className="text-lg font-mono font-semibold tracking-tight text-amber-600 dark:text-amber-400">
               {metrics.pendingApprovalExpensesCount} pendentes
             </CardTitle>
           </CardHeader>
@@ -344,13 +344,13 @@ export function FinancePageContent() {
                 <TableHeader>
                   <TableRow className="bg-muted/40 uppercase font-mono text-[10px] tracking-wider text-muted-foreground hover:bg-muted/40">
                     <TableHead className="py-2.5 px-3">Data</TableHead>
-                    <TableHead className="py-2.5 px-3">Projeto</TableHead>
+                    <TableHead className="py-2.5 px-3">Projecto</TableHead>
                     <TableHead className="py-2.5 px-3">Categoria</TableHead>
                     <TableHead className="py-2.5 px-3">Descrição</TableHead>
                     <TableHead className="py-2.5 px-3">Comprovativo</TableHead>
                     <TableHead className="py-2.5 px-3 text-right">Valor</TableHead>
                     <TableHead className="py-2.5 px-3 text-center">Estado</TableHead>
-                    <TableHead className="py-2.5 px-3 text-right">Ações de Gestão</TableHead>
+                    <TableHead className="py-2.5 px-3 text-right">Acções de Gestão</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody className="divide-y divide-border font-sans">
@@ -363,7 +363,7 @@ export function FinancePageContent() {
                           {format(new Date(expense.date), 'dd/MM/yyyy')}
                         </TableCell>
                         <TableCell className="py-3 px-3 font-semibold text-foreground">
-                          {expense.project?.title || 'Projeto Geral'}
+                          {expense.project?.title || 'Projecto Geral'}
                         </TableCell>
                         <TableCell className="py-3 px-3">
                           <span
@@ -468,12 +468,12 @@ export function FinancePageContent() {
                 <TableHeader>
                   <TableRow className="bg-muted/40 uppercase font-mono text-[10px] tracking-wider text-muted-foreground hover:bg-muted/40">
                     <TableHead className="py-2.5 px-3">Data</TableHead>
-                    <TableHead className="py-2.5 px-3">Projeto</TableHead>
+                    <TableHead className="py-2.5 px-3">Projecto</TableHead>
                     <TableHead className="py-2.5 px-3">Método</TableHead>
                     <TableHead className="py-2.5 px-3">Referência</TableHead>
                     <TableHead className="py-2.5 px-3 text-right">Valor</TableHead>
                     <TableHead className="py-2.5 px-3 text-center">Estado</TableHead>
-                    <TableHead className="py-2.5 px-3 text-right">Ação</TableHead>
+                    <TableHead className="py-2.5 px-3 text-right">Acções</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody className="divide-y divide-border font-sans">
@@ -483,7 +483,7 @@ export function FinancePageContent() {
                         {format(new Date(payment.createdAt), 'dd/MM/yyyy')}
                       </TableCell>
                       <TableCell className="py-3 px-3 font-semibold text-foreground">
-                        {payment.project?.title || 'Geral / Sem Projeto'}
+                        {payment.project?.title || 'Geral / Sem Projecto'}
                       </TableCell>
                       <TableCell className="py-3 px-3">
                         <span className="font-mono text-[11px] text-muted-foreground">
@@ -495,7 +495,7 @@ export function FinancePageContent() {
                       <TableCell className="py-3 px-3 font-mono text-[11px] text-muted-foreground">
                         {payment.reference || '—'}
                       </TableCell>
-                      <TableCell className="py-3 px-3 text-right font-mono font-bold text-foreground">
+                      <TableCell className="py-3 px-3 text-right font-mono font-semibold text-foreground">
                         {formatKz(Number(payment.amount))}
                       </TableCell>
                       <TableCell className="py-3 px-3 text-center">
@@ -538,7 +538,7 @@ export function FinancePageContent() {
       {activeTab === 'cashflow' && (
         <Card className="rounded-none border-border shadow-none">
           <CardHeader>
-            <CardTitle className="text-sm font-bold tracking-tight">
+            <CardTitle className="text-sm font-semibold tracking-tight">
               Demonstrativo Consolidado de Margem Operacional
             </CardTitle>
             <CardDescription className="text-xs text-muted-foreground">
@@ -549,21 +549,21 @@ export function FinancePageContent() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border border-border p-4 bg-muted/10">
               <div>
                 <p className="text-xs text-muted-foreground font-medium">Entradas Confirmadas</p>
-                <p className="text-xl font-mono font-bold text-emerald-600 dark:text-emerald-400 mt-1">
+                <p className="text-xl font-mono font-semibold text-emerald-600 dark:text-emerald-400 mt-1">
                   {formatKz(metrics.totalIncome)}
                 </p>
               </div>
 
               <div>
                 <p className="text-xs text-muted-foreground font-medium">Saídas Operacionais Aprovadas</p>
-                <p className="text-xl font-mono font-bold text-rose-600 dark:text-rose-400 mt-1">
+                <p className="text-xl font-mono font-semibold text-rose-600 dark:text-rose-400 mt-1">
                   {formatKz(metrics.totalExpenses)}
                 </p>
               </div>
 
               <div>
                 <p className="text-xs text-muted-foreground font-medium">Margem Operacional Efetiva</p>
-                <p className="text-xl font-mono font-bold text-foreground mt-1">
+                <p className="text-xl font-mono font-semibold text-foreground mt-1">
                   {formatKz(metrics.netCashflow)}
                 </p>
                 <p className="text-[11px] text-muted-foreground font-mono mt-0.5">

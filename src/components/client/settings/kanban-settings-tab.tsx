@@ -238,7 +238,7 @@ export function KanbanSettingsTab() {
               Fluxo de Trabalho &amp; Kanban da Produtora
             </CardTitle>
             <CardDescription className="text-xs text-muted-foreground mt-0.5">
-              Defina as colunas, categorias do Notion, limites WIP e dados exibidos nos cartões de todos os projetos.
+              Defina as colunas, categorias do Notion, limites WIP e dados exibidos nos cartões de todos os projectos.
             </CardDescription>
           </div>
 

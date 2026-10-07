@@ -77,16 +77,16 @@ export function InsightsPageContent() {
             <Sparkles className="size-3" />
             Nora Insights • Inteligência de Negócio
           </div>
-          <h2 className="text-xl font-bold tracking-tight text-foreground">
+          <h2 className="text-xl font-semibold tracking-tight text-foreground">
             Decisões Operacionais Guiadas por Dados Reais
           </h2>
           <p className="text-xs text-muted-foreground">
-            Acompanhe a rentabilidade dos seus projetos orçados vs realizados, utilização de câmaras e taxa de ocupação dos estúdios.
+            Acompanhe a rentabilidade dos seus projectos orçados vs realizados, utilização de câmaras e taxa de ocupação dos estúdios.
           </p>
         </div>
 
         <div className="flex items-center gap-2.5 w-full sm:w-auto">
-          {/* Seletor de Período */}
+          {/* Selector de Período */}
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-background text-xs text-foreground">
             <Calendar className="size-3.5 text-muted-foreground" />
             <select
@@ -143,7 +143,7 @@ export function InsightsPageContent() {
         <div className="p-5 rounded-2xl border border-border bg-card shadow-xs space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Margem Média Projetos
+              Margem Média Projectos
             </span>
             <div className="p-2 rounded-lg bg-primary/10 text-primary">
               <Percent className="size-4" />
@@ -214,7 +214,7 @@ export function InsightsPageContent() {
               <Sparkles className="size-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-foreground">Nora Encontrou na Sua Operação</h3>
+              <h3 className="text-sm font-semibold text-foreground">Nora Encontrou na Sua Operação</h3>
               <p className="text-xs text-muted-foreground">
                 Anomalias, oportunidades de margem e alertas detetados automaticamente pelos dados do estúdio.
               </p>
@@ -244,18 +244,18 @@ export function InsightsPageContent() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span
-                      className={`inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold uppercase rounded-md border ${borderBadge}`}
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold uppercase rounded-md border ${borderBadge}`}
                     >
                       <IconComponent className="size-3" />
                       {isAlert ? 'Alerta Crítico' : isOpportunity ? 'Oportunidade' : 'Destaque'}
                     </span>
                     {finding.metricChange && (
-                      <span className="font-mono text-xs font-bold text-foreground">
+                      <span className="font-mono text-xs font-semibold text-foreground">
                         {finding.metricChange}
                       </span>
                     )}
                   </div>
-                  <h4 className="text-xs font-bold text-foreground leading-snug">
+                  <h4 className="text-xs font-semibold text-foreground leading-snug">
                     {finding.title}
                   </h4>
                   <p className="text-[11px] text-muted-foreground leading-relaxed">
@@ -294,7 +294,7 @@ export function InsightsPageContent() {
               value="projects"
               className="data-[state=active]:bg-muted data-[state=active]:text-foreground text-xs gap-1.5 py-1.5 px-3 rounded-xs font-medium"
             >
-              Projetos (Orçado vs Realizado)
+              Projectos (Orçado vs Realizado)
             </TabsTrigger>
             <TabsTrigger
               value="financial"
@@ -314,21 +314,21 @@ export function InsightsPageContent() {
         {/* Tab 1: Visão Geral */}
         <TabsContent value="overview" className="space-y-6 mt-0">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Breakdown de Projetos */}
+            {/* Breakdown de Projectos */}
             <div className="p-6 rounded-2xl border border-border bg-card space-y-4">
-              <h3 className="text-sm font-bold text-foreground">Pipeline de Produção Ativa</h3>
+              <h3 className="text-sm font-semibold text-foreground">Pipeline de Produção Activa</h3>
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">Projetos em Filmagem ou Pós-Produção</span>
-                  <span className="font-bold text-foreground">{overview.activeProjectsCount} projetos</span>
+                  <span className="text-muted-foreground">Projectos em Filmagem ou Pós-Produção</span>
+                  <span className="font-semibold text-foreground">{overview.activeProjectsCount} projectos</span>
                 </div>
                 <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
                   <div className="bg-primary h-2 rounded-full" style={{ width: '45%' }} />
                 </div>
 
                 <div className="flex items-center justify-between text-xs pt-2">
-                  <span className="text-muted-foreground">Projetos Concluídos &amp; Entregues (Ano)</span>
-                  <span className="font-bold text-foreground">{overview.completedProjectsCount} projetos</span>
+                  <span className="text-muted-foreground">Projectos Concluídos &amp; Entregues (Ano)</span>
+                  <span className="font-semibold text-foreground">{overview.completedProjectsCount} projectos</span>
                 </div>
                 <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
                   <div className="bg-emerald-500 h-2 rounded-full" style={{ width: '78%' }} />
@@ -338,11 +338,11 @@ export function InsightsPageContent() {
 
             {/* Utilização de Estúdios */}
             <div className="p-6 rounded-2xl border border-border bg-card space-y-4">
-              <h3 className="text-sm font-bold text-foreground">Taxa de Eficiência de Estúdios</h3>
+              <h3 className="text-sm font-semibold text-foreground">Taxa de Eficiência de Estúdios</h3>
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">Estúdio A (Cyclorama Principal)</span>
-                  <span className="font-bold text-foreground">88% de ocupação</span>
+                  <span className="font-semibold text-foreground">88% de ocupação</span>
                 </div>
                 <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
                   <div className="bg-emerald-500 h-2 rounded-full" style={{ width: '88%' }} />
@@ -350,7 +350,7 @@ export function InsightsPageContent() {
 
                 <div className="flex items-center justify-between text-xs pt-2">
                   <span className="text-muted-foreground">Estúdio B (Blackbox &amp; Podcasts)</span>
-                  <span className="font-bold text-foreground">35% de ocupação</span>
+                  <span className="font-semibold text-foreground">35% de ocupação</span>
                 </div>
                 <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
                   <div className="bg-amber-500 h-2 rounded-full" style={{ width: '35%' }} />
@@ -360,12 +360,12 @@ export function InsightsPageContent() {
           </div>
         </TabsContent>
 
-        {/* Tab 2: Projetos */}
+        {/* Tab 2: Projectos */}
         <TabsContent value="projects" className="space-y-4 mt-0">
           <div className="p-6 rounded-2xl border border-border bg-card space-y-4">
-            <h3 className="text-sm font-bold text-foreground">Comparativo Orçado vs. Realizado</h3>
+            <h3 className="text-sm font-semibold text-foreground">Comparativo Orçado vs. Realizado</h3>
             <p className="text-xs text-muted-foreground">
-              Análise de desvio de custos em projetos recentes. O desvio positivo indica margem superior ao estimado.
+              Análise de desvio de custos em projectos recentes. O desvio positivo indica margem superior ao estimado.
             </p>
 
             <div className="divide-y divide-border border-y border-border">
@@ -375,7 +375,7 @@ export function InsightsPageContent() {
                   <span className="text-[11px] text-muted-foreground block">Publicidade • Luanda</span>
                 </div>
                 <div className="text-right">
-                  <span className="font-mono font-bold text-emerald-500">+12.4% margem</span>
+                  <span className="font-mono font-semibold text-emerald-500">+12.4% margem</span>
                   <span className="text-[10px] text-muted-foreground block">Orçado: 3.500.000 Kz</span>
                 </div>
               </div>
@@ -386,7 +386,7 @@ export function InsightsPageContent() {
                   <span className="text-[11px] text-muted-foreground block">Musical • Benguela</span>
                 </div>
                 <div className="text-right">
-                  <span className="font-mono font-bold text-red-500">-4.2% margem</span>
+                  <span className="font-mono font-semibold text-red-500">-4.2% margem</span>
                   <span className="text-[10px] text-muted-foreground block">Custos de diária excedidos</span>
                 </div>
               </div>
@@ -397,7 +397,7 @@ export function InsightsPageContent() {
                   <span className="text-[11px] text-muted-foreground block">Institucional</span>
                 </div>
                 <div className="text-right">
-                  <span className="font-mono font-bold text-emerald-500">+18.0% margem</span>
+                  <span className="font-mono font-semibold text-emerald-500">+18.0% margem</span>
                   <span className="text-[10px] text-muted-foreground block">Orçado: 8.200.000 Kz</span>
                 </div>
               </div>
@@ -408,24 +408,24 @@ export function InsightsPageContent() {
         {/* Tab 3: Financeiro */}
         <TabsContent value="financial" className="space-y-4 mt-0">
           <div className="p-6 rounded-2xl border border-border bg-card space-y-4">
-            <h3 className="text-sm font-bold text-foreground">Demonstração de Rentabilidade Operacional</h3>
+            <h3 className="text-sm font-semibold text-foreground">Demonstração de Rentabilidade Operacional</h3>
             <p className="text-xs text-muted-foreground">
               Composição das receitas por tipo de serviço e alocação de custos directos.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
               <div className="p-4 rounded-xl border border-border bg-background space-y-1">
                 <span className="text-[11px] text-muted-foreground uppercase font-semibold">Receitas de Produção</span>
-                <p className="text-lg font-bold text-foreground">{formatKz(1240000)}</p>
+                <p className="text-lg font-semibold text-foreground">{formatKz(1240000)}</p>
                 <span className="text-[10px] text-emerald-500">67.3% do total</span>
               </div>
               <div className="p-4 rounded-xl border border-border bg-background space-y-1">
                 <span className="text-[11px] text-muted-foreground uppercase font-semibold">Aluguer de Estúdios</span>
-                <p className="text-lg font-bold text-foreground">{formatKz(412000)}</p>
+                <p className="text-lg font-semibold text-foreground">{formatKz(412000)}</p>
                 <span className="text-[10px] text-blue-500">22.4% do total</span>
               </div>
               <div className="p-4 rounded-xl border border-border bg-background space-y-1">
                 <span className="text-[11px] text-muted-foreground uppercase font-semibold">Diárias de Câmaras &amp; Luz</span>
-                <p className="text-lg font-bold text-foreground">{formatKz(190000)}</p>
+                <p className="text-lg font-semibold text-foreground">{formatKz(190000)}</p>
                 <span className="text-[10px] text-amber-500">10.3% do total</span>
               </div>
             </div>
@@ -436,7 +436,7 @@ export function InsightsPageContent() {
         <TabsContent value="export" className="space-y-4 mt-0">
           <div className="p-6 rounded-2xl border border-border bg-card space-y-6">
             <div>
-              <h3 className="text-sm font-bold text-foreground">Central de Relatórios &amp; Snapshots Analíticos</h3>
+              <h3 className="text-sm font-semibold text-foreground">Central de Relatórios &amp; Snapshots Analíticos</h3>
               <p className="text-xs text-muted-foreground mt-0.5">
                 Descarregue o relatório consolidado da sua operação em formatos prontos para análise executiva ou contabilidade.
               </p>
@@ -447,7 +447,7 @@ export function InsightsPageContent() {
                 <div className="flex items-center gap-2">
                   <FileSpreadsheet className="size-5 text-emerald-500" />
                   <div>
-                    <h4 className="text-xs font-bold text-foreground">Relatório em Folha de Cálculo (CSV)</h4>
+                    <h4 className="text-xs font-semibold text-foreground">Relatório em Folha de Cálculo (CSV)</h4>
                     <p className="text-[11px] text-muted-foreground">Compatível com Excel, Google Sheets e softwares de BI.</p>
                   </div>
                 </div>
@@ -466,7 +466,7 @@ export function InsightsPageContent() {
                 <div className="flex items-center gap-2">
                   <FileCode className="size-5 text-primary" />
                   <div>
-                    <h4 className="text-xs font-bold text-foreground">Snapshot em JSON Estruturado</h4>
+                    <h4 className="text-xs font-semibold text-foreground">Snapshot em JSON Estruturado</h4>
                     <p className="text-[11px] text-muted-foreground">Payload completo normalizado para integrações ou automações.</p>
                   </div>
                 </div>

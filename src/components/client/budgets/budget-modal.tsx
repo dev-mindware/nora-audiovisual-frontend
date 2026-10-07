@@ -63,13 +63,13 @@ export function BudgetModal({ isOpen, onClose }: BudgetModalProps) {
       items: [
         {
           category: 'CREW',
-          description: 'Direção de Fotografia & Operação de Câmara',
+          description: 'Direcção de Fotografia & Operação de Câmara',
           quantity: 1,
           unitPrice: 250000,
         },
         {
           category: 'EQUIPMENT',
-          description: 'Kit Cinema 4K + Objetivas Prime + Estabilizador',
+          description: 'Kit Cinema 4K + Objectivas Prime + Estabilizador',
           quantity: 1,
           unitPrice: 180000,
         },
@@ -117,7 +117,7 @@ export function BudgetModal({ isOpen, onClose }: BudgetModalProps) {
         label: p.title,
         value: p.id,
       }));
-    return [{ label: 'Orçamento Avulso (Novo Projeto)', value: '' }, ...list];
+    return [{ label: 'Orçamento Avulso (Novo Projecto)', value: '' }, ...list];
   }, [projects, projectSearch]);
 
   // Financial calculations
@@ -171,12 +171,14 @@ export function BudgetModal({ isOpen, onClose }: BudgetModalProps) {
             type="button"
             variant="outline"
             onClick={handleCancel}
+            className="min-h-[44px] sm:min-h-0"
           >
             Cancelar
           </Button>
           <ButtonSubmit
             form="budget-form"
             isLoading={isPending}
+            className="min-h-[44px] sm:min-h-0"
           >
             Gerar Orçamento
           </ButtonSubmit>
@@ -195,7 +197,7 @@ export function BudgetModal({ isOpen, onClose }: BudgetModalProps) {
                 options={clientOptions}
                 onChange={onChange}
                 isLoading={isLoadingClients}
-                placeholder="Selecione um cliente..."
+                placeholder="Seleccione um cliente..."
                 fullWidth
                 searchValue={clientSearch}
                 onSearchChange={setClientSearch}
@@ -212,16 +214,16 @@ export function BudgetModal({ isOpen, onClose }: BudgetModalProps) {
             name="projectId"
             render={({ field: { onChange, value } }) => (
               <PaginatedSelect
-                label="Projeto Vinculado"
+                label="Projecto Vinculado"
                 value={value || ''}
                 options={projectOptions}
                 onChange={onChange}
                 isLoading={isLoadingProjects}
-                placeholder="Orçamento Avulso (Novo Projeto)"
+                placeholder="Orçamento Avulso (Novo Projecto)"
                 fullWidth
                 searchValue={projectSearch}
                 onSearchChange={setProjectSearch}
-                searchPlaceholder="Pesquisar projeto..."
+                searchPlaceholder="Pesquisar projecto..."
                 pagination={{ page: 1, totalPages: 1 }}
                 onPageChange={() => {}}
               />
@@ -339,7 +341,7 @@ export function BudgetModal({ isOpen, onClose }: BudgetModalProps) {
               className="w-28 rounded-xl border border-input bg-card px-2.5 py-1 text-right text-xs text-foreground focus:outline-none focus:border-primary"
             />
           </div>
-          <div className="flex justify-between text-sm font-bold text-foreground border-t border-border/40 pt-2">
+          <div className="flex justify-between text-sm font-semibold text-foreground border-t border-border/40 pt-2">
             <span>Total Orçamentado:</span>
             <span className="text-primary font-mono text-base">
               {total.toLocaleString('pt-AO', { maximumFractionDigits: 2 })} Kz

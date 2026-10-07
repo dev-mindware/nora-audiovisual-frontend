@@ -164,12 +164,14 @@ export function CallSheetModal({
         type="button"
         variant="outline"
         onClick={onClose}
+        className="min-h-[44px] sm:min-h-0"
       >
         Cancelar
       </Button>
       <ButtonSubmit
         form="call-sheet-form"
         isLoading={isCreating}
+        className="min-h-[44px] sm:min-h-0"
       >
         Criar Folha de Rodagem
       </ButtonSubmit>
@@ -183,7 +185,7 @@ export function CallSheetModal({
       title={isViewMode ? `Folha de Rodagem — ${viewCallSheet?.title}` : 'Nova Folha de Rodagem (Call Sheet)'}
       description={
         isViewMode
-          ? `Produção: ${projectTitle || 'Projeto'} • Escalação oficial de horários e segurança de set.`
+          ? `Produção: ${projectTitle || 'Projecto'} • Escalação oficial de horários e segurança de set.`
           : 'Preencha os dados operacionais, localização, alertas meteorológicos e chamada da equipa.'
       }
       size="3xl"

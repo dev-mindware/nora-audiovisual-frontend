@@ -106,7 +106,7 @@ export function AudiovisualDashboardContent() {
               {user?.name ? `Olá, ${user.name}` : 'Bem-vindo ao Nora Studio'}
             </h2>
             <Badge className="bg-primary/10 text-primary border-primary/20 text-xs px-2 py-0.5 font-semibold rounded-xs">
-              Produtora Ativa
+              Produtora Activa
             </Badge>
           </div>
           <p className="text-xs text-muted-foreground">
@@ -117,17 +117,17 @@ export function AudiovisualDashboardContent() {
         {/* Action Shortcuts */}
         <div className="flex flex-wrap items-center gap-2">
           <Link href="/projects">
-            <Button size="sm" className="text-xs gap-1.5 bg-primary text-primary-foreground shadow-none rounded-xs font-semibold">
+            <Button size="sm" className="text-xs gap-1.5 bg-primary text-primary-foreground shadow-none rounded-xs font-semibold h-11 sm:h-9 min-h-[44px] sm:min-h-0">
               <Plus className="h-3.5 w-3.5" /> Nova Produção
             </Button>
           </Link>
           <Link href="/equipment">
-            <Button size="sm" variant="outline" className="text-xs gap-1.5 border-border rounded-xs font-semibold">
+            <Button size="sm" variant="outline" className="text-xs gap-1.5 border-border rounded-xs font-semibold h-11 sm:h-9 min-h-[44px] sm:min-h-0">
               <Camera className="h-3.5 w-3.5" /> Reservar Equipamento
             </Button>
           </Link>
           <Link href="/budgets">
-            <Button size="sm" variant="outline" className="text-xs gap-1.5 border-border rounded-xs font-semibold">
+            <Button size="sm" variant="outline" className="text-xs gap-1.5 border-border rounded-xs font-semibold h-11 sm:h-9 min-h-[44px] sm:min-h-0">
               <FileSpreadsheet className="h-3.5 w-3.5" /> Orçamento
             </Button>
           </Link>
@@ -139,7 +139,7 @@ export function AudiovisualDashboardContent() {
         {/* Card 1: Active Projects */}
         <Card className="bg-card p-4 rounded-xs border border-border shadow-none relative overflow-hidden group hover:border-primary/40 transition-colors">
           <div className="flex items-center justify-between text-xs text-muted-foreground font-medium">
-            <span>Projetos em Rodagem</span>
+            <span>Projectos em Rodagem</span>
             <div className="p-1.5 rounded-xs bg-primary/10 text-primary">
               <Clapperboard className="h-3.5 w-3.5" />
             </div>
@@ -218,7 +218,7 @@ export function AudiovisualDashboardContent() {
                 <Clapperboard className="h-4 w-4 text-primary" />
                 Produções em Curso & Rodagens Agendadas
               </CardTitle>
-              <p className="text-xs text-muted-foreground">Projetos ativos com call sheets e equipas de filmagem</p>
+              <p className="text-xs text-muted-foreground">Projectos activos com call sheets e equipas de filmagem</p>
             </div>
             <Link href="/projects">
               <Button variant="ghost" size="sm" className="text-xs text-primary gap-1 rounded-xs font-medium">
@@ -237,10 +237,10 @@ export function AudiovisualDashboardContent() {
                 <div className="p-3 bg-muted/30 rounded-xs w-fit mx-auto text-muted-foreground">
                   <Clapperboard className="h-6 w-6" />
                 </div>
-                <div className="text-xs text-muted-foreground">Nenhuma produção ativa no momento.</div>
+                <div className="text-xs text-muted-foreground">Nenhuma produção activa no momento.</div>
                 <Link href="/projects">
                   <Button size="sm" variant="outline" className="text-xs gap-1.5 rounded-xs font-semibold">
-                    <Plus className="h-3.5 w-3.5" /> Criar Primeiro Projeto
+                    <Plus className="h-3.5 w-3.5" /> Criar Primeiro Projecto
                   </Button>
                 </Link>
               </div>
@@ -367,7 +367,7 @@ export function AudiovisualDashboardContent() {
               <FileSpreadsheet className="h-4 w-4 text-emerald-600" />
               Orçamentos Comerciais & Emissão Fiscal
             </CardTitle>
-            <p className="text-xs text-muted-foreground">Propostas em aprovação e preparadas para faturação Mindgest</p>
+            <p className="text-xs text-muted-foreground">Propostas em aprovação e preparadas para facturação Mindgest</p>
           </div>
           <Link href="/budgets">
             <Button variant="ghost" size="sm" className="text-xs text-emerald-600 gap-1 rounded-xs font-medium">
@@ -416,7 +416,7 @@ export function AudiovisualDashboardContent() {
                     <span>{budget.clientName || 'Cliente'}</span>
                     {budget.status === 'APPROVED' && (
                       <span className="text-[11px] text-emerald-600 font-medium flex items-center gap-1">
-                        <CheckCircle2 className="h-3 w-3" /> Faturação Pronta
+                        <CheckCircle2 className="h-3 w-3" /> Facturação Pronta
                       </span>
                     )}
                   </div>

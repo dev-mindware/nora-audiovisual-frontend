@@ -82,13 +82,13 @@ export function AdminMetricsCards({ stats, isLoading = false }: AdminMetricsCard
 
       <Card className="bg-card p-4 rounded-xs border border-border shadow-none">
         <div className="flex items-center justify-between text-xs text-muted-foreground font-medium">
-          <span>Projetos em Rodagem</span>
+          <span>Projectos em Rodagem</span>
           <FolderKanban className="h-4 w-4 text-purple-600" />
         </div>
         <div className="text-lg font-semibold tabular-nums text-foreground mt-2">
           {stats?.totalProjects ?? 0}
         </div>
-        <div className="text-[11px] text-muted-foreground mt-0.5">Produções gerenciadas</div>
+        <div className="text-[11px] text-muted-foreground mt-0.5">Produções geridas</div>
       </Card>
 
       <Card className="bg-card p-4 rounded-xs border border-border shadow-none sm:col-span-2 lg:col-span-1">

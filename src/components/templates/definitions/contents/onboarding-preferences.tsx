@@ -80,7 +80,7 @@ export function OnboardingPreferences() {
                 <div>
                   <h3 className="text-xs font-semibold text-foreground">Mostrar guias automaticamente</h3>
                   <p className="text-[11px] text-muted-foreground">
-                    Quando estiver ativo, cada guia aparece uma vez por utilizador e fluxo.
+                    Quando estiver activo, cada guia aparece uma vez por utilizador e fluxo.
                   </p>
                 </div>
               </div>
@@ -107,7 +107,7 @@ export function OnboardingPreferences() {
                 <div>
                   <h3 className="text-xs font-semibold text-foreground">Mostrar botão &ldquo;Ver guia&rdquo;</h3>
                   <p className="text-[11px] text-muted-foreground">
-                    Quando estiver desativado, o botão manual deixa de aparecer nas páginas com guia.
+                    Quando estiver desactivado, o botão manual deixa de aparecer nas páginas com guia.
                   </p>
                 </div>
               </div>

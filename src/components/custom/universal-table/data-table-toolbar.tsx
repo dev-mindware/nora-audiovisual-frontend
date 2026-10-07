@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
-import { useId, useMemo, useRef } from "react"
+import { useId, useMemo, useRef, useState } from "react"
 import { Table } from "@tanstack/react-table"
 import {
   CircleAlertIcon,
@@ -8,6 +8,7 @@ import {
   Columns3Icon,
   FilterIcon,
   ListFilterIcon,
+  RotateCcw,
   TrashIcon,
 } from "lucide-react"
 
@@ -23,6 +24,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -39,11 +41,81 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import {
+  MobileFilterBottomSheet,
+  FilterSectionConfig,
+} from "./mobile-filter-bottom-sheet"
+import { SortFilter, SortOption } from "./sort-filter"
+import { DateRangeFilter } from "./date-range-filter"
+
+const COLUMN_LABEL_MAP: Record<string, string> = {
+  name: "Nome / Entidade",
+  taxId: "NIF Fiscal",
+  taxid: "NIF Fiscal",
+  email: "Email Comercial",
+  phone: "Telefone",
+  address: "Endereço",
+  actions: "Acções",
+  title: "Produção / Título",
+  client: "Cliente / Produtora",
+  clientName: "Cliente",
+  productionStage: "Fase de Produção",
+  stage: "Fase",
+  lifecycleStatus: "Estado do Projecto",
+  status: "Estado",
+  responsible: "Responsável",
+  dates: "Prazos / Datas",
+  startDate: "Data de Início",
+  endDate: "Data de Fim",
+  createdAt: "Data de Registo",
+  updatedAt: "Data de Actualização",
+  serialNumber: "Nº de Série / Tag",
+  category: "Categoria",
+  location: "Localização",
+  dailyRate: "Diária Interna",
+  code: "Código",
+  total: "Valor Total",
+  currency: "Moeda",
+  notes: "Observações",
+  version: "Versão",
+  role: "Função / Cargo",
+  roles: "Funções",
+  userEmail: "Email",
+  userName: "Nome do Membro",
+  projectRole: "Função Audiovisual",
+  joinedAt: "Escalado em",
+  filename: "Nome do Ficheiro",
+  fileType: "Tipo de Ficheiro",
+  sizeBytes: "Tamanho",
+  priority: "Prioridade",
+  membersCount: "Membros",
+  projectsCount: "Projectos",
+  equipmentCount: "Equipamentos",
+  storageUsedGb: "Armazenamento",
+  activeSessionsCount: "Sessões Activas",
+  activeProjectsCount: "Projectos Activos",
+}
+
+function getColumnDisplayTitle(column: { id: string; columnDef: { header?: any } }): string {
+  if (typeof column.columnDef.header === "string" && column.columnDef.header.trim().length > 0) {
+    return column.columnDef.header
+  }
+  const idLower = column.id.toLowerCase()
+  if (COLUMN_LABEL_MAP[column.id]) {
+    return COLUMN_LABEL_MAP[column.id]
+  }
+  if (COLUMN_LABEL_MAP[idLower]) {
+    return COLUMN_LABEL_MAP[idLower]
+  }
+  return column.id.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase())
+}
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
   searchableColumns?: string[]
   searchPlaceholder?: string
+  searchValue?: string
+  onSearchChange?: (val: string) => void
   filterableColumns?: {
     id: string
     title: string
@@ -52,6 +124,31 @@ interface DataTableToolbarProps<TData> {
       value: string
     }[]
   }[]
+  customFilters?: React.ReactNode
+  mobileSections?: FilterSectionConfig[]
+  appliedMobileFilters?: Record<string, string[]>
+  onApplyMobileFilters?: (
+    filters: Record<string, string[]>,
+    extra?: {
+      sortBy?: string
+      sortOrder?: "asc" | "desc"
+      startDate?: string
+      endDate?: string
+    }
+  ) => void
+  onClearFilters?: () => void
+  sortFilter?: {
+    options: SortOption[]
+    sortBy: string
+    sortOrder: "asc" | "desc"
+    onSortChange: (sortBy: string, sortOrder: "asc" | "desc") => void
+  }
+  dateRangeFilter?: {
+    label?: string
+    startDate?: string
+    endDate?: string
+    onChange: (startDate?: string, endDate?: string) => void
+  }
   enableColumnVisibility?: boolean
   onDelete?: (selectedRows: any[]) => void
   toolbar?: {
@@ -65,16 +162,27 @@ export function DataTableToolbar<TData>({
   table,
   searchableColumns = [],
   searchPlaceholder,
+  searchValue,
+  onSearchChange,
   filterableColumns = [],
+  customFilters,
+  mobileSections = [],
+  appliedMobileFilters = {},
+  onApplyMobileFilters,
+  onClearFilters,
+  sortFilter,
+  dateRangeFilter,
   enableColumnVisibility = true,
   onDelete,
   toolbar,
 }: DataTableToolbarProps<TData>) {
   const id = useId()
   const inputRef = useRef<HTMLInputElement>(null)
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false)
 
   const searchColumn = searchableColumns[0]
   const searchColumnObj = searchColumn ? table.getColumn(searchColumn) : null
+  const shouldShowSearch = Boolean(searchColumnObj || onSearchChange || searchPlaceholder)
 
   const handleDeleteRows = () => {
     if (onDelete) {
@@ -83,6 +191,110 @@ export function DataTableToolbar<TData>({
       table.resetRowSelection()
     }
   }
+
+  // Prepara as secções para o MobileFilterBottomSheet
+  const internalFilterSections: FilterSectionConfig[] = useMemo(() => {
+    return filterableColumns.map((fc) => {
+      const col = table.getColumn(fc.id)
+      const options =
+        fc.options ||
+        (col
+          ? Array.from(col.getFacetedUniqueValues().keys()).map((v) => ({
+              label: String(v),
+              value: String(v),
+            }))
+          : [])
+      return {
+        id: fc.id,
+        title: fc.title,
+        options,
+      }
+    })
+  }, [filterableColumns, table])
+
+  const effectiveFilterSections: FilterSectionConfig[] = useMemo(() => {
+    return [...mobileSections, ...internalFilterSections]
+  }, [mobileSections, internalFilterSections])
+
+  // Mapeia os filtros actualmente aplicados em cada coluna
+  const appliedFiltersMap: Record<string, string[]> = useMemo(() => {
+    const map: Record<string, string[]> = { ...appliedMobileFilters }
+    filterableColumns.forEach((fc) => {
+      const col = table.getColumn(fc.id)
+      const val = col?.getFilterValue() as string[] | undefined
+      if (val && val.length > 0) {
+        map[fc.id] = val
+      }
+    })
+    return map
+  }, [filterableColumns, table, appliedMobileFilters])
+
+  // Contagem de filtros activos
+  const totalActiveFilters = useMemo(() => {
+    let count = Object.values(appliedFiltersMap).reduce(
+      (acc, list) => acc + (list ? list.length : 0),
+      0
+    )
+    if (dateRangeFilter?.startDate || dateRangeFilter?.endDate) {
+      count += 1
+    }
+    if (
+      sortFilter &&
+      (sortFilter.sortBy !== (sortFilter.options[0]?.value || "createdAt") ||
+        sortFilter.sortOrder !== "desc")
+    ) {
+      count += 1
+    }
+    return count
+  }, [appliedFiltersMap, dateRangeFilter, sortFilter])
+
+  const handleApplyMobileFilters = (
+    newFilters: Record<string, string[]>,
+    extra?: {
+      sortBy?: string
+      sortOrder?: "asc" | "desc"
+      startDate?: string
+      endDate?: string
+    }
+  ) => {
+    if (onApplyMobileFilters) {
+      onApplyMobileFilters(newFilters, extra)
+    }
+    Object.entries(newFilters).forEach(([colId, values]) => {
+      const col = table.getColumn(colId)
+      if (col) {
+        col.setFilterValue(values.length > 0 ? values : undefined)
+      }
+    })
+    if (sortFilter && extra?.sortBy && extra?.sortOrder) {
+      sortFilter.onSortChange(extra.sortBy, extra.sortOrder)
+    }
+    if (dateRangeFilter && (extra?.startDate !== undefined || extra?.endDate !== undefined)) {
+      dateRangeFilter.onChange(extra.startDate, extra.endDate)
+    }
+  }
+
+  const handleClearAllFilters = () => {
+    if (onClearFilters) {
+      onClearFilters()
+    }
+    filterableColumns.forEach((fc) => {
+      const col = table.getColumn(fc.id)
+      if (col) {
+        col.setFilterValue(undefined)
+      }
+    })
+    if (dateRangeFilter) {
+      dateRangeFilter.onChange(undefined, undefined)
+    }
+    if (sortFilter && sortFilter.options[0]) {
+      sortFilter.onSortChange(sortFilter.options[0].value, "desc")
+    }
+  }
+
+  const currentSearchValue = onSearchChange
+    ? (searchValue ?? "")
+    : ((searchColumnObj?.getFilterValue() ?? "") as string)
 
   return (
     <div className="space-y-4">
@@ -97,32 +309,45 @@ export function DataTableToolbar<TData>({
         </div>
       )}
 
+      {/* Barra de Filtros Responsiva e Unificada */}
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-3 w-full">
         <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center w-full sm:w-auto">
-          {searchColumnObj && (
-            <div className="relative w-full sm:w-auto">
+          {shouldShowSearch && (
+            <div className="relative w-full sm:w-64">
               <Input
                 id={`${id}-input`}
                 ref={inputRef}
                 className={cn(
-                  "peer w-full sm:w-64 ps-9 rounded-none border-border h-9 text-xs",
-                  Boolean(searchColumnObj.getFilterValue()) && "pe-9"
+                  "peer w-full sm:w-64 ps-9 rounded-none border-border h-11 sm:h-9 text-base sm:text-xs min-h-[44px] sm:min-h-0",
+                  Boolean(currentSearchValue) && "pe-9"
                 )}
-                value={(searchColumnObj.getFilterValue() ?? "") as string}
-                onChange={(e) => searchColumnObj.setFilterValue(e.target.value)}
+                value={currentSearchValue}
+                onChange={(e) => {
+                  if (onSearchChange) {
+                    onSearchChange(e.target.value)
+                  }
+                  if (searchColumnObj) {
+                    searchColumnObj.setFilterValue(e.target.value)
+                  }
+                }}
                 placeholder={searchPlaceholder || `Pesquisar...`}
                 type="text"
-                aria-label={`Filter by ${searchColumn}`}
+                aria-label={searchPlaceholder || `Filtrar registos`}
               />
               <div className="absolute inset-y-0 flex items-center justify-center pointer-events-none text-muted-foreground/80 start-0 ps-3 peer-disabled:opacity-50">
                 <ListFilterIcon size={16} aria-hidden="true" />
               </div>
-              {Boolean(searchColumnObj.getFilterValue()) && (
+              {Boolean(currentSearchValue) && (
                 <button
-                  className="text-muted-foreground/80 hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-none transition-[color,box-shadow] outline-none focus:z-10 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
-                  aria-label="Clear filter"
+                  className="text-muted-foreground/80 hover:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-none transition-[color,box-shadow] outline-none focus:z-10 focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 min-h-[44px] min-w-[36px]"
+                  aria-label="Limpar filtro"
                   onClick={() => {
-                    searchColumnObj.setFilterValue("")
+                    if (onSearchChange) {
+                      onSearchChange("")
+                    }
+                    if (searchColumnObj) {
+                      searchColumnObj.setFilterValue("")
+                    }
                     if (inputRef.current) {
                       inputRef.current.focus()
                     }
@@ -134,7 +359,46 @@ export function DataTableToolbar<TData>({
             </div>
           )}
 
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
+          {/* Botão de Filtros Mobile (Bottom Sheet) */}
+          {(effectiveFilterSections.length > 0 || Boolean(sortFilter) || Boolean(dateRangeFilter)) && (
+            <div className="flex sm:hidden w-full items-center gap-2">
+              <Button
+                variant={totalActiveFilters > 0 ? "default" : "outline"}
+                onClick={() => setIsMobileFilterOpen(true)}
+                className="flex-1 h-11 min-h-[44px] gap-2 rounded-none border-border text-xs font-semibold"
+              >
+                <FilterIcon className="h-4 w-4" />
+                <span>Filtros</span>
+                {totalActiveFilters > 0 && (
+                  <Badge variant="secondary" className="px-1.5 py-0 text-xs font-mono rounded-none">
+                    {totalActiveFilters}
+                  </Badge>
+                )}
+              </Button>
+
+              {totalActiveFilters > 0 && (
+                <Button
+                  variant="outline"
+                  onClick={handleClearAllFilters}
+                  className="h-11 min-h-[44px] px-3 rounded-none border-border text-xs text-destructive hover:text-destructive"
+                  title="Limpar todos os filtros"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                </Button>
+              )}
+
+              {toolbar?.actions && (
+                <div className="shrink-0 flex items-center">
+                  {toolbar.actions}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Filtros em Linha para Desktop - Barra Unificada sem Repetições */}
+          <div className="hidden sm:flex flex-wrap items-center gap-2 sm:gap-2.5 w-full sm:w-auto">
+            {customFilters}
+
             {filterableColumns.map((filterConfig) => (
               <FilterDropdown
                 key={filterConfig.id}
@@ -143,10 +407,40 @@ export function DataTableToolbar<TData>({
               />
             ))}
 
+            {dateRangeFilter && (
+              <DateRangeFilter
+                label={dateRangeFilter.label}
+                startDate={dateRangeFilter.startDate}
+                endDate={dateRangeFilter.endDate}
+                onChange={dateRangeFilter.onChange}
+              />
+            )}
+
+            {sortFilter && (
+              <SortFilter
+                options={sortFilter.options}
+                sortBy={sortFilter.sortBy}
+                sortOrder={sortFilter.sortOrder}
+                onSortChange={sortFilter.onSortChange}
+              />
+            )}
+
+            {totalActiveFilters > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleClearAllFilters}
+                className="h-9 px-2.5 text-xs text-destructive hover:bg-destructive/10 rounded-none gap-1.5"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                <span>Limpar filtros</span>
+              </Button>
+            )}
+
             {enableColumnVisibility && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="flex-1 sm:flex-none rounded-none border-border">
+                  <Button variant="outline" className="flex-1 sm:flex-none rounded-none border-border h-10 sm:h-9 min-h-[44px] sm:min-h-0">
                     <Columns3Icon
                       className="-ms-1 opacity-60"
                       size={16}
@@ -156,19 +450,19 @@ export function DataTableToolbar<TData>({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="rounded-none">
-                  <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+                  <DropdownMenuLabel>Visualizar colunas</DropdownMenuLabel>
                   {table
                     .getAllColumns()
                     .filter((column) => column.getCanHide())
                     .map((column) => (
                       <DropdownMenuCheckboxItem
                         key={column.id}
-                        className="capitalize"
                         checked={column.getIsVisible()}
                         onCheckedChange={(value) => column.toggleVisibility(!!value)}
                         onSelect={(event) => event.preventDefault()}
+                        className="text-xs"
                       >
-                        {column.id}
+                        {getColumnDisplayTitle(column)}
                       </DropdownMenuCheckboxItem>
                     ))}
                 </DropdownMenuContent>
@@ -177,17 +471,32 @@ export function DataTableToolbar<TData>({
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-auto">
+        {/* Modal Bottom Sheet Mobile */}
+        <MobileFilterBottomSheet
+          open={isMobileFilterOpen}
+          onOpenChange={setIsMobileFilterOpen}
+          sections={effectiveFilterSections}
+          appliedFilters={appliedFiltersMap}
+          sortConfig={sortFilter}
+          dateRangeConfig={dateRangeFilter}
+          onApply={handleApplyMobileFilters}
+          onClear={handleClearAllFilters}
+          title="Filtros de Tabela"
+          description="Seleccione os critérios para refinar os registos apresentados."
+        />
+
+        {/* Acções à Direita no Desktop */}
+        <div className="hidden sm:flex flex-row items-center gap-2 w-full sm:w-auto justify-end">
           {onDelete && table.getSelectedRowModel().rows.length > 0 && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button className="w-full sm:w-auto" variant="outline">
+                <Button className="w-full sm:w-auto h-10 sm:h-9 min-h-[44px] sm:min-h-0" variant="outline">
                   <TrashIcon
                     className="-ms-1 opacity-60"
                     size={16}
                     aria-hidden="true"
                   />
-                  <span>Delete</span>
+                  <span>Eliminar</span>
                   <span className="bg-background text-muted-foreground/70 -me-1 inline-flex h-5 max-h-full items-center rounded border px-1 font-[inherit] text-[0.625rem] font-medium">
                     {table.getSelectedRowModel().rows.length}
                   </span>
@@ -203,24 +512,26 @@ export function DataTableToolbar<TData>({
                   </div>
                   <AlertDialogHeader>
                     <AlertDialogTitle className="text-left">
-                      Are you absolutely sure?
+                      Tem a certeza absoluta?
                     </AlertDialogTitle>
                     <AlertDialogDescription className="text-left">
-                      This action cannot be undone. This will permanently delete{" "}
-                      {table.getSelectedRowModel().rows.length} selected{" "}
-                      {table.getSelectedRowModel().rows.length === 1 ? "row" : "rows"}.
+                      Esta acção não pode ser desfeita. Isto irá eliminar permanentemente{" "}
+                      {table.getSelectedRowModel().rows.length}{" "}
+                      {table.getSelectedRowModel().rows.length === 1
+                        ? "registo seleccionado"
+                        : "registos seleccionados"}.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                 </div>
                 <AlertDialogFooter className="flex-col-reverse gap-2 sm:flex-row sm:gap-0">
-                  <AlertDialogCancel className="w-full sm:w-auto">
-                    Cancel
+                  <AlertDialogCancel className="w-full sm:w-auto min-h-[44px] sm:min-h-0">
+                    Cancelar
                   </AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleDeleteRows}
-                    className="w-full sm:w-auto"
+                    className="w-full sm:w-auto min-h-[44px] sm:min-h-0 bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                   >
-                    Delete
+                    Eliminar
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>

@@ -142,7 +142,7 @@ export function TenantDetailsModal() {
               </span>
             </div>
             <div className="p-3 rounded-xl border border-border bg-card text-center">
-              <span className="text-muted-foreground block mb-1">Projetos</span>
+              <span className="text-muted-foreground block mb-1">Projectos</span>
               <span className="text-lg font-semibold text-foreground">
                 {tenant.metrics?.projectsCount || 0}
               </span>

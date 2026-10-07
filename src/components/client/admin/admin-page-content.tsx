@@ -162,7 +162,7 @@ export function AdminLegacyPageContent() {
           const m = row.original.metrics;
           return (
             <div className="text-xs text-muted-foreground space-y-0.5">
-              <div>{m?.membersCount || 0} membros • {m?.projectsCount || 0} projetos</div>
+              <div>{m?.membersCount || 0} membros • {m?.projectsCount || 0} projectos</div>
               <div className="text-muted-foreground/80 font-mono">
                 {m?.equipmentCount || 0} eqp • {m?.storageUsedGb || 0} GB
               </div>
@@ -584,13 +584,13 @@ export function AdminLegacyPageContent() {
 
         <div className="bg-card p-4 rounded-2xl border border-border/80 shadow-xs">
           <div className="flex items-center justify-between text-xs text-muted-foreground font-medium">
-            <span>Projetos em Rodagem</span>
+            <span>Projectos em Rodagem</span>
             <FolderKanban className="h-4 w-4 text-purple-500" />
           </div>
           <div className="text-lg font-semibold text-foreground mt-2">
             {stats?.totalProjects ?? 0}
           </div>
-          <div className="text-[11px] text-muted-foreground mt-0.5">Produções gerenciadas</div>
+          <div className="text-[11px] text-muted-foreground mt-0.5">Produções geridas</div>
         </div>
 
         <div className="bg-card p-4 rounded-2xl border border-border/80 shadow-xs col-span-2 lg:col-span-1">

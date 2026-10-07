@@ -111,7 +111,7 @@ function CallSheetContent() {
                 </h1>
               </div>
               <p className="text-xs text-muted-foreground mt-1 font-mono">
-                {callSheet.projectTitle ? `Projeto: ${callSheet.projectTitle} • ` : ''}
+                {callSheet.projectTitle ? `Projecto: ${callSheet.projectTitle} • ` : ''}
                 Escalação de Horários e Segurança de Set
               </p>
             </div>

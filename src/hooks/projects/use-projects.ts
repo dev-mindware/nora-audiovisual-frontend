@@ -51,10 +51,10 @@ export function useCreateProject() {
     mutationFn: (data: CreateProjectPayload) => projectsService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: PROJECTS_QUERY_KEY });
-      SucessMessage('Projeto criado com sucesso!');
+      SucessMessage('Projecto criado com sucesso!');
     },
     onError: (err) => {
-      ErrorMessage(getApiErrorMessage(err, 'Falha ao criar projeto.'));
+      ErrorMessage(getApiErrorMessage(err, 'Falha ao criar projecto.'));
     },
   });
 }
@@ -67,10 +67,10 @@ export function useUpdateProject() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: PROJECTS_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: [...PROJECTS_QUERY_KEY, 'detail', variables.id] });
-      SucessMessage('Projeto atualizado com sucesso!');
+      SucessMessage('Projecto actualizado com sucesso!');
     },
     onError: (err) => {
-      ErrorMessage(getApiErrorMessage(err, 'Falha ao atualizar projeto.'));
+      ErrorMessage(getApiErrorMessage(err, 'Falha ao actualizar projecto.'));
     },
   });
 }

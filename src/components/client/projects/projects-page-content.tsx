@@ -8,12 +8,20 @@ import {
   ItemStatusBadge,
   Button,
 } from '@/components';
-import { UniversalTable } from '@/components/custom/universal-table';
+import {
+  UniversalTable,
+  MobileFilterBottomSheet,
+  FilterSectionConfig,
+  DateRangeFilter,
+  SortFilter,
+  SortOption,
+} from '@/components/custom/universal-table';
 import { FilterPopover } from '@/components/shared';
 import { useProjects, useProjectsFilters } from '@/hooks/projects';
 import { Project } from '@/types';
 import { ProjectModal } from './project-modal';
-import { Plus, Clapperboard, Calendar, Eye, Kanban, Video, MoreHorizontal } from 'lucide-react';
+import { Plus, Clapperboard, Calendar, Eye, Kanban, Video, MoreHorizontal, Filter, RotateCcw } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -38,6 +46,13 @@ const STATUS_OPTIONS = [
   { value: 'ARCHIVED', label: 'Arquivado' },
 ];
 
+const SORT_OPTIONS: SortOption[] = [
+  { value: 'createdAt', label: 'Data de Registo' },
+  { value: 'title', label: 'Título da Produção' },
+  { value: 'lifecycleStatus', label: 'Estado' },
+  { value: 'startDate', label: 'Data de Início' },
+];
+
 export function ProjectsPageContent() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,9 +61,15 @@ export function ProjectsPageContent() {
     search,
     stage,
     status,
+    startDate,
+    endDate,
+    sortBy,
+    sortOrder,
     setSearch,
     setStage,
     setStatus,
+    setSort,
+    setDateRange,
     resetFilters,
   } = useProjectsFilters();
 
@@ -133,13 +154,14 @@ export function ProjectsPageContent() {
       },
       {
         id: 'actions',
-        header: 'Ações',
+        header: 'Acções',
+        enableHiding: false,
         cell: ({ row }) => {
           const item = row.original;
           return (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                <Button variant="ghost" size="sm" className="h-9 w-9 sm:h-8 sm:w-8 p-0 min-h-[36px] min-w-[36px]">
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -162,65 +184,119 @@ export function ProjectsPageContent() {
     [router]
   );
 
+  // Configuração das secções para o MobileFilterBottomSheet
+  const mobileSections: FilterSectionConfig[] = useMemo(
+    () => [
+      {
+        id: 'stage',
+        title: 'Fase de Produção',
+        options: STAGE_OPTIONS.filter((s) => s.value !== 'ALL').map((s) => ({
+          label: s.label,
+          value: s.value,
+        })),
+        multiple: false,
+      },
+      {
+        id: 'status',
+        title: 'Estado do Projecto',
+        options: STATUS_OPTIONS.filter((s) => s.value !== 'ALL').map((s) => ({
+          label: s.label,
+          value: s.value,
+        })),
+        multiple: false,
+      },
+    ],
+    []
+  );
+
+  const appliedMobileFilters: Record<string, string[]> = useMemo(
+    () => ({
+      stage: stage && stage !== 'ALL' ? [stage] : [],
+      status: status && status !== 'ALL' ? [status] : [],
+    }),
+    [stage, status]
+  );
+
+  const handleApplyMobileFilters = (newFilters: Record<string, string[]>) => {
+    const nextStage = newFilters.stage?.[0] || 'ALL';
+    const nextStatus = newFilters.status?.[0] || 'ALL';
+    setStage(nextStage);
+    setStatus(nextStatus);
+  };
+
   return (
     <div className="mt-6 space-y-6">
-      {/* Mindgest Filters Bar */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-baseline">
-        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-          <FilterPopover
-            icon="Tag"
-            label="Fase"
-            options={STAGE_OPTIONS}
-            value={stage}
-            onChange={(val) => setStage(val || 'ALL')}
-          />
-          <FilterPopover
-            icon="CircleDot"
-            label="Estado"
-            options={STATUS_OPTIONS}
-            value={status}
-            onChange={(val) => setStatus(val || 'ALL')}
-          />
-          {(stage !== 'ALL' || status !== 'ALL' || search) && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={resetFilters}
-              className="text-xs text-muted-foreground hover:text-foreground h-9"
-            >
-              Limpar filtros
-            </Button>
-          )}
-        </div>
-
-        <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
-          <Button
-            onClick={() => setIsModalOpen(true)}
-            size="sm"
-            className="h-10 text-xs gap-1.5 shrink-0"
-          >
-            <Plus className="h-4 w-4" /> Novo Projeto
-          </Button>
-        </div>
-      </div>
-
-      {/* UniversalTable */}
+      {/* UniversalTable Unificada - Barra Única sem Repetições */}
       <UniversalTable<Project>
         data={projects}
         columns={columns}
         isLoading={isLoading}
         searchKey="title"
-        searchPlaceholder="Pesquisar projetos por título ou cliente..."
+        searchPlaceholder="Pesquisar projectos por título ou cliente..."
+        searchValue={search}
+        onSearchChange={setSearch}
         pageSize={filters.limit || 10}
+        customFilters={
+          <>
+            <FilterPopover
+              icon="Tag"
+              label="Fase"
+              options={STAGE_OPTIONS}
+              value={stage}
+              onChange={(val) => setStage(val || 'ALL')}
+            />
+            <FilterPopover
+              icon="CircleDot"
+              label="Estado"
+              options={STATUS_OPTIONS}
+              value={status}
+              onChange={(val) => setStatus(val || 'ALL')}
+            />
+          </>
+        }
+        mobileSections={mobileSections}
+        appliedMobileFilters={appliedMobileFilters}
+        onApplyMobileFilters={(newFilters, extra) => {
+          handleApplyMobileFilters(newFilters);
+          if (extra?.sortBy && extra?.sortOrder) {
+            setSort(extra.sortBy, extra.sortOrder);
+          }
+          if (extra?.startDate !== undefined || extra?.endDate !== undefined) {
+            setDateRange(extra.startDate, extra.endDate);
+          }
+        }}
+        onClearFilters={resetFilters}
+        sortFilter={{
+          options: SORT_OPTIONS,
+          sortBy,
+          sortOrder,
+          onSortChange: (sb, so) => setSort(sb, so),
+        }}
+        dateRangeFilter={{
+          startDate,
+          endDate,
+          onChange: (start, end) => setDateRange(start, end),
+        }}
+        toolbar={{
+          actions: (
+            <Button
+              onClick={() => setIsModalOpen(true)}
+              size="sm"
+              className="h-10 sm:h-9 min-h-[44px] sm:min-h-0 text-xs gap-1.5 shrink-0 rounded-none px-3.5"
+            >
+              <Plus className="h-4 w-4" /> Novo Projecto
+            </Button>
+          ),
+        }}
         emptyState={{
-          title: 'Sem Projetos',
+          title: 'Sem Projectos',
           description:
             search || stage !== 'ALL' || status !== 'ALL'
-              ? 'Nenhum projeto encontrado com os filtros selecionados.'
+              ? 'Nenhum projecto encontrado com os filtros seleccionados.'
               : 'Adicione uma nova produção audiovisual para iniciar.',
           action: (
-            <Button size="sm" onClick={() => setIsModalOpen(true)} className="text-xs">
-              <Plus className="mr-1.5 h-3.5 w-3.5" /> Criar Primeiro Projeto
+            <Button size="sm" onClick={() => setIsModalOpen(true)} className="text-xs min-h-[44px] sm:min-h-0">
+              <Plus className="mr-1.5 h-3.5 w-3.5" /> Criar Primeiro Projecto
             </Button>
           ),
         }}

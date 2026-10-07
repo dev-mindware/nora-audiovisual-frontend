@@ -73,7 +73,7 @@ function ResetPasswordForm() {
         {/* Header */}
         <div className="flex flex-col gap-2.5 text-left">
           <div className="space-y-1">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
+            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-foreground">
               Nova Palavra-passe
             </h1>
             <p className="text-sm text-muted-foreground leading-relaxed">

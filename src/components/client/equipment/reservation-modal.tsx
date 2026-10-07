@@ -112,6 +112,7 @@ export function ReservationModal({ isOpen, onClose, equipment }: ReservationModa
             type="button"
             variant="outline"
             onClick={handleCancel}
+            className="min-h-[44px] sm:min-h-0"
           >
             Cancelar
           </Button>
@@ -119,6 +120,7 @@ export function ReservationModal({ isOpen, onClose, equipment }: ReservationModa
             form="reservation-form"
             isLoading={isPending}
             disabled={hasConflict}
+            className="min-h-[44px] sm:min-h-0"
           >
             Confirmar Reserva
           </ButtonSubmit>
@@ -131,7 +133,7 @@ export function ReservationModal({ isOpen, onClose, equipment }: ReservationModa
           name="projectId"
           render={({ field: { onChange, value } }) => (
             <PaginatedSelect
-              label="Projeto Vinculado"
+              label="Projecto Vinculado"
               value={value || ''}
               options={projectOptions}
               onChange={onChange}
@@ -140,7 +142,7 @@ export function ReservationModal({ isOpen, onClose, equipment }: ReservationModa
               fullWidth
               searchValue={projectSearch}
               onSearchChange={setProjectSearch}
-              searchPlaceholder="Pesquisar projeto..."
+              searchPlaceholder="Pesquisar projecto..."
               pagination={{ page: 1, totalPages: 1 }}
               onPageChange={() => {}}
             />

@@ -109,6 +109,7 @@ export function RecordExpenseModal({
             size="sm"
             onClick={handleCancel}
             disabled={isPending}
+            className="min-h-[44px] sm:min-h-0"
           >
             Cancelar
           </Button>
@@ -116,6 +117,7 @@ export function RecordExpenseModal({
             form="record-expense-form"
             size="sm"
             isLoading={isPending}
+            className="min-h-[44px] sm:min-h-0"
           >
             Submeter Despesa
           </ButtonSubmit>
@@ -127,7 +129,7 @@ export function RecordExpenseModal({
         onSubmit={handleSubmit(onSubmit)}
         className="space-y-4"
       >
-        {/* Projeto */}
+        {/* Projecto */}
         {!defaultProjectId && (
           <Controller
             name="projectId"
@@ -135,15 +137,15 @@ export function RecordExpenseModal({
             render={({ field }) => (
               <div>
                 <PaginatedSelect
-                  label="Projeto Audiovisual *"
+                  label="Projecto Audiovisual *"
                   options={projectOptions}
                   value={field.value}
                   onChange={field.onChange}
-                  placeholder="Selecione o projeto..."
+                  placeholder="Seleccione o projecto..."
                   isLoading={isLoadingProjects}
                   searchValue={projectSearch}
                   onSearchChange={setProjectSearch}
-                  searchPlaceholder="Pesquisar projeto..."
+                  searchPlaceholder="Pesquisar projecto..."
                   pagination={{ page: 1, totalPages: 1 }}
                   onPageChange={() => {}}
                 />

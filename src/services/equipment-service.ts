@@ -7,6 +7,10 @@ export interface EquipmentFilters {
   search?: string;
   page?: number;
   limit?: number;
+  dateFrom?: string;
+  dateTo?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
 }
 
 export interface CreateEquipmentPayload {

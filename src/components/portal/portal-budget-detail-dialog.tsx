@@ -125,7 +125,7 @@ export function PortalBudgetDetailDialog({
         notes: notes.trim() || undefined,
       });
 
-      toast.success('Proposta comercial aceite com sucesso! O contrato e fatura foram gerados.');
+      toast.success('Proposta comercial aceite com sucesso! O contrato e factura foram gerados.');
       onUpdated?.();
       onClose();
     } catch (err: any) {
@@ -308,7 +308,7 @@ export function PortalBudgetDetailDialog({
                   <ShieldCheck className="h-4 w-4 text-primary" /> Aceite Formal Digital
                 </h4>
                 <p className="text-muted-foreground text-[11px]">
-                  Ao confirmar, esta proposta comercial torna-se o plano orçamental oficial do projeto.
+                  Ao confirmar, esta proposta comercial torna-se o plano orçamental oficial do projecto.
                 </p>
               </div>
 
@@ -338,7 +338,7 @@ export function PortalBudgetDetailDialog({
                   rows={2}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Indique número de ordem de compra ou referências para faturação..."
+                  placeholder="Indique número de ordem de compra ou referências para facturação..."
                   className="w-full rounded-none border border-border bg-background p-2.5 text-xs text-foreground focus:outline-none focus:border-primary"
                 />
               </div>

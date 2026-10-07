@@ -96,10 +96,10 @@ export function MindgestSettingsTab() {
           </div>
           <div className="space-y-1">
             <CardTitle className="text-sm font-semibold text-foreground">
-              Como funciona o fluxo de faturação no Nora Audiovisual?
+              Como funciona o fluxo de facturação no Nora Audiovisual?
             </CardTitle>
             <CardDescription className="text-xs text-muted-foreground leading-relaxed">
-              O Nora gere os seus orçamentos comerciais, projetos e reservas. Assim que um cliente aprovar a proposta e o pagamento for registado, o Nora solicita ao <strong>Mindgest</strong> a geração da fatura com assinatura criptográfica e hash SAF-T oficial da Administração Geral Tributária (AGT).
+              O Nora gere os seus orçamentos comerciais, projectos e reservas. Assim que um cliente aprovar a proposta e o pagamento for registado, o Nora solicita ao <strong>Mindgest</strong> a geração da factura com assinatura criptográfica e hash SAF-T oficial da Administração Geral Tributária (AGT).
             </CardDescription>
           </div>
         </div>

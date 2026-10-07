@@ -32,7 +32,6 @@ export const PRIVATE_ROUTE_PREFIXES = [
   "/equipment",
   "/studio",
   "/kanban",
-  "/files",
   "/deliverables",
   "/budgets",
   "/finance",

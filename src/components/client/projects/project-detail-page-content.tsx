@@ -10,7 +10,6 @@ import {
   useMoveTask,
   useRemoveProjectMember,
 } from '@/hooks/projects';
-import { useFiles } from '@/hooks/files';
 import { useProjectDeliverables } from '@/hooks/deliverables';
 import { Button, Badge } from '@/components/ui';
 import {
@@ -79,7 +78,7 @@ interface ProjectDetailPageContentProps {
 }
 
 export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContentProps) {
-  const [activeTab, setActiveTab] = useState<'overview' | 'call-sheets' | 'crew' | 'files' | 'kanban' | 'finance'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'call-sheets' | 'crew' | 'deliverables' | 'kanban' | 'finance'>('overview');
 
   // Modals state
   const [isCallSheetModalOpen, setIsCallSheetModalOpen] = useState(false);
@@ -88,13 +87,11 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
   const [isDeliverableModalOpen, setIsDeliverableModalOpen] = useState(false);
   const [isProjectExpenseModalOpen, setIsProjectExpenseModalOpen] = useState(false);
   const [isProjectPaymentModalOpen, setIsProjectPaymentModalOpen] = useState(false);
-  const [fileCategoryFilter, setFileCategoryFilter] = useState<string>('ALL');
 
   // Data fetching
   const { data: project, isLoading: loadingProject } = useProject(projectId);
   const { data: members = [], isLoading: loadingMembers } = useProjectMembers(projectId);
   const { data: callSheets = [], isLoading: loadingCallSheets } = useProjectCallSheets(projectId);
-  const { files = [], isLoading: loadingFiles, uploadFile, isUploading, deleteFile } = useFiles(projectId);
   const { data: deliverables = [], isLoading: loadingDeliverables } = useProjectDeliverables(projectId);
   const { data: kanbanData } = useProjectKanban(projectId);
   const { mutateAsync: removeMember } = useRemoveProjectMember(projectId);
@@ -114,24 +111,6 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
     ? STATUS_LABELS[project.lifecycleStatus] || { label: project.lifecycleStatus, color: 'bg-muted' }
     : { label: 'Em Curso', color: 'bg-muted' };
 
-  const filteredFiles = files.filter((f) => {
-    if (fileCategoryFilter === 'ALL') return true;
-    return f.category === fileCategoryFilter;
-  });
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const fileList = e.target.files;
-    if (!fileList || fileList.length === 0) return;
-    const file = fileList[0];
-    let category = 'DOCUMENT';
-    if (file.type.startsWith('video/')) category = 'VIDEO_PROXY';
-    else if (file.type.startsWith('audio/')) category = 'AUDIO';
-    else if (file.name.endsWith('.pdf')) category = 'SCRIPT';
-
-    await uploadFile({ file, category });
-    e.target.value = '';
-  };
-
   return (
     <div className="space-y-6">
       {/* Top Breadcrumb & Navigation */}
@@ -139,13 +118,13 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
         <div className="space-y-1">
           <Link
             href="/projects"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors min-h-[44px] sm:min-h-0"
           >
-            <ArrowLeft className="h-3.5 w-3.5" /> Voltar aos Projetos
+            <ArrowLeft className="h-3.5 w-3.5" /> Voltar aos Projectos
           </Link>
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-              {project?.title || 'Detalhes do Projeto'}
+              {project?.title || 'Detalhes do Projecto'}
             </h1>
             <Badge variant="outline" className={`font-semibold ${stageConfig.color}`}>
               {stageConfig.label}
@@ -236,13 +215,13 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
           <Users className="h-4 w-4" /> Equipa & Crew ({members.length})
         </button>
         <button
-          onClick={() => setActiveTab('files')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-sm font-semibold border-b-2 transition-all whitespace-nowrap ${activeTab === 'files'
+          onClick={() => setActiveTab('deliverables')}
+          className={`flex items-center gap-2 px-4 py-2.5 text-sm font-semibold border-b-2 transition-all whitespace-nowrap ${activeTab === 'deliverables'
               ? 'border-primary text-primary'
               : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
         >
-          <FileText className="h-4 w-4" /> Arquivos & Entregáveis ({files.length + deliverables.length})
+          <Video className="h-4 w-4" /> Entregáveis & Copiões ({deliverables.length})
         </button>
         <button
           onClick={() => setActiveTab('kanban')}
@@ -268,7 +247,7 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
       {activeTab === 'overview' && (
         <div className="space-y-6">
           {/* Key Metric Counters */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="rounded-2xl border border-border bg-card p-4 shadow-xs">
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
                 Folhas de Rodagem
@@ -282,15 +261,7 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
                 Equipa Escalada
               </span>
               <p className="mt-2 text-2xl font-semibold text-foreground">{members.length}</p>
-              <span className="text-xs text-muted-foreground">Profissionais ativos no projeto</span>
-            </div>
-
-            <div className="rounded-2xl border border-border bg-card p-4 shadow-xs">
-              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
-                Ficheiros no Bucket
-              </span>
-              <p className="mt-2 text-2xl font-semibold text-foreground">{files.length}</p>
-              <span className="text-xs text-muted-foreground">Guiões, áudios e proxies</span>
+              <span className="text-xs text-muted-foreground">Profissionais activos no projecto</span>
             </div>
 
             <div className="rounded-2xl border border-border bg-card p-4 shadow-xs">
@@ -298,7 +269,7 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
                 Pacotes Entregáveis
               </span>
               <p className="mt-2 text-2xl font-semibold text-purple-600 dark:text-purple-400">{deliverables.length}</p>
-              <span className="text-xs text-muted-foreground">Versões com timecode</span>
+              <span className="text-xs text-muted-foreground">Versões e copiões de revisão</span>
             </div>
           </div>
 
@@ -309,7 +280,7 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
             </h3>
             <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-line">
               {project?.description ||
-                'Nenhuma descrição detalhada fornecida para este projeto. Utilize o briefing para alinhar diretrizes de direção, referências estéticas e notas técnicas do cliente.'}
+                'Nenhuma descrição detalhada fornecida para este projecto. Utilize o briefing para alinhar directrizes de direcção, referências estéticas e notas técnicas do cliente.'}
             </p>
           </div>
 
@@ -327,7 +298,7 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
               </div>
               <h4 className="mt-4 font-semibold text-foreground">Criar Folha de Rodagem</h4>
               <p className="mt-1 text-xs text-muted-foreground">
-                Escalone horários de chamada (crew call), localização do set e contatos de emergência.
+                Escalone horários de chamada (crew call), localização do set e contactos de emergência.
               </p>
             </div>
 
@@ -340,7 +311,7 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
               </div>
               <h4 className="mt-4 font-semibold text-foreground">Escalar Equipa Técnica</h4>
               <p className="mt-1 text-xs text-muted-foreground">
-                Atribua Diretor de Fotografia, Gaffer, Técnico de Som e Produtores ao projeto.
+                Atribua Director de Fotografia, Gaffer, Técnico de Som e Produtores ao projecto.
               </p>
             </div>
 
@@ -455,7 +426,7 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
             <div>
               <h2 className="text-lg font-semibold text-foreground">Equipa e Escalação Técnica</h2>
               <p className="text-xs text-muted-foreground">
-                Profissionais associados a este projeto com funções especializadas na produção.
+                Profissionais associados a este projecto com funções especializadas na produção.
               </p>
             </div>
             <Button
@@ -474,7 +445,7 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
                   <TableHead className="px-5 py-3.5">Email</TableHead>
                   <TableHead className="px-5 py-3.5">Função Audiovisual</TableHead>
                   <TableHead className="px-5 py-3.5">Escalado em</TableHead>
-                  <TableHead className="px-5 py-3.5 text-right">Ação</TableHead>
+                  <TableHead className="px-5 py-3.5 text-right">Acção</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="divide-y divide-border">
@@ -517,7 +488,7 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
                 ) : (
                   <TableRow>
                     <TableCell colSpan={5} className="px-5 py-12 text-center text-muted-foreground">
-                      Nenhum membro escalado ainda. Adicione os profissionais responsáveis pelo projeto.
+                      Nenhum membro escalado ainda. Adicione os profissionais responsáveis pelo projecto.
                     </TableCell>
                   </TableRow>
                 )}
@@ -527,10 +498,9 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
         </div>
       )}
 
-      {/* Tab 4: Ficheiros & Entregáveis */}
-      {activeTab === 'files' && (
+      {/* Tab 4: Entregáveis & Copiões */}
+      {activeTab === 'deliverables' && (
         <div className="space-y-6">
-          {/* Deliverables section */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div>
@@ -592,7 +562,7 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
                           size="sm"
                           className="h-8 border-border text-purple-600 dark:text-purple-400 hover:bg-purple-500/10"
                         >
-                          <Video className="mr-1.5 h-3.5 w-3.5" /> Abrir Player de Revisão
+                          <Video className="mr-1.5 h-3.5 w-3.5" /> Abrir Leitor de Revisão
                         </Button>
                       </Link>
                     </div>
@@ -600,136 +570,9 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
                 ))
               ) : (
                 <div className="col-span-2 rounded-2xl border border-dashed border-border bg-muted/20 p-8 text-center text-xs text-muted-foreground">
-                  Nenhum entregável gerado ainda. Crie um pacote a partir dos arquivos do projeto.
+                  Nenhum entregável gerado ainda. Crie um pacote de entregável para revisão ou aprovação do cliente.
                 </div>
               )}
-            </div>
-          </div>
-
-          {/* Files library section */}
-          <div className="space-y-3 pt-4 border-t border-border">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-primary" /> Acervo de Arquivos do Projeto
-                </h3>
-                <p className="text-xs text-muted-foreground">
-                  Armazenamento em bucket privado de guiões, áudio, vídeos proxy e documentação.
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <label className="cursor-pointer">
-                  <input
-                    type="file"
-                    className="hidden"
-                    onChange={handleFileUpload}
-                    disabled={isUploading}
-                  />
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-xs">
-                    <Upload className="h-3.5 w-3.5" />
-                    {isUploading ? 'A Carregar...' : 'Carregar Ficheiro'}
-                  </div>
-                </label>
-              </div>
-            </div>
-
-            {/* Category filter pills */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-1">
-              {['ALL', 'SCRIPT', 'AUDIO', 'VIDEO_PROXY', 'DELIVERABLE', 'DOCUMENT'].map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setFileCategoryFilter(cat)}
-                  className={`px-3 py-1 text-xs font-medium rounded-lg transition-colors whitespace-nowrap ${fileCategoryFilter === cat
-                      ? 'bg-primary text-primary-foreground font-semibold'
-                      : 'bg-muted text-muted-foreground hover:text-foreground'
-                    }`}
-                >
-                  {cat === 'ALL'
-                    ? 'Todos'
-                    : cat === 'SCRIPT'
-                      ? 'Guiões'
-                      : cat === 'AUDIO'
-                        ? 'Áudio'
-                        : cat === 'VIDEO_PROXY'
-                          ? 'Vídeo Proxy'
-                          : cat === 'DELIVERABLE'
-                            ? 'Entregáveis'
-                            : 'Documentos'}
-                </button>
-              ))}
-            </div>
-
-            <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-xs">
-              <Table className="min-w-full text-left text-xs">
-                <TableHeader className="bg-muted/50 font-semibold text-muted-foreground">
-                  <TableRow>
-                    <TableHead className="px-5 py-3.5">Nome do Ficheiro</TableHead>
-                    <TableHead className="px-5 py-3.5">Categoria</TableHead>
-                    <TableHead className="px-5 py-3.5">Tamanho</TableHead>
-                    <TableHead className="px-5 py-3.5">Carregado por</TableHead>
-                    <TableHead className="px-5 py-3.5">Data</TableHead>
-                    <TableHead className="px-5 py-3.5 text-right">Ação</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody className="divide-y divide-border">
-                  {filteredFiles.length > 0 ? (
-                    filteredFiles.map((file) => (
-                      <TableRow key={file.id} className="hover:bg-muted/40 transition-colors">
-                        <TableCell className="px-5 py-4 font-semibold text-foreground">
-                          <div className="flex items-center gap-2 truncate max-w-sm">
-                            <FileText className="h-4 w-4 text-primary shrink-0" />
-                            <span className="truncate">{file.fileName}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="px-5 py-4">
-                          <Badge variant="outline" className="text-xs border-border">
-                            {file.category}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="px-5 py-4 text-muted-foreground font-mono">
-                          {(file.fileSize / (1024 * 1024)).toFixed(2)} MB
-                        </TableCell>
-                        <TableCell className="px-5 py-4 text-foreground">{file.uploader?.name || 'Equipa'}</TableCell>
-                        <TableCell className="px-5 py-4 text-muted-foreground">
-                          {new Date(file.createdAt).toLocaleDateString('pt-PT')}
-                        </TableCell>
-                        <TableCell className="px-5 py-4 text-right">
-                          <div className="flex items-center justify-end gap-1">
-                            {file.url && (
-                              <a href={file.url} target="_blank" rel="noopener noreferrer">
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="h-8 text-muted-foreground hover:text-foreground"
-                                  title="Descarregar"
-                                >
-                                  <Download className="h-4 w-4" />
-                                </Button>
-                              </a>
-                            )}
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => deleteFile(file.id)}
-                              className="h-8 text-muted-foreground hover:text-destructive"
-                              title="Eliminar"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell colSpan={6} className="px-5 py-12 text-center text-muted-foreground">
-                        Nenhum ficheiro encontrado nesta categoria.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
             </div>
           </div>
         </div>
@@ -818,8 +661,8 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
           {/* Action Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-3">
             <div>
-              <h3 className="text-base font-bold text-foreground">Custos Reais de Produção & Margem</h3>
-              <p className="text-xs text-muted-foreground">Despesas de rodagem efetuadas no terreno e margem consolidada do projeto.</p>
+              <h3 className="text-base font-semibold text-foreground">Custos Reais de Produção & Margem</h3>
+              <p className="text-xs text-muted-foreground">Despesas de rodagem efectuadas no terreno e margem consolidada do projecto.</p>
             </div>
             <div className="flex items-center gap-2">
               <Button
@@ -846,9 +689,9 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="rounded-none border border-border bg-card p-4">
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
-                Receita Faturada / Orçada
+                Receita Facturada / Orçada
               </span>
-              <p className="mt-2 text-xl font-mono font-bold text-emerald-600 dark:text-emerald-400">
+              <p className="mt-2 text-xl font-mono font-semibold text-emerald-600 dark:text-emerald-400">
                 {financialSummary ? new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA', maximumFractionDigits: 0 }).format(financialSummary.totalRevenue) : '—'}
               </p>
               <span className="text-[11px] text-muted-foreground">Valor recebido ou aprovado em proposta</span>
@@ -858,7 +701,7 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
                 Total Despesas de Campo
               </span>
-              <p className="mt-2 text-xl font-mono font-bold text-rose-600 dark:text-rose-400">
+              <p className="mt-2 text-xl font-mono font-semibold text-rose-600 dark:text-rose-400">
                 {financialSummary ? new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA', maximumFractionDigits: 0 }).format(financialSummary.totalExpenses) : '—'}
               </p>
               <span className="text-[11px] text-muted-foreground">Catering, combustível, alugueres e diárias</span>
@@ -866,9 +709,9 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
 
             <div className="rounded-none border border-border bg-card p-4">
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">
-                Margem Efetiva
+                Margem Efectiva
               </span>
-              <p className={`mt-2 text-xl font-mono font-bold ${financialSummary && financialSummary.actualMargin >= 0 ? 'text-foreground' : 'text-rose-600'}`}>
+              <p className={`mt-2 text-xl font-mono font-semibold ${financialSummary && financialSummary.actualMargin >= 0 ? 'text-foreground' : 'text-rose-600'}`}>
                 {financialSummary ? new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA', maximumFractionDigits: 0 }).format(financialSummary.actualMargin) : '—'}
               </p>
               <span className="text-[11px] text-muted-foreground">
@@ -888,8 +731,8 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
             ) : projectExpenses.length === 0 ? (
               <div className="p-8 text-center border border-dashed border-border text-xs text-muted-foreground space-y-1">
                 <Receipt className="h-6 w-6 mx-auto text-muted-foreground/50 mb-1" />
-                <p className="font-semibold text-foreground">Nenhuma despesa de campo registada para este projeto.</p>
-                <p>Lançe custos de alimentação, transporte e diárias de rodagem.</p>
+                <p className="font-semibold text-foreground">Nenhuma despesa de campo registada para este projecto.</p>
+                <p>Lance custos de alimentação, transporte e diárias de rodagem.</p>
               </div>
             ) : (
               <div className="border border-border overflow-x-auto">
@@ -902,7 +745,7 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
                       <TableHead className="py-2.5 px-3">Comprovativo</TableHead>
                       <TableHead className="py-2.5 px-3 text-right">Valor (AOA)</TableHead>
                       <TableHead className="py-2.5 px-3 text-center">Estado</TableHead>
-                      <TableHead className="py-2.5 px-3 text-right">Ação</TableHead>
+                      <TableHead className="py-2.5 px-3 text-right">Acção</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody className="divide-y divide-border font-sans">
@@ -931,7 +774,7 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
                             <span className="text-muted-foreground/60">—</span>
                           )}
                         </TableCell>
-                        <TableCell className="py-2.5 px-3 text-right font-mono font-bold text-foreground">
+                        <TableCell className="py-2.5 px-3 text-right font-mono font-semibold text-foreground">
                           {new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA', maximumFractionDigits: 0 }).format(Number(exp.amount))}
                         </TableCell>
                         <TableCell className="py-2.5 px-3 text-center">

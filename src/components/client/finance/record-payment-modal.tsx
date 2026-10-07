@@ -113,6 +113,7 @@ export function RecordPaymentModal({
             size="sm"
             onClick={handleCancel}
             disabled={isPending}
+            className="min-h-[44px] sm:min-h-0"
           >
             Cancelar
           </Button>
@@ -120,6 +121,7 @@ export function RecordPaymentModal({
             form="record-payment-form"
             size="sm"
             isLoading={isPending}
+            className="min-h-[44px] sm:min-h-0"
           >
             Registar Pagamento
           </ButtonSubmit>
@@ -131,14 +133,14 @@ export function RecordPaymentModal({
         onSubmit={handleSubmit(onSubmit)}
         className="space-y-4"
       >
-        {/* Projeto */}
+        {/* Projecto */}
         {!defaultProjectId && (
           <Controller
             name="projectId"
             control={control}
             render={({ field }) => (
               <PaginatedSelect
-                label="Projeto Vinculado (Opcional)"
+                label="Projecto Vinculado (Opcional)"
                 options={projectOptions}
                 value={field.value}
                 onChange={field.onChange}
@@ -146,7 +148,7 @@ export function RecordPaymentModal({
                 isLoading={isLoadingProjects}
                 searchValue={projectSearch}
                 onSearchChange={setProjectSearch}
-                searchPlaceholder="Pesquisar projeto..."
+                searchPlaceholder="Pesquisar projecto..."
                 pagination={{ page: 1, totalPages: 1 }}
                 onPageChange={() => {}}
               />

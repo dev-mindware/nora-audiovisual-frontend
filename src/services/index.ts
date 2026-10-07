@@ -10,7 +10,6 @@ export * from './studio-service';
 export * from './budgets-service';
 export * from './ai-service';
 export * from './subscriptions-service';
-export * from './files-service';
 export * from './admin-service';
 export * from './members-service';
 export * from './sessions-service';

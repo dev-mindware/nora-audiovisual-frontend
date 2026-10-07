@@ -70,7 +70,7 @@ export function AutomatePageContent() {
             <Zap className="size-3" />
             Nora Automate
           </div>
-          <h2 className="text-xl font-bold tracking-tight text-foreground">Automações da produtora</h2>
+          <h2 className="text-xl font-semibold tracking-tight text-foreground">Automações da produtora</h2>
           <p className="text-xs text-muted-foreground">
             {workflows.length} fluxos · {active} activos. Os fluxos disparam com eventos reais (orçamento aprovado, pagamento confirmado, …).
           </p>
@@ -104,7 +104,7 @@ export function AutomatePageContent() {
                     aria-label={wf.status === 'ACTIVE' ? 'Desactivar fluxo' : 'Activar fluxo'}
                   />
                 </div>
-                <h3 className="text-sm font-bold text-foreground leading-snug">{wf.name}</h3>
+                <h3 className="text-sm font-semibold text-foreground leading-snug">{wf.name}</h3>
                 {wf.description && <p className="text-xs text-muted-foreground line-clamp-2">{wf.description}</p>}
                 <div className="flex flex-wrap gap-1.5">
                   {wf.actions.map((a, i) => (
@@ -142,7 +142,7 @@ export function AutomatePageContent() {
       <div className="p-6 rounded-2xl border border-border bg-card space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-bold text-foreground">Execuções recentes</h3>
+            <h3 className="text-sm font-semibold text-foreground">Execuções recentes</h3>
             <p className="text-xs text-muted-foreground">Resultado real de cada acção, incluindo falhas e execuções ignoradas.</p>
           </div>
           <Button variant="outline" size="sm" className="gap-1.5 text-xs" onClick={() => refetch()} disabled={isFetching}>
@@ -163,7 +163,7 @@ export function AutomatePageContent() {
                   <div className="space-y-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="font-semibold text-foreground">{exec.workflow?.name ?? 'Fluxo removido'}</span>
-                      <span className={`px-2 py-0.5 text-[9px] font-bold uppercase rounded border ${style.className}`}>{style.label}</span>
+                      <span className={`px-2 py-0.5 text-[9px] font-semibold uppercase rounded border ${style.className}`}>{style.label}</span>
                     </div>
                     <span className="block text-[11px] text-muted-foreground">
                       Origem: {exec.triggeredBy?.startsWith('USER') ? 'Manual' : exec.triggeredBy === 'SYSTEM_EVENT' ? 'Evento do sistema' : (exec.triggeredBy ?? '—')}
