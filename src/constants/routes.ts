@@ -2,7 +2,6 @@ import { Role } from "@/types";
 
 // Rotas públicas (acessíveis sem autenticação)
 export const PUBLIC_ROUTES = [
-  "/",
   "/auth/login",
   "/auth/register",
   "/auth/forgot-password",
@@ -16,7 +15,6 @@ export const PUBLIC_ROUTES = [
 
 // Páginas de autenticação — se logado, redireciona para dashboard
 export const AUTH_PAGES = [
-  "/",
   "/auth/login",
   "/auth/register",
   "/auth/forgot-password",

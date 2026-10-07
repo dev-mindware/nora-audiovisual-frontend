@@ -1,13 +1,6 @@
-import { Suspense } from "react";
-import { PageWrapper } from "@/components";
-import { NoraHomePageContent } from "@/components/client/nora";
+import { redirect } from "next/navigation";
 
-export default function HomePage() {
-  return (
-    <Suspense>
-      <PageWrapper subRoute="Visão Geral">
-        <NoraHomePageContent />
-      </PageWrapper>
-    </Suspense>
-  );
+export default function RootPage() {
+  redirect("/auth/login");
 }
+

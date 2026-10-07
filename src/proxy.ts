@@ -59,6 +59,16 @@ export async function proxy(req: NextRequest) {
   }
 
   const isAuthenticated = Boolean(hasRefreshToken && role);
+
+  // Redirecionamento da raiz /
+  if (pathname === "/") {
+    if (isAuthenticated && role) {
+      const redirectTo = getRouteByRole(role);
+      return NextResponse.redirect(new URL(redirectTo, req.url));
+    }
+    return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, req.url));
+  }
+
   const publicRoute = isPublicRoute(pathname);
   const authPage = isAuthPage(pathname);
   const privateRoute = isPrivateRoute(pathname);
