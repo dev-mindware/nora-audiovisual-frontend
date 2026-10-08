@@ -1,8 +1,7 @@
 "use client";
+import { Icon } from "@/components/common/icon";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
-  Icon,
-  Avatar,
-  AvatarFallback,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -10,11 +9,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components";
+} from "@/components/ui/sidebar";
 import { useAuth, useLogout } from "@/hooks/auth";
 import { usePwaInstallPrompt } from "@/hooks/common/use-pwa-install-prompt";
 import Link from "next/link";

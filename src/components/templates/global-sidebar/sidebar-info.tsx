@@ -1,19 +1,21 @@
 "use client";
 
+import { Icon } from "@/components/common/icon";
+import { BrandLogo } from "@/components/common/brand-logo";
 import {
-  Icon,
-  BrandLogo,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components";
+} from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/auth";
 import { useTenantStore } from "@/stores/tenant";
 import { api } from "@/services/api";

@@ -1,15 +1,15 @@
 "use client";
 import {
-  NavMenu,
-  UserInfo,
   Sidebar,
   SidebarRail,
   SidebarHeader,
   SidebarFooter,
   SidebarContent,
-  SidebarSkeleton,
-  SidebarCompanyInfo,
-} from "@/components";
+} from "@/components/ui/sidebar";
+import { NavMenu } from "./nav-components";
+import { UserInfo } from "./user-info";
+import { SidebarCompanyInfo } from "./sidebar-info";
+import { SidebarSkeleton } from "@/components/common/skeletons/sidebar-skeleton";
 import { menuItems } from "@/constants/menu-items";
 import { useAuth } from "@/hooks/auth";
 import { getSidebarForUser } from "@/lib/get-sidebar-for-user";

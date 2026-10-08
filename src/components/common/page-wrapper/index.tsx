@@ -1,17 +1,19 @@
 "use client"
-import { DinamicBreadcrumb } from "@/components/custom";
+import { DinamicBreadcrumb } from "@/components/custom/dynamic-breadcrumb";
 import { NotificationDropdown, ChatbotSheet, TutorialsModal } from "@/components/shared";
+import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
 import {
-  Separator,
-  SidebarTrigger,
-  Button,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui";
+} from "@/components/ui/dropdown-menu";
 import { useQueryState } from "nuqs";
-import { Icon, Input, Avatar, AvatarFallback, AvatarImage } from "@/components";
+import { Icon } from "@/components/common/icon";
+import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/auth";
 import { OnboardingTourButton } from "@/components/common/onboarding-tour-button";
 import type { OnboardingTourId } from "@/constants/onboarding-tours";

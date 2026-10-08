@@ -1,4 +1,4 @@
-import { Icon } from "@/components";
+import { Icon } from "@/components/common/icon";
 import { cn } from "@/lib/utils";
 
 export interface MetricTrend {

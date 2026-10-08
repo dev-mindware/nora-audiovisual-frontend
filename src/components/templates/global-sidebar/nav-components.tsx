@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Icon } from "@/components/common/icon";
 import {
-  Icon,
   SidebarGroup,
   SidebarMenu,
   SidebarMenuAction,
@@ -13,7 +13,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   useSidebar,
-} from "@/components";
+} from "@/components/ui/sidebar";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { MenuItem } from "@/constants/menu-items";

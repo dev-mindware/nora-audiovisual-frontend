@@ -1,6 +1,7 @@
 "use client";
 
-import { Card, CardContent, Icon } from "@/components";
+import { Card, CardContent } from "@/components/ui/card";
+import { Icon } from "@/components/common/icon";
 import { cn } from "@/lib/utils";
 import { icons } from "lucide-react";
 import { MetricTrendIndicator, type MetricTrend } from "./metric-trend";
