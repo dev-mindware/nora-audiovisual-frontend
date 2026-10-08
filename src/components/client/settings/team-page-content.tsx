@@ -5,6 +5,13 @@ import { TitleList } from '@/components';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { membersService, OrganizationMemberItem } from '@/services/members-service';
 import { useTenantStore } from '@/stores/tenant/tenant-store';
 import { parseApiError } from '@/lib/api-error';
@@ -332,17 +339,18 @@ export function TeamPageContent() {
 
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-foreground">Função na Equipa / Perfil Operacional</label>
-                <select
-                  value={inviteRole}
-                  onChange={(e) => setInviteRole(e.target.value)}
-                  className="w-full h-11 sm:h-10 px-3.5 rounded-none border border-border bg-background text-foreground text-base sm:text-sm focus:outline-none focus:border-foreground"
-                >
-                  <option value="PRODUCER">Produtor Executivo (PRODUCER)</option>
-                  <option value="MANAGER">Gestor de Operações (MANAGER)</option>
-                  <option value="FINANCE">Financeiro &amp; Facturação (FINANCE)</option>
-                  <option value="EDITOR">Editor / Pós-Produção (EDITOR)</option>
-                  <option value="CREW">Equipa Técnica / Rodagem (CREW)</option>
-                </select>
+                <Select value={inviteRole} onValueChange={(val) => setInviteRole(val)}>
+                  <SelectTrigger className="w-full h-11 sm:h-10 px-3.5 rounded-none border border-border bg-background text-foreground text-base sm:text-sm">
+                    <SelectValue placeholder="Selecione o perfil operacional" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="PRODUCER" className="text-sm">Produtor Executivo (PRODUCER)</SelectItem>
+                    <SelectItem value="MANAGER" className="text-sm">Gestor de Operações (MANAGER)</SelectItem>
+                    <SelectItem value="FINANCE" className="text-sm">Financeiro &amp; Facturação (FINANCE)</SelectItem>
+                    <SelectItem value="EDITOR" className="text-sm">Editor / Pós-Produção (EDITOR)</SelectItem>
+                    <SelectItem value="CREW" className="text-sm">Equipa Técnica / Rodagem (CREW)</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-3">

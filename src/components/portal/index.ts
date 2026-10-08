@@ -9,3 +9,4 @@ export * from './portal-budget-view';
 export * from './cinema-video-player';
 export * from './photo-proofing-gallery';
 export * from './extra-photos-checkout-modal';
+export * from './services';

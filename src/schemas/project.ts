@@ -3,6 +3,7 @@ import { z } from 'zod';
 export const createProjectSchema = z.object({
   title: z.string().min(2, 'O título deve ter pelo menos 2 caracteres'),
   clientId: z.string().min(1, 'Selecione ou indique o cliente'),
+  serviceId: z.string().optional(),
   productionStage: z.enum([
     'PRE_PRODUCTION',
     'PRODUCTION',

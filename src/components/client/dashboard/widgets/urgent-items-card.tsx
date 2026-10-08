@@ -4,7 +4,7 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { EmptyState } from '@/components/common/empty-state';
+import { EmptyState, ItemStatusBadge } from '@/components/common';
 import {
   AlertCircle,
   FileSpreadsheet,
@@ -47,22 +47,6 @@ export function UrgentItemsCard({
         return <Film className="size-3.5 text-purple-600" />;
       default:
         return <AlertCircle className="size-3.5 text-muted-foreground" />;
-    }
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'PENDENTE':
-      case 'SENT':
-      case 'AGUARDA_CLIENTE':
-        return <Badge variant="outline" className="text-[10px] bg-amber-500/10 text-amber-600 border-amber-500/20 rounded-xs font-semibold">{status}</Badge>;
-      case 'NO_SET':
-      case 'EM_CAMPO':
-        return <Badge variant="outline" className="text-[10px] bg-primary/10 text-primary border-primary/20 rounded-xs font-semibold">{status}</Badge>;
-      case 'ACTIVE':
-        return <Badge variant="outline" className="text-[10px] bg-blue-500/10 text-blue-600 border-blue-500/20 rounded-xs font-semibold">Ativo</Badge>;
-      default:
-        return <Badge variant="outline" className="text-[10px] rounded-xs font-semibold">{status}</Badge>;
     }
   };
 
@@ -116,7 +100,7 @@ export function UrgentItemsCard({
                 </div>
 
                 <div className="shrink-0">
-                  {getStatusBadge(item.status)}
+                  <ItemStatusBadge status={item.status} />
                 </div>
               </div>
             ))}

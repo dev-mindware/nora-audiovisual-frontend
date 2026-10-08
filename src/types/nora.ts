@@ -160,6 +160,8 @@ export interface Project {
   clientName?: string;
   client?: { id: string; name: string; type?: string } | null;
   budgetId?: string | null;
+  serviceId?: string | null;
+  service?: CatalogService | null;
   title: string;
   description?: string | null;
   lifecycleStatus: ProjectLifecycleStatus;
@@ -488,4 +490,64 @@ export interface ProjectFinancialSummary {
   actualMargin: number;
   actualMarginPercent: number;
 }
+
+// ---------------------------------------------------------------------------
+// CATÁLOGO DE SERVIÇOS & PACOTES AUDIOVISUAIS
+// ---------------------------------------------------------------------------
+
+export type CatalogServiceCategory =
+  | 'VIDEO_PRODUCTION'
+  | 'PHOTOGRAPHY'
+  | 'POST_PRODUCTION'
+  | 'STUDIO_RENTAL'
+  | 'LIVE_STREAMING'
+  | 'COMMERCIAL'
+  | 'MUSIC_VIDEO'
+  | 'CORPORATE'
+  | 'EVENT'
+  | 'PODCAST'
+  | 'COLOR_GRADING'
+  | 'AUDIO_MASTERING'
+  | 'DRONE_FOOTAGE'
+  | 'OTHER';
+
+export interface CatalogService {
+  id: string;
+  organizationId: string;
+  name: string;
+  description?: string | null;
+  category: CatalogServiceCategory;
+  price: number;
+  currency: string;
+  durationHours?: number | null;
+  benefits: string[];
+  deliverablesIncluded: string[];
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateCatalogServicePayload {
+  name: string;
+  description?: string;
+  category?: CatalogServiceCategory;
+  price: number;
+  currency?: string;
+  durationHours?: number;
+  benefits?: string[];
+  deliverablesIncluded?: string[];
+  isActive?: boolean;
+}
+
+export interface RequestPortalServicePayload {
+  serviceId: string;
+  projectTitle?: string;
+  requestedDate?: string;
+  requestedTimeSlot?: string;
+  notes?: string;
+  clientName?: string;
+  clientEmail?: string;
+  clientPhone?: string;
+}
+
 

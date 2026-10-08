@@ -19,6 +19,7 @@ import {
   TableBody,
   TableCell,
 } from '@/components/ui';
+import { ItemStatusBadge } from '@/components/common';
 import {
   FileCheck,
   AlertTriangle,
@@ -130,12 +131,7 @@ export function PortalBudgetView({ token }: PortalBudgetViewProps) {
             </p>
           </div>
 
-          <Badge
-            variant="outline"
-            className="py-1 px-3 text-sm font-semibold"
-          >
-            {isApproved ? 'Aceite Confirmado' : 'Aguarda Aceite'}
-          </Badge>
+          <ItemStatusBadge status={budget.status} className="py-1 px-3 text-sm font-semibold" />
         </div>
 
         {/* Line Items Table */}

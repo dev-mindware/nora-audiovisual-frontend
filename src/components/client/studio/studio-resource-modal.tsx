@@ -12,6 +12,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { StudioResource, StudioResourceType } from '@/types';
 import { useCreateStudioResource, useUpdateStudioResource } from '@/hooks/studio';
 import { Building2, Layers, Users, Clock, CalendarCheck, MapPin } from 'lucide-react';
@@ -139,17 +146,21 @@ export function StudioResourceModal({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className="text-xs font-medium text-foreground">Tipo de Espaço *</Label>
-              <select
+              <Select
                 value={type}
-                onChange={(e) => setType(e.target.value as StudioResourceType)}
-                className="w-full h-9 rounded-none border border-border bg-background px-3 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                onValueChange={(val) => setType(val as StudioResourceType)}
               >
-                {RESOURCE_TYPES.map((t) => (
-                  <option key={t.value} value={t.value}>
-                    {t.label}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="w-full h-9 rounded-none border border-border bg-background px-3 text-xs text-foreground">
+                  <SelectValue placeholder="Selecione o tipo de espaço" />
+                </SelectTrigger>
+                <SelectContent>
+                  {RESOURCE_TYPES.map((t) => (
+                    <SelectItem key={t.value} value={t.value} className="text-xs">
+                      {t.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-1.5">
@@ -216,14 +227,18 @@ export function StudioResourceModal({
 
             <div className="space-y-1.5">
               <Label className="text-xs font-medium text-foreground">Estado Operacional</Label>
-              <select
+              <Select
                 value={status}
-                onChange={(e) => setStatus(e.target.value as any)}
-                className="w-full h-9 rounded-none border border-border bg-background px-3 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                onValueChange={(val) => setStatus(val as any)}
               >
-                <option value="AVAILABLE">Disponível para Rodagem</option>
-                <option value="MAINTENANCE">Em Manutenção Técnica</option>
-              </select>
+                <SelectTrigger className="w-full h-9 rounded-none border border-border bg-background px-3 text-xs text-foreground">
+                  <SelectValue placeholder="Selecione o estado" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="AVAILABLE" className="text-xs">Disponível para Rodagem</SelectItem>
+                  <SelectItem value="MAINTENANCE" className="text-xs">Em Manutenção Técnica</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 

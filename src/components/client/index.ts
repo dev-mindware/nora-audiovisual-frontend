@@ -16,3 +16,4 @@ export * from './nora';
 export * from './finance';
 export * from './insights';
 export * from './automate';
+export * from './services';

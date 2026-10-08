@@ -101,6 +101,12 @@ export const menuItems: MenuStructure = {
       roles: ["OWNER", "MANAGER", "PRODUCER", "FINANCE"],
     },
     {
+      name: "Catálogo de Serviços",
+      url: "/services",
+      icon: <Icon name="Briefcase" className="w-5 h-5" />,
+      roles: ["OWNER", "MANAGER", "PRODUCER", "FINANCE"],
+    },
+    {
       name: "Finanças & Despesas",
       url: "/finance",
       icon: <Icon name="Receipt" className="w-5 h-5" />,

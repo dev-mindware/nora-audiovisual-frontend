@@ -11,6 +11,12 @@ import {
   ChevronLeft,
   Sparkles,
   Wand2,
+  ShieldCheck,
+  Film,
+  Users,
+  HardDrive,
+  Camera,
+  Layers,
 } from "lucide-react";
 import { registerAction, syncSessionAction, type RegisterActionResult } from "@/actions/register";
 import { registerActionSchema, type RegisterActionInput } from "@/schemas";
@@ -23,62 +29,9 @@ import { queryClient } from "@/lib";
 import { api } from "@/services/api";
 import { AccountCreatedModal } from "./account-created-modal";
 
-interface PlanOption {
-  code: "INICIAL" | "PROFISSIONAL" | "BUSINESS";
-  name: string;
-  popular?: boolean;
-  tagline: string;
-  price: string;
-  features: string[];
-}
-
-const PLANS: PlanOption[] = [
-  {
-    code: "INICIAL",
-    name: "Inicial",
-    tagline: "Para pequenos estúdios e freelancers independentes",
-    price: "25.000",
-    features: [
-      "Até 3 utilizadores",
-      "5 projectos activos",
-      "50 GB de armazenamento",
-      "Gestão de equipamentos básica",
-    ],
-  },
-  {
-    code: "PROFISSIONAL",
-    name: "Profissional",
-    popular: true,
-    tagline: "Para produtoras em expansão com equipa técnica",
-    price: "45.000",
-    features: [
-      "Até 10 utilizadores",
-      "Projectos ilimitados",
-      "500 GB de armazenamento",
-      "Folhas de Chamada & PDF",
-      "Portal do Cliente com Timecode",
-      "1.000 créditos de IA inclusos",
-    ],
-  },
-  {
-    code: "BUSINESS",
-    name: "Business",
-    tagline: "Para agências criativas e grandes operações",
-    price: "85.000",
-    features: [
-      "Utilizadores ilimitados",
-      "2 TB de armazenamento",
-      "Check-out / Check-in com QR",
-      "Facturação integrada Mindgest",
-      "Auditoria avançada e SLA prioritário",
-      "Créditos de IA expandidos",
-    ],
-  },
-];
-
 export function RegisterFlow() {
   const router = useRouter();
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState<1 | 2>(1);
 
   const { setUser, setIsAuthenticating } = useAuthStore();
   const { setActiveOrganization, setOrganizations } = useTenantStore();
@@ -101,12 +54,11 @@ export function RegisterFlow() {
       organizationName: "",
       organizationSlug: "",
       taxId: "",
-      planCode: "PROFISSIONAL",
+      planCode: "INICIAL",
     },
   });
 
   const watchedPassword = watch("password");
-  const watchedPlanCode = watch("planCode");
 
   const generateStrongPassword = () => {
     const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -135,15 +87,12 @@ export function RegisterFlow() {
     if (step === 1) {
       const isValid = await trigger(["name", "email", "password"]);
       if (isValid) setStep(2);
-    } else if (step === 2) {
-      const isValid = await trigger(["organizationName", "organizationSlug"]);
-      if (isValid) setStep(3);
     }
   };
 
   const handleBack = () => {
-    if (step > 1) {
-      setStep((prev) => (prev - 1) as 1 | 2);
+    if (step === 2) {
+      setStep(1);
     }
   };
 
@@ -172,13 +121,13 @@ export function RegisterFlow() {
     try {
       setIsAuthenticating(true);
 
-      // 1. Sanitiza campos opcionais para evitar enviar strings vazias à API
+      // 1. Sanitiza campos opcionais e fixa plano inicial com trial automático
       const cleanData: RegisterActionInput = {
         name: data.name.trim(),
         email: data.email.trim().toLowerCase(),
         password: data.password,
         organizationName: data.organizationName.trim(),
-        planCode: data.planCode,
+        planCode: "INICIAL",
       };
       if (data.organizationSlug?.trim()) {
         cleanData.organizationSlug = data.organizationSlug.trim();
@@ -271,16 +220,15 @@ export function RegisterFlow() {
             Criar Conta Nora
           </h1>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            {step === 1 && "Passo 1 de 3 — Configure os seus dados de acesso de titular."}
-            {step === 2 && "Passo 2 de 3 — Identifique a sua produtora e workspace."}
-            {step === 3 && "Passo 3 de 3 — Selecione o plano adequado para a operação."}
+            {step === 1 && "Passo 1 de 2 — Configure os seus dados de acesso de titular."}
+            {step === 2 && "Passo 2 de 2 — Identifique a sua produtora e active o seu teste."}
           </p>
         </div>
       </div>
 
       {/* Stepper Dots */}
       <div className="flex items-center gap-2">
-        {[1, 2, 3].map((s) => (
+        {[1, 2].map((s) => (
           <div
             key={s}
             className={`h-1.5 rounded-full transition-all duration-300 ${
@@ -357,7 +305,7 @@ export function RegisterFlow() {
           </div>
         )}
 
-        {/* STEP 2: PRODUTORA & TENANT */}
+        {/* STEP 2: PRODUTORA & TRIAL AUTOMÁTICO COM PACOTE INICIAL */}
         {step === 2 && (
           <div className="grid gap-4 animate-in fade-in duration-300">
             <Input
@@ -378,77 +326,43 @@ export function RegisterFlow() {
               error={errors.organizationSlug?.message}
             />
 
+            {/* Trial & Benefícios do Pacote Inicial */}
+            <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 text-xs text-foreground space-y-3">
+              <div className="flex items-center gap-2 font-semibold text-primary">
+                <Sparkles className="h-4 w-4 shrink-0 text-primary" />
+                <span>Trial de 7 Dias — Pacote Inicial Activado</span>
+              </div>
+              <p className="text-muted-foreground leading-relaxed">
+                A sua produtora terá acesso imediato a todos os recursos do <strong className="text-foreground">Plano Inicial</strong> sem custos e sem cartão de crédito:
+              </p>
+
+              <div className="grid grid-cols-2 gap-2 text-muted-foreground pt-1">
+                <div className="flex items-center gap-1.5">
+                  <Film className="h-3.5 w-3.5 text-primary shrink-0" />
+                  <span>5 Projectos activos</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Users className="h-3.5 w-3.5 text-primary shrink-0" />
+                  <span>Até 3 utilizadores</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <HardDrive className="h-3.5 w-3.5 text-primary shrink-0" />
+                  <span>50 GB armazenamento</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Camera className="h-3.5 w-3.5 text-primary shrink-0" />
+                  <span>50 Equipamentos</span>
+                </div>
+                <div className="flex items-center gap-1.5 col-span-2">
+                  <Layers className="h-3.5 w-3.5 text-primary shrink-0" />
+                  <span>Portal do Cliente & Timecode</span>
+                </div>
+              </div>
+            </div>
+
             <div className="rounded-lg border border-border/70 bg-muted/20 p-3 text-xs text-muted-foreground leading-relaxed">
               <span className="font-medium text-foreground">Gestão Fiscal Mindgest:</span> Os dados fiscais e de facturação (NIF, enquadramento de IVA AGT e SAF-T) serão geridos e sincronizados centralmente através do Mindgest.
             </div>
-          </div>
-        )}
-
-        {/* STEP 3: PLANO SAAS */}
-        {step === 3 && (
-          <div className="flex flex-col gap-3 animate-in fade-in duration-300">
-            <span className="text-xs text-muted-foreground text-left mb-1">
-              Todos os planos incluem 7 dias de teste sem compromisso.
-            </span>
-
-            {PLANS.map((plan) => {
-              const isSelected = watchedPlanCode === plan.code;
-              return (
-                <div
-                  key={plan.code}
-                  onClick={() => setValue("planCode", plan.code, { shouldValidate: true })}
-                  className={`relative cursor-pointer rounded-xl border p-4 transition-all duration-200 ${
-                    isSelected
-                      ? "border-primary bg-primary/10 ring-2 ring-primary/20 shadow-xs"
-                      : "border-border bg-card hover:border-border/80 hover:bg-muted/40"
-                  }`}
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-2">
-                      <div
-                        className={`flex h-4 w-4 items-center justify-center rounded-full border transition-colors ${
-                          isSelected
-                            ? "border-primary bg-primary text-primary-foreground"
-                            : "border-input bg-background"
-                        }`}
-                      >
-                        {isSelected && <Check className="h-2.5 w-2.5 stroke-[3]" />}
-                      </div>
-                      <span className="font-semibold text-foreground text-sm">
-                        {plan.name}
-                      </span>
-                      {plan.popular && (
-                        <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
-                          Recomendado
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-right">
-                      <span className="font-semibold text-foreground text-sm">
-                        {plan.price}
-                      </span>
-                      <span className="text-xs text-muted-foreground"> Kz/mês</span>
-                    </div>
-                  </div>
-
-                  <p className="mt-1 text-xs text-muted-foreground pl-6">
-                    {plan.tagline}
-                  </p>
-
-                  <div className="mt-2.5 grid grid-cols-2 gap-1.5 pl-6">
-                    {plan.features.slice(0, 4).map((f, idx) => (
-                      <span
-                        key={idx}
-                        className="flex items-center gap-1.5 text-[11px] text-muted-foreground"
-                      >
-                        <Check className="h-3 w-3 text-primary shrink-0" />
-                        <span className="truncate">{f}</span>
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
           </div>
         )}
 
@@ -467,7 +381,7 @@ export function RegisterFlow() {
             </Button>
           )}
 
-          {step < 3 ? (
+          {step === 1 ? (
             <Button
               type="button"
               onClick={handleNext}
@@ -485,7 +399,7 @@ export function RegisterFlow() {
                 "A criar produtora..."
               ) : (
                 <>
-                  <span>Concluir e Começar</span>
+                  <span>Criar Produtora & Começar</span>
                   <Sparkles className="h-4 w-4" />
                 </>
               )}

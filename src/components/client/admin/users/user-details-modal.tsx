@@ -1,6 +1,7 @@
 "use client";
 
 import { GlobalModal, Button, Badge } from "@/components";
+import { ItemStatusBadge } from "@/components/common";
 import { useModal } from "@/stores/modal/use-modal-store";
 import { AdminUserItem } from "@/services/admin-service";
 import {
@@ -78,24 +79,7 @@ export function UserDetailsModal() {
               </p>
             </div>
           </div>
-          <Badge
-            variant="outline"
-            className={
-              isActive
-                ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
-                : "bg-destructive/10 text-destructive border-destructive/20"
-            }
-          >
-            {isActive ? (
-              <span className="flex items-center gap-1">
-                <CheckCircle2 className="h-3 w-3" /> Ativo
-              </span>
-            ) : (
-              <span className="flex items-center gap-1">
-                <XCircle className="h-3 w-3" /> {user.status}
-              </span>
-            )}
-          </Badge>
+          <ItemStatusBadge status={user.status} />
         </div>
 
         {/* Info Grid */}

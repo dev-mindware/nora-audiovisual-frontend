@@ -40,10 +40,12 @@ const STAGE_OPTIONS = [
 
 const STATUS_OPTIONS = [
   { value: 'ALL', label: 'Todos os Estados' },
-  { value: 'DRAFT', label: 'Rascunho' },
+  { value: 'PLANNING', label: 'Planeamento' },
   { value: 'ACTIVE', label: 'Em Curso' },
+  { value: 'LEAD', label: 'Proposta / Lead' },
   { value: 'COMPLETED', label: 'Concluído' },
   { value: 'ARCHIVED', label: 'Arquivado' },
+  { value: 'DRAFT', label: 'Rascunho' },
 ];
 
 const SORT_OPTIONS: SortOption[] = [
@@ -110,15 +112,7 @@ export function ProjectsPageContent() {
       {
         accessorKey: 'productionStage',
         header: 'Fase',
-        cell: ({ row }) => {
-          const item = row.original;
-          const stageOption = STAGE_OPTIONS.find((s) => s.value === item.productionStage);
-          return (
-            <span className="text-xs font-medium text-foreground">
-              {stageOption?.label || item.productionStage}
-            </span>
-          );
-        },
+        cell: ({ row }) => <ItemStatusBadge status={row.original.productionStage} />,
       },
       {
         accessorKey: 'lifecycleStatus',

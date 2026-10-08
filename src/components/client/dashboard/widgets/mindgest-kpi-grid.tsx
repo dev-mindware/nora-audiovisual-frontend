@@ -40,10 +40,14 @@ export function MindgestKpiGrid({ kpis }: MindgestKpiGridProps) {
             subtitle={item.label}
             title={formattedValue}
             icon={iconName}
-            trend={{
-              percent: item.change ?? 0,
-              label: 'vs. período anterior',
-            }}
+            trend={
+              item.change !== undefined
+                ? {
+                    percent: item.change,
+                    label: 'vs. período anterior',
+                  }
+                : undefined
+            }
           />
         );
       })}

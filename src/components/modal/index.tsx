@@ -243,7 +243,7 @@ export function GlobalModal({
         {footer && (
           <DialogFooter
             className={cn(
-              "mt-auto shrink-0",
+              "mt-auto shrink-0 w-full min-w-0",
               "border-t border-border/40",
               "pt-4",
               "flex flex-row flex-wrap items-center justify-end gap-2",

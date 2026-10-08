@@ -5,7 +5,7 @@ import { AdminTenantsPageContent } from '@/components/client/admin';
 export default function AdminTenantsPage() {
   return (
     <Suspense>
-      <PageWrapper subRoute="Produtoras" routeLabel="Admin">
+      <PageWrapper subRoute="Produtoras" routeLabel="Admin" routePath="/admin">
         <TitleList
           title="Produtoras"
           suTitle="Lista de produtoras e estúdios audiovisuais"

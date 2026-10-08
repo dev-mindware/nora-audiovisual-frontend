@@ -4,10 +4,11 @@ import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useDeliverablesList } from '@/hooks/deliverables';
 import { useBudgets } from '@/hooks/budgets';
+import type { Deliverable, Budget } from '@/types';
 import { useAuthStore } from '@/stores';
-import { Deliverable, Budget } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { DynamicMetricCard, ItemStatusBadge } from '@/components';
 import {
   Video,
   FileSpreadsheet,
@@ -15,6 +16,7 @@ import {
   Clock,
   ArrowRight,
   Film,
+  Briefcase,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { PortalDeliverableReviewDialog } from './portal-deliverable-review-dialog';
@@ -67,13 +69,19 @@ export function PortalOverviewContent() {
             Olá, {user?.name || 'Cliente'}
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Área de aprovações, revisão de vídeo e propostas comerciais da Nora Audiovisual.
+            Área de aprovações, revisão de vídeo, pacotes de serviços e propostas comerciais da Nora Audiovisual.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <Link href="/portal/deliverables">
+          <Link href="/portal/services">
             <Button size="sm" className="rounded-none text-xs h-8 gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90">
+              <Briefcase className="h-3.5 w-3.5" />
+              <span>Solicitar Serviço</span>
+            </Button>
+          </Link>
+          <Link href="/portal/deliverables">
+            <Button size="sm" variant="outline" className="rounded-none text-xs h-8 gap-1.5 border-border">
               <Video className="h-3.5 w-3.5" />
               <span>Ver Entregáveis</span>
             </Button>
@@ -87,39 +95,32 @@ export function PortalOverviewContent() {
         </div>
       </div>
 
-      {/* Minimal Metric Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 font-mono">
-        <div className="border border-border bg-card p-3 sm:p-4">
-          <span className="text-[10px] uppercase text-muted-foreground block truncate">Aguardam Revisão</span>
-          <span className="text-xl sm:text-2xl font-semibold tabular-nums text-amber-600 dark:text-amber-400 mt-1 block">
-            {loadingDeliverables ? '—' : pendingDeliverables.length}
-          </span>
-          <span className="text-[11px] text-muted-foreground mt-1 block truncate">Entregáveis</span>
-        </div>
-
-        <div className="border border-border bg-card p-3 sm:p-4">
-          <span className="text-[10px] uppercase text-muted-foreground block truncate">Aprovados</span>
-          <span className="text-xl sm:text-2xl font-semibold tabular-nums text-emerald-600 dark:text-emerald-400 mt-1 block">
-            {loadingDeliverables ? '—' : approvedDeliverables.length}
-          </span>
-          <span className="text-[11px] text-muted-foreground mt-1 block truncate">Validados</span>
-        </div>
-
-        <div className="border border-border bg-card p-3 sm:p-4">
-          <span className="text-[10px] uppercase text-muted-foreground block truncate">Propostas Pendentes</span>
-          <span className="text-xl sm:text-2xl font-semibold tabular-nums text-primary mt-1 block">
-            {loadingBudgets ? '—' : pendingBudgets.length}
-          </span>
-          <span className="text-[11px] text-muted-foreground mt-1 block truncate">Para Aceite</span>
-        </div>
-
-        <div className="border border-border bg-card p-3 sm:p-4">
-          <span className="text-[10px] uppercase text-muted-foreground block truncate">Total de Materiais</span>
-          <span className="text-xl sm:text-2xl font-semibold tabular-nums text-foreground mt-1 block">
-            {loadingDeliverables ? '—' : deliverables.length}
-          </span>
-          <span className="text-[11px] text-muted-foreground mt-1 block truncate">No Catálogo</span>
-        </div>
+      {/* Metric Cards Padronizados */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full">
+        <DynamicMetricCard
+          subtitle="Aguardam Revisão"
+          title={loadingDeliverables ? '—' : pendingDeliverables.length}
+          icon="Clock"
+          description="Entregáveis para validação"
+        />
+        <DynamicMetricCard
+          subtitle="Aprovados"
+          title={loadingDeliverables ? '—' : approvedDeliverables.length}
+          icon="CheckCheck"
+          description="Validados e prontos"
+        />
+        <DynamicMetricCard
+          subtitle="Propostas Pendentes"
+          title={loadingBudgets ? '—' : pendingBudgets.length}
+          icon="FileSpreadsheet"
+          description="Aguardam o seu aceite"
+        />
+        <DynamicMetricCard
+          subtitle="Total de Materiais"
+          title={loadingDeliverables ? '—' : deliverables.length}
+          icon="Film"
+          description="No catálogo da produtora"
+        />
       </div>
 
       {/* Main Grid: Pending Deliverables & Budgets */}
@@ -203,15 +204,7 @@ export function PortalOverviewContent() {
                       <span className="text-xs font-semibold text-foreground">
                         {b.title || `Proposta v${b.version}`}
                       </span>
-                      <Badge
-                        variant="outline"
-                        className={`rounded-none text-[9px] uppercase px-1 py-0 ${b.status === 'SENT'
-                            ? 'border-amber-500/40 text-amber-600 dark:text-amber-400'
-                            : 'border-border text-muted-foreground'
-                          }`}
-                      >
-                        {b.status === 'SENT' ? 'Pendente' : b.status}
-                      </Badge>
+                      <ItemStatusBadge status={b.status} />
                     </div>
                     <span className="text-xs font-semibold text-primary block">
                       {formatCurrency(b.total)}

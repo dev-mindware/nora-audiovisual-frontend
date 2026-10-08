@@ -8,7 +8,7 @@ import {
   useDeleteStudioResource,
   useStudioFilters,
 } from '@/hooks/studio';
-import { Button, Badge } from '@/components';
+import { Button, Badge, ItemStatusBadge } from '@/components';
 import { FilterPopover } from '@/components/shared';
 import { StudioResource, StudioResourceType } from '@/types';
 import { StudioBookingModal } from './booking-modal';
@@ -276,12 +276,7 @@ export function StudioPageContent() {
                         <IconComp className="h-4 w-4" />
                       </div>
                       <div className="flex items-center gap-1">
-                        <Badge
-                          variant="outline"
-                          className="rounded-none border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-mono uppercase tracking-wider px-2 py-0.5"
-                        >
-                          {res.status === 'AVAILABLE' ? 'Disponível' : res.status}
-                        </Badge>
+                        <ItemStatusBadge status={res.status} />
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
@@ -448,17 +443,7 @@ export function StudioPageContent() {
                     </div>
 
                     <div className="flex items-center gap-2 self-end sm:self-center">
-                      <Badge
-                        variant="outline"
-                        className={`rounded-none text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 ${b.status === 'CONFIRMED'
-                            ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                            : b.status === 'PENDING'
-                              ? 'border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                              : 'border-destructive/30 bg-destructive/10 text-destructive'
-                          }`}
-                      >
-                        {b.status === 'CONFIRMED' ? 'Confirmado' : b.status === 'PENDING' ? 'Pendente' : 'Cancelado'}
-                      </Badge>
+                      <ItemStatusBadge status={b.status} />
                       {b.status !== 'CANCELLED' && (
                         <Button
                           variant="ghost"

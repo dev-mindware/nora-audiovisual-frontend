@@ -1,6 +1,7 @@
 "use client";
 
 import { GlobalModal, Button, Badge } from "@/components";
+import { ItemStatusBadge } from "@/components/common";
 import { useModal } from "@/stores/modal/use-modal-store";
 import { useAdmin } from "@/hooks/admin";
 import {
@@ -110,18 +111,7 @@ export function SubscriptionDetailsModal() {
               </p>
             </div>
           </div>
-          <Badge
-            variant="outline"
-            className={
-              isActive
-                ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
-                : isPending
-                  ? "bg-amber-500/10 text-amber-500 border-amber-500/20"
-                  : "bg-destructive/10 text-destructive border-destructive/20"
-            }
-          >
-            {sub.status}
-          </Badge>
+          <ItemStatusBadge status={sub.status} />
         </div>
 
         {/* Plan & Cycle Info */}

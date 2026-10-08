@@ -6,6 +6,7 @@ import { Budget } from '@/types';
 import { portalService } from '@/services/portal-service';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { ItemStatusBadge } from '@/components';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -208,17 +209,7 @@ export function PortalBudgetsContent() {
                       <span className="text-xs font-semibold font-mono">
                         {b.title || `Proposta v${b.version}`}
                       </span>
-                      <Badge
-                        variant="outline"
-                        className={`rounded-none text-[9px] font-mono uppercase px-1.5 py-0 ${isPending
-                            ? 'border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                            : isApproved
-                              ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                              : 'border-border text-muted-foreground'
-                          }`}
-                      >
-                        {isPending ? 'Pendente' : isApproved ? 'Aprovada' : b.status}
-                      </Badge>
+                      <ItemStatusBadge status={b.status} />
                     </div>
 
                     {(b.client?.name || b.clientName) && (

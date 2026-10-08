@@ -22,6 +22,13 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -676,19 +683,20 @@ export function KanbanSettingsTab() {
 
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium">Coluna de Destino</Label>
-                  <select
-                    value={selectedFallbackId}
-                    onChange={(e) => setSelectedFallbackId(e.target.value)}
-                    className="w-full h-9 border border-border bg-background px-3 text-xs rounded-none focus:outline-none focus:border-primary"
-                  >
-                    {columns
-                      .filter((c) => c.id !== archiveTargetColumn.id)
-                      .map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {c.name} ({KANBAN_CATEGORIES_METADATA[c.category].label})
-                        </option>
-                      ))}
-                  </select>
+                  <Select value={selectedFallbackId} onValueChange={(val) => setSelectedFallbackId(val)}>
+                    <SelectTrigger className="w-full h-9 border border-border bg-background px-3 text-xs rounded-none">
+                      <SelectValue placeholder="Selecione a coluna de destino" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {columns
+                        .filter((c) => c.id !== archiveTargetColumn.id)
+                        .map((c) => (
+                          <SelectItem key={c.id} value={c.id} className="text-xs">
+                            {c.name} ({KANBAN_CATEGORIES_METADATA[c.category].label})
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             ) : (

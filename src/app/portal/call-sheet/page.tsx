@@ -7,6 +7,7 @@ import { CallSheet } from '@/types';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { ItemStatusBadge } from '@/components/common';
 import {
   Clock,
   MapPin,
@@ -83,9 +84,7 @@ function CallSheetContent() {
           >
             Folha de Rodagem Oficial
           </Badge>
-          <span className="text-xs text-muted-foreground font-mono">
-            {callSheet.status === 'PUBLISHED' ? 'Publicada & Em Vigor' : callSheet.status}
-          </span>
+          <ItemStatusBadge status={callSheet.status} />
         </div>
 
         <Button

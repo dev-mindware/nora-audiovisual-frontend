@@ -4,7 +4,8 @@ import { useMemo, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { ColumnDef } from '@tanstack/react-table';
 import { UniversalTable } from '@/components/custom/universal-table';
-import { Button, Badge, TitleList } from '@/components';
+import { Button, Badge, TitleList, DynamicMetricCard } from '@/components';
+import { ItemStatusBadge } from '@/components/common';
 import { useAdmin } from '@/hooks/admin';
 import { TenantAdminItem, AdminUserItem } from '@/services/admin-service';
 import {
@@ -173,21 +174,7 @@ export function AdminLegacyPageContent() {
       {
         accessorKey: 'status',
         header: 'Estado',
-        cell: ({ row }) => {
-          const isActive = row.original.status === 'ACTIVE';
-          return (
-            <Badge
-              variant="outline"
-              className={
-                isActive
-                  ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
-                  : 'bg-destructive/10 text-destructive border-destructive/20'
-              }
-            >
-              {isActive ? 'Ativo' : 'Suspenso'}
-            </Badge>
-          );
-        },
+        cell: ({ row }) => <ItemStatusBadge status={row.original.status} />,
       },
       {
         id: 'actions',
@@ -273,21 +260,7 @@ export function AdminLegacyPageContent() {
       {
         accessorKey: 'status',
         header: 'Estado',
-        cell: ({ row }) => {
-          const isActive = row.original.status === 'ACTIVE';
-          return (
-            <Badge
-              variant="outline"
-              className={
-                isActive
-                  ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
-                  : 'bg-destructive/10 text-destructive border-destructive/20'
-              }
-            >
-              {row.original.status}
-            </Badge>
-          );
-        },
+        cell: ({ row }) => <ItemStatusBadge status={row.original.status} />,
       },
       {
         accessorKey: 'createdAt',
@@ -394,25 +367,7 @@ export function AdminLegacyPageContent() {
       {
         accessorKey: 'status',
         header: 'Estado',
-        cell: ({ row }) => {
-          const status = row.original.status;
-          const isActive = status === 'ACTIVE';
-          const isPending = status === 'PENDING' || status === 'TRIALING';
-          return (
-            <Badge
-              variant="outline"
-              className={
-                isActive
-                  ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'
-                  : isPending
-                    ? 'bg-amber-500/10 text-amber-500 border-amber-500/20 font-semibold'
-                    : 'bg-destructive/10 text-destructive border-destructive/20'
-              }
-            >
-              {status}
-            </Badge>
-          );
-        },
+        cell: ({ row }) => <ItemStatusBadge status={row.original.status} />,
       },
       {
         id: 'actions',
@@ -543,70 +498,52 @@ export function AdminLegacyPageContent() {
       </div>
 
       {/* KPI Cards (Always visible on Overview, or compact on others) */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 w-full">
-        <div className="bg-card p-4 rounded-2xl border border-border/80 shadow-xs">
-          <div className="flex items-center justify-between text-xs text-muted-foreground font-medium">
-            <span>MRR Estimado</span>
-            <DollarSign className="h-4 w-4 text-emerald-500" />
-          </div>
-          <div className="text-lg font-semibold text-foreground mt-2">
-            {formatKz(stats?.mrrKz ?? 0)}
-          </div>
-          <div className="text-[11px] text-muted-foreground mt-0.5">Receita recorrente mensal</div>
-        </div>
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 w-full">
+        <DynamicMetricCard
+          subtitle="MRR Estimado"
+          title={formatKz(stats?.mrrKz ?? 0)}
+          description="Receita recorrente mensal"
+          icon="DollarSign"
+        />
 
-        <div className="bg-card p-4 rounded-2xl border border-border/80 shadow-xs">
-          <div className="flex items-center justify-between text-xs text-muted-foreground font-medium">
-            <span>Produtoras Ativas</span>
-            <Building2 className="h-4 w-4 text-primary" />
-          </div>
-          <div className="text-lg font-semibold text-foreground mt-2">
-            {stats?.activeTenants ?? 0}{' '}
-            <span className="text-xs font-normal text-muted-foreground">/ {stats?.totalTenants ?? 0}</span>
-          </div>
-          <div className="text-[11px] text-emerald-500 mt-0.5 font-medium">
-            {stats?.totalTenants
+        <DynamicMetricCard
+          subtitle="Produtoras Ativas"
+          title={`${stats?.activeTenants ?? 0} / ${stats?.totalTenants ?? 0}`}
+          description={
+            stats?.totalTenants
               ? `${Math.round(((stats.activeTenants || 0) / stats.totalTenants) * 100)}% de retenção`
-              : '0% de retenção'}
-          </div>
-        </div>
+              : '0% de retenção'
+          }
+          icon="Building2"
+        />
 
-        <div className="bg-card p-4 rounded-2xl border border-border/80 shadow-xs">
-          <div className="flex items-center justify-between text-xs text-muted-foreground font-medium">
-            <span>Utilizadores Totais</span>
-            <Users className="h-4 w-4 text-primary" />
-          </div>
-          <div className="text-lg font-semibold text-foreground mt-2">
-            {stats?.totalUsers ?? 0}
-          </div>
-          <div className="text-[11px] text-muted-foreground mt-0.5">Membros na plataforma</div>
-        </div>
+        <DynamicMetricCard
+          subtitle="Utilizadores Totais"
+          title={stats?.totalUsers ?? 0}
+          description="Membros na plataforma"
+          icon="Users"
+        />
 
-        <div className="bg-card p-4 rounded-2xl border border-border/80 shadow-xs">
-          <div className="flex items-center justify-between text-xs text-muted-foreground font-medium">
-            <span>Projectos em Rodagem</span>
-            <FolderKanban className="h-4 w-4 text-purple-500" />
-          </div>
-          <div className="text-lg font-semibold text-foreground mt-2">
-            {stats?.totalProjects ?? 0}
-          </div>
-          <div className="text-[11px] text-muted-foreground mt-0.5">Produções geridas</div>
-        </div>
+        <DynamicMetricCard
+          subtitle="Projectos em Rodagem"
+          title={stats?.totalProjects ?? 0}
+          description="Produções geridas"
+          icon="FolderKanban"
+        />
 
-        <div className="bg-card p-4 rounded-2xl border border-border/80 shadow-xs col-span-2 lg:col-span-1">
-          <div className="flex items-center justify-between text-xs text-muted-foreground font-medium">
-            <span>Armazenamento S3/R2</span>
-            <HardDrive className="h-4 w-4 text-amber-500" />
-          </div>
-          <div className="text-lg font-semibold text-foreground mt-2">
-            {stats?.totalStorageTb != null
-              ? stats.totalStorageTb.toFixed(2)
-              : stats?.totalStorageGb != null
-                ? (stats.totalStorageGb / 1024).toFixed(2)
-                : '0.00'}{' '}
-            TB
-          </div>
-          <div className="text-[11px] text-muted-foreground mt-0.5">Footage, proxies e masters</div>
+        <div className="col-span-2 lg:col-span-1">
+          <DynamicMetricCard
+            subtitle="Armazenamento S3/R2"
+            title={`${
+              stats?.totalStorageTb != null
+                ? stats.totalStorageTb.toFixed(2)
+                : stats?.totalStorageGb != null
+                  ? (stats.totalStorageGb / 1024).toFixed(2)
+                  : '0.00'
+            } TB`}
+            description="Footage, proxies e masters"
+            icon="HardDrive"
+          />
         </div>
       </div>
 

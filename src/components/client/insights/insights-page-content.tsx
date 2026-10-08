@@ -23,6 +23,13 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { ListSkeleton } from '@/components';
 import Link from 'next/link';
 import { SucessMessage } from '@/utils/messages';
@@ -87,19 +94,20 @@ export function InsightsPageContent() {
 
         <div className="flex items-center gap-2.5 w-full sm:w-auto">
           {/* Selector de Período */}
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-background text-xs text-foreground">
-            <Calendar className="size-3.5 text-muted-foreground" />
-            <select
-              value={period}
-              onChange={(e) => setPeriod(e.target.value)}
-              className="bg-transparent focus:outline-none cursor-pointer"
-            >
-              <option value="last_7_days">Últimos 7 dias</option>
-              <option value="last_30_days">Últimos 30 dias</option>
-              <option value="this_quarter">Este Trimestre</option>
-              <option value="this_year">Ano de 2026</option>
-            </select>
-          </div>
+          <Select value={period} onValueChange={(val) => setPeriod(val)}>
+            <SelectTrigger className="h-9 px-3 rounded-lg border border-border bg-background text-xs text-foreground min-w-[150px]">
+              <div className="flex items-center gap-1.5">
+                <Calendar className="size-3.5 text-muted-foreground" />
+                <SelectValue placeholder="Selecione o período" />
+              </div>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="last_7_days" className="text-xs">Últimos 7 dias</SelectItem>
+              <SelectItem value="last_30_days" className="text-xs">Últimos 30 dias</SelectItem>
+              <SelectItem value="this_quarter" className="text-xs">Este Trimestre</SelectItem>
+              <SelectItem value="this_year" className="text-xs">Ano de 2026</SelectItem>
+            </SelectContent>
+          </Select>
 
           {/* Exportação */}
           <Button

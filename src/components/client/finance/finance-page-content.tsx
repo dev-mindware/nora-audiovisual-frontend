@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { ColumnDef } from '@tanstack/react-table';
 import {
   Button,
   Badge,
@@ -9,15 +10,10 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
+  DynamicMetricCard,
+  ItemStatusBadge,
+  UniversalTable,
 } from '@/components';
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from '@/components/ui/table';
 import {
   Select,
   SelectContent,
@@ -136,6 +132,215 @@ export function FinancePageContent() {
     });
   }, [expenses, expenseStatusFilter, expenseCategoryFilter]);
 
+  const expenseColumns: ColumnDef<Expense>[] = useMemo(
+    () => [
+      {
+        accessorKey: 'date',
+        header: 'Data',
+        cell: ({ row }) => (
+          <span className="font-mono text-muted-foreground whitespace-nowrap">
+            {format(new Date(row.original.date), 'dd/MM/yyyy')}
+          </span>
+        ),
+      },
+      {
+        accessorKey: 'project',
+        header: 'Projecto',
+        cell: ({ row }) => (
+          <span className="font-semibold text-foreground">
+            {row.original.project?.title || 'Projecto Geral'}
+          </span>
+        ),
+      },
+      {
+        accessorKey: 'category',
+        header: 'Categoria',
+        cell: ({ row }) => {
+          const catMeta = CATEGORY_LABELS[row.original.category] || CATEGORY_LABELS.MISC;
+          return (
+            <span
+              className={`inline-block px-2 py-0.5 text-[10px] rounded-md border font-medium ${catMeta.color}`}
+            >
+              {catMeta.label}
+            </span>
+          );
+        },
+      },
+      {
+        accessorKey: 'description',
+        header: 'Descrição',
+        cell: ({ row }) => (
+          <span className="max-w-xs truncate text-muted-foreground block">
+            {row.original.description}
+          </span>
+        ),
+      },
+      {
+        accessorKey: 'receiptUrl',
+        header: 'Comprovativo',
+        cell: ({ row }) => {
+          const url = row.original.receiptUrl;
+          return url ? (
+            <a
+              href={url}
+              target="_blank"
+              rel="noreferrer"
+              className="text-primary hover:underline flex items-center gap-1 text-[11px]"
+            >
+              <ExternalLink className="h-3 w-3" />
+              Ver Recibo
+            </a>
+          ) : (
+            <span className="text-muted-foreground/60 text-[11px]">—</span>
+          );
+        },
+      },
+      {
+        accessorKey: 'amount',
+        header: () => <div className="text-right">Valor</div>,
+        cell: ({ row }) => (
+          <div className="text-right font-mono font-semibold text-foreground whitespace-nowrap">
+            {formatKz(Number(row.original.amount))}
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'status',
+        header: () => <div className="text-center">Estado</div>,
+        cell: ({ row }) => (
+          <div className="flex justify-center">
+            <ItemStatusBadge status={row.original.status} />
+          </div>
+        ),
+      },
+      {
+        id: 'actions',
+        header: () => <div className="text-right">Acções de Gestão</div>,
+        cell: ({ row }) => {
+          const expense = row.original;
+          return (
+            <div className="flex items-center justify-end whitespace-nowrap">
+              {expense.status === 'PENDING' ? (
+                <div className="flex items-center gap-1.5">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => approveExpense(expense.id)}
+                    disabled={approving}
+                    className="h-7 px-2 text-[11px] rounded-md border-emerald-500/40 text-emerald-600 hover:bg-emerald-500/10 gap-1"
+                  >
+                    <Check className="h-3 w-3" />
+                    Aprovar
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => rejectExpense({ expenseId: expense.id })}
+                    disabled={rejecting}
+                    className="h-7 px-2 text-[11px] rounded-md border-rose-500/40 text-rose-600 hover:bg-rose-500/10 gap-1"
+                  >
+                    <X className="h-3 w-3" />
+                    Rejeitar
+                  </Button>
+                </div>
+              ) : (
+                <span className="text-[11px] text-muted-foreground font-mono">Concluído</span>
+              )}
+            </div>
+          );
+        },
+      },
+    ],
+    [approving, rejecting, approveExpense, rejectExpense]
+  );
+
+  const paymentColumns: ColumnDef<ProductionPayment>[] = useMemo(
+    () => [
+      {
+        accessorKey: 'createdAt',
+        header: 'Data',
+        cell: ({ row }) => (
+          <span className="font-mono text-muted-foreground whitespace-nowrap">
+            {format(new Date(row.original.createdAt), 'dd/MM/yyyy')}
+          </span>
+        ),
+      },
+      {
+        accessorKey: 'project',
+        header: 'Projecto',
+        cell: ({ row }) => (
+          <span className="font-semibold text-foreground">
+            {row.original.project?.title || 'Geral / Sem Projecto'}
+          </span>
+        ),
+      },
+      {
+        accessorKey: 'method',
+        header: 'Método',
+        cell: ({ row }) => (
+          <span className="font-mono text-[11px] text-muted-foreground">
+            {row.original.method === 'BANK_TRANSFER' && 'Transferência Bancária'}
+            {row.original.method === 'MULTICAIXA' && 'Multicaixa Express'}
+            {row.original.method === 'CASH' && 'Numerário'}
+          </span>
+        ),
+      },
+      {
+        accessorKey: 'reference',
+        header: 'Referência',
+        cell: ({ row }) => (
+          <span className="font-mono text-[11px] text-muted-foreground">
+            {row.original.reference || '—'}
+          </span>
+        ),
+      },
+      {
+        accessorKey: 'amount',
+        header: () => <div className="text-right">Valor</div>,
+        cell: ({ row }) => (
+          <div className="text-right font-mono font-semibold text-foreground whitespace-nowrap">
+            {formatKz(Number(row.original.amount))}
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'status',
+        header: () => <div className="text-center">Estado</div>,
+        cell: ({ row }) => (
+          <div className="flex justify-center">
+            <ItemStatusBadge status={row.original.status} />
+          </div>
+        ),
+      },
+      {
+        id: 'actions',
+        header: () => <div className="text-right">Acções</div>,
+        cell: ({ row }) => {
+          const payment = row.original;
+          return (
+            <div className="flex justify-end">
+              {payment.status !== 'PAID' ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => confirmPayment(payment.id)}
+                  disabled={confirming}
+                  className="h-7 px-2.5 text-[11px] rounded-md border-emerald-500/40 text-emerald-600 hover:bg-emerald-500/10 gap-1"
+                >
+                  <CheckCircle2 className="h-3 w-3" />
+                  Confirmar
+                </Button>
+              ) : (
+                <span className="text-[11px] text-muted-foreground font-mono">Liquidado</span>
+              )}
+            </div>
+          );
+        },
+      },
+    ],
+    [confirming, confirmPayment]
+  );
+
   return (
     <div className="space-y-6">
       {/* Top Banner & Actions */}
@@ -163,77 +368,34 @@ export function FinancePageContent() {
         </div>
       </div>
 
-      {/* KPI Cards */}
+      {/* KPI Cards Padronizados */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Receita Liquidada */}
-        <Card className="rounded-none border-border shadow-none">
-          <CardHeader className="p-4 pb-2">
-            <CardDescription className="text-xs font-medium flex items-center justify-between">
-              <span>Total Recebido</span>
-              <TrendingUp className="h-4 w-4 text-emerald-500" />
-            </CardDescription>
-            <CardTitle className="text-lg font-mono font-semibold tracking-tight text-emerald-600 dark:text-emerald-400">
-              {formatKz(metrics.totalIncome)}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 pt-0 text-[11px] text-muted-foreground">
-            + {formatKz(metrics.totalPendingIncome)} a receber pendente
-          </CardContent>
-        </Card>
-
-        {/* Despesas de Produção */}
-        <Card className="rounded-none border-border shadow-none">
-          <CardHeader className="p-4 pb-2">
-            <CardDescription className="text-xs font-medium flex items-center justify-between">
-              <span>Despesas Aprovadas</span>
-              <TrendingDown className="h-4 w-4 text-rose-500" />
-            </CardDescription>
-            <CardTitle className="text-lg font-mono font-semibold tracking-tight text-rose-600 dark:text-rose-400">
-              {formatKz(metrics.totalExpenses)}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 pt-0 text-[11px] text-muted-foreground">
-            Custos de rodagem contabilizados
-          </CardContent>
-        </Card>
-
-        {/* Saldo Operacional */}
-        <Card className="rounded-none border-border shadow-none">
-          <CardHeader className="p-4 pb-2">
-            <CardDescription className="text-xs font-medium flex items-center justify-between">
-              <span>Margem / Saldo Líquido</span>
-              <DollarSign className="h-4 w-4 text-primary" />
-            </CardDescription>
-            <CardTitle
-              className={`text-lg font-mono font-semibold tracking-tight ${
-                metrics.netCashflow >= 0
-                  ? 'text-foreground'
-                  : 'text-rose-600 dark:text-rose-400'
-              }`}
-            >
-              {formatKz(metrics.netCashflow)}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 pt-0 text-[11px] text-muted-foreground">
-            Entradas confirmadas menos saídas
-          </CardContent>
-        </Card>
-
-        {/* Alertas de Aprovação */}
-        <Card className="rounded-none border-border shadow-none">
-          <CardHeader className="p-4 pb-2">
-            <CardDescription className="text-xs font-medium flex items-center justify-between">
-              <span>Despesas Pendentes</span>
-              <Clock className="h-4 w-4 text-amber-500" />
-            </CardDescription>
-            <CardTitle className="text-lg font-mono font-semibold tracking-tight text-amber-600 dark:text-amber-400">
-              {metrics.pendingApprovalExpensesCount} pendentes
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 pt-0 text-[11px] text-muted-foreground font-mono">
-            {formatKz(metrics.pendingApprovalExpensesAmount)} aguardando validação
-          </CardContent>
-        </Card>
+        <DynamicMetricCard
+          subtitle="Total Recebido"
+          title={formatKz(metrics.totalIncome)}
+          icon="TrendingUp"
+          description={`+ ${formatKz(metrics.totalPendingIncome)} a receber pendente`}
+        />
+        <DynamicMetricCard
+          subtitle="Despesas Aprovadas"
+          title={formatKz(metrics.totalExpenses)}
+          icon="Receipt"
+          colors="destructive"
+          variant="action"
+          description="Custos de rodagem contabilizados"
+        />
+        <DynamicMetricCard
+          subtitle="Margem / Saldo Líquido"
+          title={formatKz(metrics.netCashflow)}
+          icon="DollarSign"
+          description="Entradas confirmadas menos saídas"
+        />
+        <DynamicMetricCard
+          subtitle="Despesas Pendentes"
+          title={`${metrics.pendingApprovalExpensesCount} pendentes`}
+          icon="Clock"
+          description={`Total: ${formatKz(metrics.pendingApprovalExpensesAmount)}`}
+        />
       </div>
 
       {/* Tabs */}
@@ -327,210 +489,55 @@ export function FinancePageContent() {
           </div>
 
           {/* Expenses Table */}
-          {loadingExpenses ? (
-            <div className="p-12 text-center text-xs text-muted-foreground flex items-center justify-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin text-primary" />
-              A carregar despesas de produção...
-            </div>
-          ) : filteredExpenses.length === 0 ? (
-            <div className="p-12 text-center border border-dashed border-border text-xs text-muted-foreground space-y-2">
-              <Receipt className="h-8 w-8 mx-auto text-muted-foreground/50" />
-              <p className="font-semibold text-foreground">Nenhuma despesa encontrada</p>
-              <p>Registe os custos de alimentação, transporte e diárias de rodagem.</p>
-            </div>
-          ) : (
-            <div className="rounded-xl border border-border bg-card overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted/40 uppercase font-mono text-[10px] tracking-wider text-muted-foreground hover:bg-muted/40">
-                    <TableHead className="py-2.5 px-3">Data</TableHead>
-                    <TableHead className="py-2.5 px-3">Projecto</TableHead>
-                    <TableHead className="py-2.5 px-3">Categoria</TableHead>
-                    <TableHead className="py-2.5 px-3">Descrição</TableHead>
-                    <TableHead className="py-2.5 px-3">Comprovativo</TableHead>
-                    <TableHead className="py-2.5 px-3 text-right">Valor</TableHead>
-                    <TableHead className="py-2.5 px-3 text-center">Estado</TableHead>
-                    <TableHead className="py-2.5 px-3 text-right">Acções de Gestão</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody className="divide-y divide-border font-sans">
-                  {filteredExpenses.map((expense) => {
-                    const catMeta = CATEGORY_LABELS[expense.category] || CATEGORY_LABELS.MISC;
-
-                    return (
-                      <TableRow key={expense.id} className="hover:bg-muted/10 transition-colors">
-                        <TableCell className="py-3 px-3 font-mono text-muted-foreground whitespace-nowrap">
-                          {format(new Date(expense.date), 'dd/MM/yyyy')}
-                        </TableCell>
-                        <TableCell className="py-3 px-3 font-semibold text-foreground">
-                          {expense.project?.title || 'Projecto Geral'}
-                        </TableCell>
-                        <TableCell className="py-3 px-3">
-                          <span
-                            className={`inline-block px-2 py-0.5 text-[10px] rounded-md border font-medium ${catMeta.color}`}
-                          >
-                            {catMeta.label}
-                          </span>
-                        </TableCell>
-                        <TableCell className="py-3 px-3 max-w-xs truncate text-muted-foreground">
-                          {expense.description}
-                        </TableCell>
-                        <TableCell className="py-3 px-3">
-                          {expense.receiptUrl ? (
-                            <a
-                              href={expense.receiptUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="text-primary hover:underline flex items-center gap-1 text-[11px]"
-                            >
-                              <ExternalLink className="h-3 w-3" />
-                              Ver Recibo
-                            </a>
-                          ) : (
-                            <span className="text-muted-foreground/60 text-[11px]">—</span>
-                          )}
-                        </TableCell>
-                        <TableCell className="py-3 px-3 text-right font-mono font-semibold text-foreground whitespace-nowrap">
-                          {formatKz(Number(expense.amount))}
-                        </TableCell>
-                        <TableCell className="py-3 px-3 text-center">
-                          {expense.status === 'APPROVED' && (
-                            <Badge variant="outline" className="border-emerald-500/30 text-emerald-600 bg-emerald-500/10 text-[10px] font-mono">
-                              Aprovada
-                            </Badge>
-                          )}
-                          {expense.status === 'PENDING' && (
-                            <Badge variant="outline" className="border-amber-500/30 text-amber-600 bg-amber-500/10 text-[10px] font-mono">
-                              Pendente
-                            </Badge>
-                          )}
-                          {expense.status === 'REJECTED' && (
-                            <Badge variant="outline" className="border-rose-500/30 text-rose-600 bg-rose-500/10 text-[10px] font-mono">
-                              Rejeitada
-                            </Badge>
-                          )}
-                        </TableCell>
-                        <TableCell className="py-3 px-3 text-right whitespace-nowrap">
-                          {expense.status === 'PENDING' ? (
-                            <div className="flex items-center justify-end gap-1.5">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => approveExpense(expense.id)}
-                                disabled={approving}
-                                className="h-7 px-2 text-[11px] rounded-md border-emerald-500/40 text-emerald-600 hover:bg-emerald-500/10 gap-1"
-                              >
-                                <Check className="h-3 w-3" />
-                                Aprovar
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => rejectExpense({ expenseId: expense.id })}
-                                disabled={rejecting}
-                                className="h-7 px-2 text-[11px] rounded-md border-rose-500/40 text-rose-600 hover:bg-rose-500/10 gap-1"
-                              >
-                                <X className="h-3 w-3" />
-                                Rejeitar
-                              </Button>
-                            </div>
-                          ) : (
-                            <span className="text-[11px] text-muted-foreground font-mono">Concluído</span>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
-          )}
+          <UniversalTable<Expense>
+            columns={expenseColumns}
+            data={filteredExpenses}
+            isLoading={loadingExpenses}
+            searchPlaceholder="Pesquisar despesa por descrição..."
+            searchKey="description"
+            emptyState={{
+              title: 'Nenhuma despesa encontrada',
+              description: 'Registe os custos de alimentação, transporte e diárias de rodagem.',
+              action: (
+                <Button
+                  size="sm"
+                  onClick={() => setIsExpenseModalOpen(true)}
+                  className="rounded-none text-xs gap-1.5 font-medium"
+                >
+                  <Plus className="h-4 w-4" />
+                  Registar Despesa
+                </Button>
+              ),
+            }}
+          />
         </div>
       )}
 
       {/* Content: TAB 2 - PAGAMENTOS */}
       {activeTab === 'payments' && (
         <div className="space-y-4">
-          {loadingPayments ? (
-            <div className="p-12 text-center text-xs text-muted-foreground flex items-center justify-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin text-primary" />
-              A carregar pagamentos...
-            </div>
-          ) : payments.length === 0 ? (
-            <div className="p-12 text-center border border-dashed border-border text-xs text-muted-foreground space-y-2">
-              <CreditCard className="h-8 w-8 mx-auto text-muted-foreground/50" />
-              <p className="font-semibold text-foreground">Nenhum pagamento registado</p>
-              <p>Liquide propostas comerciais e parcelas de produção.</p>
-            </div>
-          ) : (
-            <div className="rounded-xl border border-border bg-card overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted/40 uppercase font-mono text-[10px] tracking-wider text-muted-foreground hover:bg-muted/40">
-                    <TableHead className="py-2.5 px-3">Data</TableHead>
-                    <TableHead className="py-2.5 px-3">Projecto</TableHead>
-                    <TableHead className="py-2.5 px-3">Método</TableHead>
-                    <TableHead className="py-2.5 px-3">Referência</TableHead>
-                    <TableHead className="py-2.5 px-3 text-right">Valor</TableHead>
-                    <TableHead className="py-2.5 px-3 text-center">Estado</TableHead>
-                    <TableHead className="py-2.5 px-3 text-right">Acções</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody className="divide-y divide-border font-sans">
-                  {payments.map((payment) => (
-                    <TableRow key={payment.id} className="hover:bg-muted/10 transition-colors">
-                      <TableCell className="py-3 px-3 font-mono text-muted-foreground whitespace-nowrap">
-                        {format(new Date(payment.createdAt), 'dd/MM/yyyy')}
-                      </TableCell>
-                      <TableCell className="py-3 px-3 font-semibold text-foreground">
-                        {payment.project?.title || 'Geral / Sem Projecto'}
-                      </TableCell>
-                      <TableCell className="py-3 px-3">
-                        <span className="font-mono text-[11px] text-muted-foreground">
-                          {payment.method === 'BANK_TRANSFER' && 'Transferência Bancária'}
-                          {payment.method === 'MULTICAIXA' && 'Multicaixa Express'}
-                          {payment.method === 'CASH' && 'Numerário'}
-                        </span>
-                      </TableCell>
-                      <TableCell className="py-3 px-3 font-mono text-[11px] text-muted-foreground">
-                        {payment.reference || '—'}
-                      </TableCell>
-                      <TableCell className="py-3 px-3 text-right font-mono font-semibold text-foreground">
-                        {formatKz(Number(payment.amount))}
-                      </TableCell>
-                      <TableCell className="py-3 px-3 text-center">
-                        {payment.status === 'PAID' ? (
-                          <Badge variant="outline" className="border-emerald-500/30 text-emerald-600 bg-emerald-500/10 text-[10px] font-mono">
-                            Liquidado
-                          </Badge>
-                        ) : (
-                          <Badge variant="outline" className="border-amber-500/30 text-amber-600 bg-amber-500/10 text-[10px] font-mono">
-                            Pendente
-                          </Badge>
-                        )}
-                      </TableCell>
-                      <TableCell className="py-3 px-3 text-right">
-                        {payment.status !== 'PAID' ? (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => confirmPayment(payment.id)}
-                            disabled={confirming}
-                            className="h-7 px-2.5 text-[11px] rounded-md border-emerald-500/40 text-emerald-600 hover:bg-emerald-500/10 gap-1"
-                          >
-                            <CheckCircle2 className="h-3 w-3" />
-                            Confirmar
-                          </Button>
-                        ) : (
-                          <span className="text-[11px] text-muted-foreground font-mono">Liquidado</span>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
+          <UniversalTable<ProductionPayment>
+            columns={paymentColumns}
+            data={payments}
+            isLoading={loadingPayments}
+            searchPlaceholder="Pesquisar pagamento por referência..."
+            searchKey="reference"
+            emptyState={{
+              title: 'Nenhum pagamento registado',
+              description: 'Liquide propostas comerciais e parcelas de produção.',
+              action: (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setIsPaymentModalOpen(true)}
+                  className="rounded-none text-xs gap-1.5 border-border"
+                >
+                  <CreditCard className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                  Registar Recebimento
+                </Button>
+              ),
+            }}
+          />
         </div>
       )}
 

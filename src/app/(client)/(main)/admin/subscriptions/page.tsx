@@ -5,7 +5,7 @@ import { AdminSubscriptionsPageContent } from '@/components/client/admin';
 export default function AdminSubscriptionsPage() {
   return (
     <Suspense>
-      <PageWrapper subRoute="Subscrições" routeLabel="Admin">
+      <PageWrapper subRoute="Subscrições" routeLabel="Admin" routePath="/admin">
         <TitleList
           title="Subscrições"
           suTitle="Lista de subscrições e planos multi-tenant"

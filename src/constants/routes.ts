@@ -32,6 +32,7 @@ export const PRIVATE_ROUTE_PREFIXES = [
   "/kanban",
   "/deliverables",
   "/budgets",
+  "/services",
   "/finance",
   "/crm",
   "/ai",

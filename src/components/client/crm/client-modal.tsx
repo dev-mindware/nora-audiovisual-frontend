@@ -18,9 +18,10 @@ interface ClientModalProps {
   isOpen: boolean;
   onClose: () => void;
   clientToEdit?: ClientData | null;
+  onSuccess?: (newClient: ClientData) => void;
 }
 
-export function ClientModal({ isOpen, onClose, clientToEdit }: ClientModalProps) {
+export function ClientModal({ isOpen, onClose, clientToEdit, onSuccess }: ClientModalProps) {
   const queryClient = useQueryClient();
 
   const {
@@ -52,9 +53,13 @@ export function ClientModal({ isOpen, onClose, clientToEdit }: ClientModalProps)
       }
       return clientsService.addClient(data);
     },
-    onSuccess: () => {
+    onSuccess: (savedData: any) => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
       toast.success(clientToEdit ? 'Cliente actualizado com sucesso!' : 'Cliente registado com sucesso!');
+      const newClient = savedData?.data || savedData;
+      if (onSuccess && newClient) {
+        onSuccess(newClient);
+      }
       handleCancel();
     },
     onError: (err: any) => {

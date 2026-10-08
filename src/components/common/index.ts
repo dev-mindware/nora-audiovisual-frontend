@@ -24,3 +24,4 @@ export * from "./onboarding-tour-button";
 export * from "./nif-verification-field";
 export * from "./brand-logo";
 export * from "./item-status-badge";
+export * from "../client/dashboard/widgets/kpi-metric-card";

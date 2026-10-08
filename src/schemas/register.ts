@@ -53,7 +53,7 @@ export const registerActionSchema = z.object({
   organizationName: z.string().trim().min(2, "O nome da organização é obrigatório."),
   organizationSlug: z.string().trim().optional(),
   taxId: z.string().trim().optional(),
-  planCode: z.enum(["INICIAL", "PROFISSIONAL", "BUSINESS"]),
+  planCode: z.enum(["INICIAL", "PROFISSIONAL", "BUSINESS"]).default("INICIAL").optional(),
 });
 
 export type RegisterActionInput = z.infer<typeof registerActionSchema>;

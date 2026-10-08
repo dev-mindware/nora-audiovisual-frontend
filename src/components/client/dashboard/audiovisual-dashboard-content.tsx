@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import Link from 'next/link';
-import { TitleList, Button, Badge, Card, CardHeader, CardTitle, CardContent } from '@/components';
+import { TitleList, Button, Badge, Card, CardHeader, CardTitle, CardContent, DynamicMetricCard } from '@/components';
 import { useAuth } from '@/hooks/auth/use-auth';
 import { useProjects } from '@/hooks/projects';
 import { useEquipmentList } from '@/hooks/equipment';
@@ -24,6 +24,7 @@ import {
   Users,
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { ItemStatusBadge } from '@/components/common';
 
 export function AudiovisualDashboardContent() {
   const { user } = useAuth();
@@ -79,23 +80,6 @@ export function AudiovisualDashboardContent() {
     }).format(value);
   };
 
-  const getStageBadge = (stage: string) => {
-    switch (stage) {
-      case 'PRE_PRODUCTION':
-        return <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/20 text-[10px] rounded-xs font-semibold">Pré-produção</Badge>;
-      case 'PRODUCTION':
-        return <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 text-[10px] font-semibold rounded-xs">Rodagem em Curso</Badge>;
-      case 'POST_PRODUCTION':
-        return <Badge variant="outline" className="bg-purple-500/10 text-purple-600 border-purple-500/20 text-[10px] rounded-xs font-semibold">Pós-produção / Edição</Badge>;
-      case 'REVIEW':
-        return <Badge variant="outline" className="bg-blue-500/10 text-blue-600 border-blue-500/20 text-[10px] rounded-xs font-semibold">Revisão de Copiões</Badge>;
-      case 'DELIVERED':
-        return <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[10px] rounded-xs font-semibold">Entregue</Badge>;
-      default:
-        return <Badge variant="outline" className="text-[10px] rounded-xs font-semibold">{stage}</Badge>;
-    }
-  };
-
   return (
     <div className="space-y-6 w-full">
       {/* Executive Welcome & Actions Header */}
@@ -134,78 +118,32 @@ export function AudiovisualDashboardContent() {
         </div>
       </Card>
 
-      {/* 4 Core Audiovisual Metric Cards */}
+      {/* 4 Core Audiovisual Metric Cards Padronizados */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 w-full">
-        {/* Card 1: Active Projects */}
-        <Card className="bg-card p-4 rounded-xs border border-border shadow-none relative overflow-hidden group hover:border-primary/40 transition-colors">
-          <div className="flex items-center justify-between text-xs text-muted-foreground font-medium">
-            <span>Projectos em Rodagem</span>
-            <div className="p-1.5 rounded-xs bg-primary/10 text-primary">
-              <Clapperboard className="h-3.5 w-3.5" />
-            </div>
-          </div>
-          <div className="text-2xl font-semibold text-foreground mt-2">
-            {activeProjects.length}
-          </div>
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1">
-            <span className="font-semibold text-primary">{productionProjects.length}</span> sets em filmagem
-          </div>
-        </Card>
-
-        {/* Card 2: Equipment in Use */}
-        <Card className="bg-card p-4 rounded-xs border border-border shadow-none relative overflow-hidden group hover:border-primary/40 transition-colors">
-          <div className="flex items-center justify-between text-xs text-muted-foreground font-medium">
-            <span>Equipamentos em Campo</span>
-            <div className="p-1.5 rounded-xs bg-blue-500/10 text-blue-600">
-              <Camera className="h-3.5 w-3.5" />
-            </div>
-          </div>
-          <div className="text-2xl font-semibold text-foreground mt-2">
-            {equipmentStats.inUse} <span className="text-xs text-muted-foreground font-normal">/ {equipmentStats.total}</span>
-          </div>
-          <div className="text-xs text-muted-foreground mt-1 flex items-center justify-between">
-            <span>Taxa de Ocupação</span>
-            <span className="font-semibold text-foreground">{equipmentStats.utilizationRate}%</span>
-          </div>
-          <div className="w-full bg-muted/60 h-1.5 rounded-xs mt-1.5 overflow-hidden">
-            <div
-              className="bg-primary h-full rounded-xs transition-all duration-500"
-              style={{ width: `${Math.min(equipmentStats.utilizationRate, 100)}%` }}
-            />
-          </div>
-        </Card>
-
-        {/* Card 3: Financial Pipeline */}
-        <Card className="bg-card p-4 rounded-xs border border-border shadow-none relative overflow-hidden group hover:border-primary/40 transition-colors">
-          <div className="flex items-center justify-between text-xs text-muted-foreground font-medium">
-            <span>Pipeline de Orçamentos</span>
-            <div className="p-1.5 rounded-xs bg-emerald-500/10 text-emerald-600">
-              <DollarSign className="h-3.5 w-3.5" />
-            </div>
-          </div>
-          <div className="text-xl md:text-2xl font-semibold text-foreground mt-2 truncate">
-            {formatKz(financialStats.totalPipeline || 12500000)}
-          </div>
-          <div className="text-xs text-muted-foreground mt-1 truncate">
-            <span className="text-emerald-600 font-semibold">{financialStats.approvedCount} aprovados</span> • {financialStats.pendingCount} proposta
-          </div>
-        </Card>
-
-        {/* Card 4: AI Assistant Credits */}
-        <Card className="bg-card p-4 rounded-xs border border-border shadow-none relative overflow-hidden group hover:border-primary/40 transition-colors">
-          <div className="flex items-center justify-between text-xs text-muted-foreground font-medium">
-            <span>Créditos Nora AI</span>
-            <div className="p-1.5 rounded-xs bg-purple-500/10 text-purple-600">
-              <Sparkles className="h-3.5 w-3.5" />
-            </div>
-          </div>
-          <div className="text-2xl font-semibold text-foreground mt-2">
-            850 <span className="text-xs text-muted-foreground font-normal">/ 1.000</span>
-          </div>
-          <div className="text-xs text-muted-foreground mt-1">
-            Ordens de rodagem e decupagem
-          </div>
-        </Card>
+        <DynamicMetricCard
+          subtitle="Projectos em Rodagem"
+          title={activeProjects.length}
+          icon="Clapperboard"
+          description={`${productionProjects.length} sets em filmagem`}
+        />
+        <DynamicMetricCard
+          subtitle="Equipamentos em Campo"
+          title={`${equipmentStats.inUse} / ${equipmentStats.total}`}
+          icon="Camera"
+          description={`Taxa de Ocupação: ${equipmentStats.utilizationRate}%`}
+        />
+        <DynamicMetricCard
+          subtitle="Pipeline de Orçamentos"
+          title={formatKz(financialStats.totalPipeline || 0)}
+          icon="DollarSign"
+          description={`${financialStats.approvedCount} aprovados • ${financialStats.pendingCount} pendentes`}
+        />
+        <DynamicMetricCard
+          subtitle="Créditos Nora AI"
+          title="850 / 1.000"
+          icon="Sparkles"
+          description="Ordens de rodagem e decupagem"
+        />
       </div>
 
       {/* Main Grid: Productions Timeline vs Technical Gear Warehouse */}
@@ -253,7 +191,7 @@ export function AudiovisualDashboardContent() {
                         <span className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors">
                           {project.title}
                         </span>
-                        {getStageBadge(project.productionStage)}
+                        <ItemStatusBadge status={project.productionStage || 'PLANNING'} />
                       </div>
                       <div className="flex items-center gap-3 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1">
@@ -396,18 +334,7 @@ export function AudiovisualDashboardContent() {
                     <span className="font-semibold text-sm text-foreground truncate max-w-[150px]">
                       {budget.title}
                     </span>
-                    <Badge
-                      variant="outline"
-                      className={
-                        budget.status === 'APPROVED'
-                          ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[10px] font-semibold rounded-xs'
-                          : budget.status === 'SENT'
-                          ? 'bg-blue-500/10 text-blue-600 border-blue-500/20 text-[10px] rounded-xs font-semibold'
-                          : 'bg-muted text-muted-foreground text-[10px] rounded-xs font-semibold'
-                      }
-                    >
-                      {budget.status}
-                    </Badge>
+                    <ItemStatusBadge status={budget.status} />
                   </div>
                   <div className="text-lg font-semibold text-foreground">
                     {formatKz(Number(budget.total || 0))}

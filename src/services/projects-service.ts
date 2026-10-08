@@ -25,6 +25,7 @@ export interface ProjectFilters {
 
 export interface CreateProjectPayload {
   clientId: string;
+  serviceId?: string;
   title: string;
   description?: string;
   lifecycleStatus?: string;

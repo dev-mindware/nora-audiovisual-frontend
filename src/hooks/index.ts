@@ -21,3 +21,4 @@ export * from "./entities/clients-filters";
 export * from "./dashboard";
 export * from "./crm";
 export * from "./automate";
+export * from "./services";

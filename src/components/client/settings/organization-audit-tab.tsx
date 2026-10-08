@@ -7,7 +7,15 @@ import {
   ListSkeleton,
   EmptyState,
   SearchHandlerWrapper,
+  Button,
 } from '@/components';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useTenantAudit } from '@/hooks/use-tenant-audit';
 import { InvestigativeAuditEvent, AuditCategory, AuditSeverity } from '@/types/audit';
 import { format } from 'date-fns';
@@ -240,29 +248,31 @@ export function OrganizationAuditTab() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="h-8 rounded-md border border-border bg-background px-2.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-          >
-            {CATEGORIES.map((cat) => (
-              <option key={cat.value} value={cat.value}>
-                {cat.label}
-              </option>
-            ))}
-          </select>
+          <Select value={category} onValueChange={(val) => setCategory(val)}>
+            <SelectTrigger className="h-8 rounded-md border border-border bg-background px-2.5 text-xs text-foreground min-w-[140px]">
+              <SelectValue placeholder="Categoria" />
+            </SelectTrigger>
+            <SelectContent>
+              {CATEGORIES.map((cat) => (
+                <SelectItem key={cat.value} value={cat.value} className="text-xs">
+                  {cat.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-          <select
-            value={severity}
-            onChange={(e) => setSeverity(e.target.value)}
-            className="h-8 rounded-md border border-border bg-background px-2.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-          >
-            {SEVERITIES.map((sev) => (
-              <option key={sev.value} value={sev.value}>
-                {sev.label}
-              </option>
-            ))}
-          </select>
+          <Select value={severity} onValueChange={(val) => setSeverity(val)}>
+            <SelectTrigger className="h-8 rounded-md border border-border bg-background px-2.5 text-xs text-foreground min-w-[140px]">
+              <SelectValue placeholder="Severidade" />
+            </SelectTrigger>
+            <SelectContent>
+              {SEVERITIES.map((sev) => (
+                <SelectItem key={sev.value} value={sev.value} className="text-xs">
+                  {sev.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
           {(category !== 'ALL' || severity !== 'ALL' || search) && (
             <button

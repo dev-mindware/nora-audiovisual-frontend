@@ -16,6 +16,13 @@ import { studioBookingSchema, StudioBookingFormData } from '@/schemas';
 import { StudioResource, StudioBooking } from '@/types';
 import { Building2, AlertCircle, Clock, Calendar } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface PortalClientBookingModalProps {
   isOpen: boolean;
@@ -201,20 +208,24 @@ export function PortalClientBookingModal({
           <label className="text-xs font-semibold text-foreground">
             Espaço de Estúdio / Set *
           </label>
-          <select
+          <Select
             value={selectedResourceId}
-            onChange={(e) => {
-              setSelectedResourceId(e.target.value);
+            onValueChange={(val) => {
+              setSelectedResourceId(val);
               setConflictWarning(null);
             }}
-            className="w-full h-10 px-3 text-xs bg-background border border-border rounded-none focus:outline-none focus:border-primary"
           >
-            {resourceOptions.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="w-full h-10 px-3 text-xs bg-background border border-border rounded-none">
+              <SelectValue placeholder="Selecione o espaço de estúdio" />
+            </SelectTrigger>
+            <SelectContent>
+              {resourceOptions.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value} className="text-xs">
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           {selectedResource?.description && (
             <p className="text-[11px] text-muted-foreground">
               {selectedResource.description}

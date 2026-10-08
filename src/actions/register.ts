@@ -58,7 +58,7 @@ export async function registerAction(
       email: data.email.trim().toLowerCase(),
       password: data.password,
       organizationName: data.organizationName.trim(),
-      planCode: data.planCode,
+      planCode: data.planCode || "INICIAL",
     };
 
     if (data.organizationSlug?.trim()) {

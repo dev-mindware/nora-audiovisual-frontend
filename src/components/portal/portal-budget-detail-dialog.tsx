@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { ItemStatusBadge } from '@/components/common';
 import { Input } from '@/components/ui/input';
 import {
   FileSpreadsheet,
@@ -154,17 +155,7 @@ export function PortalBudgetDetailDialog({
               >
                 Proposta Orçamental Oficial
               </Badge>
-              <Badge
-                variant="outline"
-                className={`rounded-none text-[10px] font-mono uppercase font-semibold ${isApproved
-                    ? 'border-emerald-500 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                    : isPending
-                      ? 'border-amber-500 bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                      : 'border-border text-muted-foreground'
-                  }`}
-              >
-                {isApproved ? 'Aceite Formal Concluído' : isPending ? 'Aguardando Aceite' : budget.status}
-              </Badge>
+              <ItemStatusBadge status={budget.status} />
               <span className="text-xs font-mono text-muted-foreground">
                 v{budget.version}
               </span>

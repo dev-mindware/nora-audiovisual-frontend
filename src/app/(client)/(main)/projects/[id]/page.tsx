@@ -11,7 +11,11 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
 
   return (
     <Suspense>
-      <PageWrapper subRoute="Detalhe da Produção">
+      <PageWrapper
+        subRoute="Detalhe da Produção"
+        routeLabel="Projectos"
+        routePath="/projects"
+      >
         <ProjectDetailPageContent projectId={id} />
       </PageWrapper>
     </Suspense>

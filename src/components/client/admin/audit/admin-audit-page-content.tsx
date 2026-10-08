@@ -8,6 +8,13 @@ import {
   EmptyState,
   SearchHandlerWrapper,
 } from '@/components';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { useAdmin } from '@/hooks/admin';
 import { AuditLogItem, InvestigativeAuditEvent, AuditCategory, AuditSeverity } from '@/types/audit';
 import { format } from 'date-fns';
@@ -299,43 +306,46 @@ export function AdminAuditPageContent() {
         {/* Dropdowns de Filtro */}
         <div className="flex flex-wrap items-center gap-3">
           {/* Categoria */}
-          <select
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
-            className="h-8 rounded-md border border-border bg-background px-2.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-          >
-            {CATEGORIES.map((cat) => (
-              <option key={cat.value} value={cat.value}>
-                {cat.label}
-              </option>
-            ))}
-          </select>
+          <Select value={categoryFilter} onValueChange={(val) => setCategoryFilter(val)}>
+            <SelectTrigger className="h-8 rounded-md border border-border bg-background px-2.5 text-xs text-foreground min-w-[140px]">
+              <SelectValue placeholder="Categoria" />
+            </SelectTrigger>
+            <SelectContent>
+              {CATEGORIES.map((cat) => (
+                <SelectItem key={cat.value} value={cat.value} className="text-xs">
+                  {cat.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
           {/* Severidade */}
-          <select
-            value={severityFilter}
-            onChange={(e) => setSeverityFilter(e.target.value)}
-            className="h-8 rounded-md border border-border bg-background px-2.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-          >
-            {SEVERITIES.map((sev) => (
-              <option key={sev.value} value={sev.value}>
-                {sev.label}
-              </option>
-            ))}
-          </select>
+          <Select value={severityFilter} onValueChange={(val) => setSeverityFilter(val)}>
+            <SelectTrigger className="h-8 rounded-md border border-border bg-background px-2.5 text-xs text-foreground min-w-[140px]">
+              <SelectValue placeholder="Severidade" />
+            </SelectTrigger>
+            <SelectContent>
+              {SEVERITIES.map((sev) => (
+                <SelectItem key={sev.value} value={sev.value} className="text-xs">
+                  {sev.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
           {/* Sistema Operacional */}
-          <select
-            value={osFilter}
-            onChange={(e) => setOsFilter(e.target.value)}
-            className="h-8 rounded-md border border-border bg-background px-2.5 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-          >
-            {OS_FILTERS.map((os) => (
-              <option key={os.value} value={os.value}>
-                {os.label}
-              </option>
-            ))}
-          </select>
+          <Select value={osFilter} onValueChange={(val) => setOsFilter(val)}>
+            <SelectTrigger className="h-8 rounded-md border border-border bg-background px-2.5 text-xs text-foreground min-w-[150px]">
+              <SelectValue placeholder="Dispositivo / OS" />
+            </SelectTrigger>
+            <SelectContent>
+              {OS_FILTERS.map((os) => (
+                <SelectItem key={os.value} value={os.value} className="text-xs">
+                  {os.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
           {(categoryFilter !== 'ALL' || severityFilter !== 'ALL' || osFilter !== 'ALL' || search) && (
             <button

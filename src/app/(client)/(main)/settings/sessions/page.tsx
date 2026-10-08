@@ -10,7 +10,11 @@ export const metadata = {
 export default function SessionsSettingsPage() {
   return (
     <Suspense>
-      <PageWrapper subRoute="Sessões Ativas">
+      <PageWrapper
+        subRoute="Sessões Ativas"
+        routeLabel="Configurações"
+        routePath="/settings"
+      >
         <SessionsPageContent />
       </PageWrapper>
     </Suspense>

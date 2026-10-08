@@ -3,8 +3,8 @@
 import { useState, useMemo } from 'react';
 import { useStudioResources, useStudioBookings, useCancelStudioBooking } from '@/hooks/studio';
 import { useAuthStore } from '@/stores';
-import { StudioResource, StudioBooking, StudioResourceType } from '@/types';
-import { Button, Badge } from '@/components';
+import { Button, Badge, ItemStatusBadge } from '@/components';
+import type { StudioResourceType, StudioResource, StudioBooking } from '@/types';
 import { PortalClientBookingModal } from './portal-client-booking-modal';
 import {
   Building2,
@@ -362,9 +362,7 @@ export function PortalStudioPageContent() {
                             <Badge variant="outline" className="text-[10px] bg-emerald-500/10 text-emerald-600 border-emerald-500/30 rounded-none">
                               Sua Produção
                             </Badge>
-                            <Badge variant="outline" className="text-[10px] rounded-none">
-                              {b.status === 'CONFIRMED' ? 'Confirmada' : 'Pendente de Aprovação'}
-                            </Badge>
+                            <ItemStatusBadge status={b.status} />
                           </div>
                           <p className="text-[11px] text-muted-foreground mt-0.5">
                             {resourceName} • <Clock className="inline h-3 w-3 mr-1" />
@@ -450,22 +448,7 @@ export function PortalStudioPageContent() {
                     <span className="text-[10px] font-mono px-1.5 py-0.5 bg-muted text-muted-foreground border border-border">
                       {b.resourceName || (b as any).resource?.name || 'Estúdio'}
                     </span>
-                    <Badge
-                      variant="outline"
-                      className={`text-[10px] rounded-none ${
-                        b.status === 'CONFIRMED'
-                          ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/30'
-                          : b.status === 'CANCELLED'
-                          ? 'bg-destructive/10 text-destructive border-destructive/30'
-                          : 'bg-amber-500/10 text-amber-600 border-amber-500/30'
-                      }`}
-                    >
-                      {b.status === 'CONFIRMED'
-                        ? 'Confirmada'
-                        : b.status === 'CANCELLED'
-                        ? 'Cancelada'
-                        : 'Aguardando Confirmação'}
-                    </Badge>
+                    <ItemStatusBadge status={b.status} />
                   </div>
 
                   <p className="text-[11px] text-muted-foreground mt-1">

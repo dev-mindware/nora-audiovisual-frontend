@@ -6,6 +6,7 @@ import { Deliverable, ReviewComment } from '@/types';
 import { portalService } from '@/services/portal-service';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { ItemStatusBadge } from '@/components';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -286,19 +287,7 @@ export function PortalDeliverablesContent() {
                       <span className="text-xs font-semibold font-mono">
                         v{item.version} • {TYPE_LABELS[item.type] || item.type}
                       </span>
-                      <Badge
-                        variant="outline"
-                        className={`rounded-none text-[9px] font-mono uppercase px-1.5 py-0 ${isApproved
-                            ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                            : isChanges
-                              ? 'border-rose-500/40 bg-rose-500/10 text-rose-600 dark:text-rose-400'
-                              : isPending
-                                ? 'border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                                : 'border-border text-muted-foreground'
-                          }`}
-                      >
-                        {isApproved ? 'Aprovado' : isChanges ? 'Alterações' : isPending ? 'Em Revisão' : item.status}
-                      </Badge>
+                      <ItemStatusBadge status={item.status} />
                     </div>
 
                     <h4 className="text-xs font-semibold text-foreground mt-1 truncate">
@@ -338,21 +327,7 @@ export function PortalDeliverablesContent() {
                     </h2>
                   </div>
 
-                  <Badge
-                    variant="outline"
-                    className={`rounded-none text-xs font-mono uppercase px-2.5 py-0.5 ${selectedDeliverable.status === 'APPROVED'
-                        ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                        : selectedDeliverable.status === 'CHANGES_REQUESTED'
-                          ? 'border-rose-500/40 bg-rose-500/10 text-rose-600 dark:text-rose-400'
-                          : 'border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                      }`}
-                  >
-                    {selectedDeliverable.status === 'APPROVED'
-                      ? 'Aprovado'
-                      : selectedDeliverable.status === 'CHANGES_REQUESTED'
-                        ? 'Alterações Solicitadas'
-                        : 'Aguardando Parecer'}
-                  </Badge>
+                  <ItemStatusBadge status={selectedDeliverable.status} />
                 </div>
 
                 {/* 16:9 Video Player */}

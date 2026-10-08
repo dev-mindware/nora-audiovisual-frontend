@@ -24,28 +24,41 @@ export function useAdmin() {
   const [subStatus, setSubStatus] = useState<string>('ALL');
   const [subSearch, setSubSearch] = useState('');
 
+  const adminQueryConfig = {
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    refetchInterval: false as const,
+    retry: false,
+  };
+
   // 1. Tenants
   const tenantsQuery = useQuery<{ tenants: TenantAdminItem[]; total: number }>({
     queryKey: ['admin-tenants'],
     queryFn: () => adminService.listTenants(),
+    ...adminQueryConfig,
   });
 
   // 2. Stats
   const statsQuery = useQuery<PlatformStats>({
     queryKey: ['admin-stats'],
     queryFn: () => adminService.getPlatformStats(),
+    ...adminQueryConfig,
   });
 
   // 2.1 Storage Control (Cloudflare R2)
   const storageControlQuery = useQuery<PlatformStorageControl>({
     queryKey: ['admin-storage-control'],
     queryFn: () => adminService.getPlatformStorageControl(),
+    ...adminQueryConfig,
   });
 
   // 3. Audit Logs
   const auditLogsQuery = useQuery({
     queryKey: ['admin-audit-logs'],
     queryFn: () => adminService.listAuditLogs(),
+    ...adminQueryConfig,
   });
 
   // 4. Users Globais
@@ -57,6 +70,7 @@ export function useAdmin() {
         status: userStatus !== 'ALL' ? (userStatus as any) : undefined,
         role: userRole !== 'ALL' ? userRole : undefined,
       }),
+    ...adminQueryConfig,
   });
 
   // 5. Subscrições Multi-Tenant
@@ -67,6 +81,7 @@ export function useAdmin() {
         status: subStatus !== 'ALL' ? subStatus : undefined,
         search: subSearch || undefined,
       }),
+    ...adminQueryConfig,
   });
 
   // Mutation: Status Tenant

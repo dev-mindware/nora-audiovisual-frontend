@@ -10,7 +10,11 @@ export const metadata = {
 export default function TeamSettingsPage() {
   return (
     <Suspense>
-      <PageWrapper subRoute="Equipa & Colaboradores">
+      <PageWrapper
+        subRoute="Equipa & Colaboradores"
+        routeLabel="Configurações"
+        routePath="/settings"
+      >
         <TeamPageContent />
       </PageWrapper>
     </Suspense>

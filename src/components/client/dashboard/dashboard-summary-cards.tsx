@@ -10,13 +10,13 @@ export function DashboardSummaryCards({ summary }: DashboardSummaryCardsProps) {
         {
             subtitle: "Produtos Vendidos",
             title: summary.productsSold.total?.toString() || "0",
-            icon: "ShoppingCart",
+            icon: "ShoppingCart" as const,
             description: summary.productsSold.insight,
         },
         {
             subtitle: "Serviços Prestados",
             title: summary.servicesRendered.total?.toString() || "0",
-            icon: "TrendingUp",
+            icon: "TrendingUp" as const,
             description: summary.servicesRendered.insight,
         },
         {
@@ -25,7 +25,7 @@ export function DashboardSummaryCards({ summary }: DashboardSummaryCardsProps) {
                 style: "currency",
                 currency: "AOA",
             }).format(summary.totalSales.amount || 0).replace("AOA", "Kz"),
-            icon: "ShoppingBasket",
+            icon: "ShoppingBasket" as const,
             description: summary.totalSales.insight,
         },
         {
@@ -34,7 +34,7 @@ export function DashboardSummaryCards({ summary }: DashboardSummaryCardsProps) {
                 style: "currency",
                 currency: "AOA",
             }).format(summary.overallTotal.amount || 0).replace("AOA", "Kz"),
-            icon: "DollarSign",
+            icon: "DollarSign" as const,
             description: summary.overallTotal.insight,
         },
     ];
@@ -42,7 +42,13 @@ export function DashboardSummaryCards({ summary }: DashboardSummaryCardsProps) {
     return (
         <div className="grid grid-cols-2 gap-3 md:gap-4 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
             {stats.map((stat, i) => (
-                <DynamicMetricCard key={i} {...(stat as any)} />
+                <DynamicMetricCard
+                    key={i}
+                    subtitle={stat.subtitle}
+                    title={stat.title}
+                    icon={stat.icon}
+                    description={stat.description}
+                />
             ))}
         </div>
     );
