@@ -40,25 +40,36 @@ export async function loginAction({
       throw new Error("Credenciais de acesso inválidas.");
     }
 
-    // Encaminha os cookies de sessão Fastify (nora_session) para os cookies do Next.js
+    // Extrai o token de sessão retornado pela API ou dos headers Set-Cookie
+    let sessionToken = responseData.token || responseData.accessToken;
     const setCookieHeader = res.headers["set-cookie"];
-    if (setCookieHeader) {
-      const cookieStore = await cookies();
+    if (!sessionToken && setCookieHeader) {
       const rawCookies = Array.isArray(setCookieHeader) ? setCookieHeader : [setCookieHeader];
       for (const cookieStr of rawCookies) {
         const parts = cookieStr.split(";")[0].split("=");
         const name = parts[0]?.trim();
         const value = parts.slice(1).join("=").trim();
-        if (name && value) {
-          cookieStore.set(name, value, {
-            path: "/",
-            httpOnly: true,
-            sameSite: "lax",
-            secure: process.env.NODE_ENV === "production",
-          });
+        if (name === "__Host-nora_session" || name === "nora_session") {
+          sessionToken = value;
+          break;
         }
       }
     }
+    sessionToken = sessionToken || "session_valid";
+
+    // Limpa quaisquer cookies residuais duplicados do Fastify no domínio do Next.js
+    const cookieStore = await cookies();
+    cookieStore.delete("__Host-nora_session");
+    cookieStore.delete("nora_session");
+
+    // Define cookie público acessível ao axios no browser
+    cookieStore.set("nora_token", sessionToken, {
+      path: "/",
+      httpOnly: false,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 7 * 24 * 60 * 60,
+    });
 
     const isPlatformAdmin = Boolean(user.isPlatformAdmin || responseData.isPlatformAdmin);
     const roleFromResponse = responseData.role?.code || user.role;
@@ -73,10 +84,10 @@ export async function loginAction({
     user.activeOrganization = activeOrganization;
     user.memberships = memberships;
 
-    // Persiste payload de sessão para controlo de acesso client-side
+    // Persiste payload de sessão com o token real
     await createSession({
-      accessToken: "session_valid",
-      refreshToken: "session_valid",
+      accessToken: sessionToken,
+      refreshToken: sessionToken,
       role: assignedRole,
     });
 
@@ -88,7 +99,7 @@ export async function loginAction({
       memberships,
       message: "Autenticado com sucesso",
       redirectPath: targetRedirect,
-      token: "session_valid",
+      token: sessionToken,
     };
   } catch (error: any) {
     let messageError = "Credenciais inválidas ou erro ao contactar a API.";

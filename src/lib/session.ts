@@ -99,6 +99,9 @@ export async function destroySession() {
   authCookies.delete(ACCESS_TOKEN_KEY);
   authCookies.delete(REFRESH_TOKEN_KEY);
   authCookies.delete(ROLE_KEY);
+  authCookies.delete("nora_token");
+  authCookies.delete("nora_session");
+  authCookies.delete("__Host-nora_session");
 }
 
 /**

@@ -71,6 +71,10 @@ export function LoginForm() {
         }
       }
 
+      if (res.token) {
+        localStorage.setItem("nora_token", res.token);
+      }
+
       queryClient.setQueryData(["user"], res.user);
       setUser(res.user);
       router.replace(res.redirectPath || "/dashboard");

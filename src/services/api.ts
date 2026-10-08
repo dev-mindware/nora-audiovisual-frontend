@@ -17,14 +17,33 @@ export const api = axios.create({
   },
 });
 
-// Intercetor de Request: Injeção de tenant ativo e headers operacionais
+// Intercetor de Request: Injeção de tenant ativo, autenticação e headers operacionais
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
+    // Evita prefixo duplicado /api/api/... caso o chamador passe /api/... com baseURL já terminando em /api
+    if (config.url && config.url.startsWith('/api/') && baseURL.endsWith('/api')) {
+      config.url = config.url.replace(/^\/api/, '');
+    }
+
     // Injeta x-organization-id se estiver selecionada na store
     const activeOrg = useTenantStore.getState().activeOrganization;
     if (activeOrg?.id) {
       config.headers.set('x-organization-id', activeOrg.id);
     }
+
+    // Injeta token de autenticação (Bearer + x-session-token) para suportar CORS cross-origin
+    if (typeof window !== 'undefined') {
+      let token = localStorage.getItem('nora_token');
+      if (!token || token === 'session_valid') {
+        const match = document.cookie.match(/(?:^|;\s*)(?:nora_token|access_token)=([^;]+)/);
+        token = match ? decodeURIComponent(match[1]) : null;
+      }
+      if (token && token !== 'session_valid') {
+        config.headers.set('Authorization', `Bearer ${token}`);
+        config.headers.set('x-session-token', token);
+      }
+    }
+
     return config;
   },
   (error) => Promise.reject(error)
@@ -47,6 +66,8 @@ api.interceptors.response.use(
       errorCode === 'AUTHENTICATION_REQUIRED';
 
     if (isSessionExpired && !url.includes('/auth/login') && typeof window !== 'undefined') {
+      // Limpa credencial local imediatamente para evitar repetição em cascata
+      localStorage.removeItem('nora_token');
       window.dispatchEvent(new CustomEvent('session:expired', { detail: { code: errorCode } }));
 
       const isAuthPage =
@@ -54,7 +75,7 @@ api.interceptors.response.use(
         window.location.pathname.startsWith('/login');
 
       if (!isAuthPage) {
-        window.location.href = '/login?expired=1';
+        window.location.href = '/auth/login?expired=1';
       }
     }
 

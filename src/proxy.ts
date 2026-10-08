@@ -74,8 +74,20 @@ export async function proxy(req: NextRequest) {
 
   // Caso 1: rota pública
   if (publicRoute) {
-    // Se autenticado em página de auth (login/register), redireciona
+    // Se autenticado em página de auth (login/register), redireciona excepto se expired=1
     if (isAuthenticated && authPage) {
+      const isExpired = req.nextUrl.searchParams.get("expired") === "1";
+      if (isExpired) {
+        const response = NextResponse.next();
+        response.cookies.delete(REFRESH_TOKEN_KEY);
+        response.cookies.delete(ROLE_KEY);
+        response.cookies.delete(ACCESS_TOKEN_KEY);
+        response.cookies.delete("nora_token");
+        response.cookies.delete("nora_session");
+        response.cookies.delete("__Host-nora_session");
+        return response;
+      }
+
       const redirectTo = getRouteByRole(role);
       return NextResponse.redirect(new URL(redirectTo, req.url));
     }
