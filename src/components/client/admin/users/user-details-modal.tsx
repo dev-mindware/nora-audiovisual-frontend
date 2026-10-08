@@ -14,16 +14,22 @@ import {
   CheckCircle2,
   XCircle,
   Clock,
+  KeyRound,
 } from "lucide-react";
 import { format } from "date-fns";
 
 export function UserDetailsModal() {
-  const { open, modalData, closeModal } = useModal();
+  const { open, modalData, closeModal, openModal } = useModal();
   const user = modalData["view-user-details"]?.user as AdminUserItem | undefined;
 
   if (!open["view-user-details"] || !user) return null;
 
   const handleClose = () => closeModal("view-user-details");
+
+  const handleOpenResetPassword = () => {
+    handleClose();
+    openModal("reset-user-password", { user });
+  };
 
   const isActive = user.status === "ACTIVE";
 
@@ -35,9 +41,20 @@ export function UserDetailsModal() {
       canClose
       className="max-w-2xl"
       footer={
-        <Button variant="outline" size="sm" onClick={handleClose}>
-          Fechar
-        </Button>
+        <div className="flex items-center justify-between w-full">
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-primary hover:text-primary gap-1.5 border-primary/30 hover:bg-primary/5"
+            onClick={handleOpenResetPassword}
+          >
+            <KeyRound className="h-4 w-4" />
+            Redefinir Palavra-passe
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleClose}>
+            Fechar
+          </Button>
+        </div>
       }
     >
       <div className="space-y-6 pt-2">

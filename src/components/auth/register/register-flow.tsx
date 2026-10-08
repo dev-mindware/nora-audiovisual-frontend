@@ -16,11 +16,12 @@ import { registerAction, syncSessionAction, type RegisterActionResult } from "@/
 import { registerActionSchema, type RegisterActionInput } from "@/schemas";
 import { Input, Button, ButtonSubmit } from "@/components/ui";
 import { PasswordStrengthBar } from "@/components/auth/_components";
-import { useAuthStore } from "@/stores";
+import { useAuthStore, useModal } from "@/stores";
 import { useTenantStore } from "@/stores/tenant";
 import { ErrorMessage, SucessMessage } from "@/utils/messages";
 import { queryClient } from "@/lib";
 import { api } from "@/services/api";
+import { AccountCreatedModal } from "./account-created-modal";
 
 interface PlanOption {
   code: "INICIAL" | "PROFISSIONAL" | "BUSINESS";
@@ -81,6 +82,7 @@ export function RegisterFlow() {
 
   const { setUser, setIsAuthenticating } = useAuthStore();
   const { setActiveOrganization, setOrganizations } = useTenantStore();
+  const { openModal } = useModal();
 
   const {
     register,
@@ -245,9 +247,14 @@ export function RegisterFlow() {
 
       queryClient.setQueryData(["user"], res.user);
       setUser(res.user);
+      setIsAuthenticating(false);
 
-      SucessMessage(res.message || "Produtora registada com sucesso! Bem-vindo(a).");
-      router.replace(res.redirectPath || "/dashboard");
+      // Abre o modal confirmando a criação e perguntando se deseja iniciar sessão (estilo mindgest-frontend)
+      openModal("account-created", {
+        email: cleanData.email,
+        password: cleanData.password,
+        redirectPath: res.redirectPath || "/dashboard",
+      });
     } catch (err: any) {
       setIsAuthenticating(false);
       const apiMsg = err.response?.data?.message || err.response?.data?.error?.message;
@@ -497,6 +504,8 @@ export function RegisterFlow() {
           </Link>
         </div>
       </form>
+
+      <AccountCreatedModal />
     </div>
   );
 }

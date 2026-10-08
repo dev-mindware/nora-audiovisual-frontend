@@ -1,41 +1,59 @@
 "use client";
-import { useTransition } from "react";
+
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useFormContext } from "react-hook-form";
 import { useModal, useAuthStore } from "@/stores";
 import { Button } from "@/components/ui";
 import { GlobalModal } from "@/components/modal";
-import { RegisterFormData } from "@/schemas";
 import { loginAction } from "@/actions/login";
-import { ErrorMessage } from "@/utils/messages";
+import { SucessMessage } from "@/utils/messages";
+import { LogIn } from "lucide-react";
+
+interface AccountCreatedData {
+  email?: string;
+  password?: string;
+  redirectPath?: string;
+}
 
 export function AccountCreatedModal() {
-  const { closeModal } = useModal();
+  const { closeModal, modalData } = useModal();
   const router = useRouter();
-  const { getValues } = useFormContext<RegisterFormData>();
-  const [isPending, startTransition] = useTransition();
+  const [isLoading, setIsLoading] = useState(false);
   const setUser = useAuthStore((state) => state.setUser);
 
-  const handleLogin = () => {
-    startTransition(async () => {
-      try {
-        const { email, password } = getValues("step1");
+  const data = (modalData["account-created"] || {}) as AccountCreatedData;
 
-        const result = await loginAction({ email, password });
+  const handleLoginNow = async () => {
+    try {
+      setIsLoading(true);
 
-        if (result.user) {
-          setUser(result.user);
-          closeModal("account-created");
-          router.push(result.redirectPath || "/dashboard");
-          return;
+      // Se temos credenciais e for necessário sincronizar nova sessão via loginAction
+      if (data.email && data.password) {
+        try {
+          const result = await loginAction({ email: data.email, password: data.password });
+          if (result.user) {
+            setUser(result.user);
+          }
+        } catch {
+          // Mantém a sessão já criada no processo de registo
         }
-
-        ErrorMessage(result.message || "Ocorreu um erro ao realizar o login automático.");
-      } catch (error) {
-        ErrorMessage("Ocorreu um erro inesperado ao realizar o login.");
-        console.error("Login automatic error:", error);
       }
-    });
+
+      closeModal("account-created");
+      SucessMessage("Sessão iniciada com sucesso! A aceder ao painel...");
+      router.push(data.redirectPath || "/dashboard");
+    } catch (error) {
+      console.error("Erro ao iniciar sessão a partir do modal:", error);
+      closeModal("account-created");
+      router.push(data.redirectPath || "/dashboard");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoToLoginPage = () => {
+    closeModal("account-created");
+    router.push("/auth/login");
   };
 
   return (
@@ -43,18 +61,33 @@ export function AccountCreatedModal() {
       sucess
       canClose={false}
       id="account-created"
-      title="Bem-vindo(a) ao Nora Audiovisual!"
-      className="!w-lg text-center"
-      description="Sua produtora e conta foram configuradas com sucesso."
+      title="Produtora criada com sucesso!"
+      className="!max-w-md text-center"
+      description="A sua conta e produtora foram configuradas com sucesso. Deseja iniciar sessão agora?"
     >
-      <div className="flex flex-col items-center justify-center py-2 space-y-4">
-        <div className="w-full">
+      <div className="flex flex-col items-center justify-center pt-2 pb-1 space-y-4">
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          Pode aceder de imediato ao seu espaço de trabalho ou iniciar sessão mais tarde.
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-3 w-full pt-2">
           <Button
-            onClick={handleLogin}
-            loading={isPending}
-            className="w-full bg-primary hover:bg-primary/90 font-semibold"
+            type="button"
+            variant="outline"
+            onClick={handleGoToLoginPage}
+            disabled={isLoading}
+            className="flex-1 order-2 sm:order-1"
           >
-            Entrar
+            Ir para o Login
+          </Button>
+          <Button
+            type="button"
+            onClick={handleLoginNow}
+            loading={isLoading}
+            className="flex-1 bg-primary hover:bg-primary/90 font-semibold gap-2 order-1 sm:order-2"
+          >
+            <LogIn className="size-4" />
+            Entrar Agora
           </Button>
         </div>
       </div>
