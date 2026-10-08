@@ -1,9 +1,15 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { noraSubscriptionsService, PlanItem, SubscriptionData, AddOnItem } from '@/services/subscriptions-service';
+import { useAuthStore } from '@/stores/auth';
+import { useTenantStore } from '@/stores/tenant';
 import { toast } from 'sonner';
 
 export function useNoraSubscriptions() {
   const queryClient = useQueryClient();
+  const { user } = useAuthStore();
+  const { activeOrganization } = useTenantStore();
+  const isPlatformAdmin = Boolean(user?.isPlatformAdmin || user?.role === 'ADMIN');
+  const hasTenant = Boolean(activeOrganization?.id);
 
   const plansQuery = useQuery<PlanItem[]>({
     queryKey: ['nora-plans'],
@@ -16,8 +22,10 @@ export function useNoraSubscriptions() {
   });
 
   const currentSubscriptionQuery = useQuery<SubscriptionData>({
-    queryKey: ['nora-current-subscription'],
+    queryKey: ['nora-current-subscription', activeOrganization?.id],
     queryFn: () => noraSubscriptionsService.getCurrentSubscription(),
+    enabled: !isPlatformAdmin && hasTenant,
+    retry: false,
   });
 
   const changePlanMutation = useMutation({

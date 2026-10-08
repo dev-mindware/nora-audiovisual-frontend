@@ -345,6 +345,17 @@ export interface Deliverable {
   approvedAt?: string | null;
   approvedBy?: string | null;
   feedbackNotes?: string | null;
+  assets?: Array<{
+    id: string;
+    label?: string;
+    fileAsset?: {
+      id: string;
+      name: string;
+      fileType?: string;
+      mimeType?: string;
+      sizeBytes?: number;
+    };
+  }>;
   createdAt: string;
   updatedAt: string;
 }

@@ -18,24 +18,32 @@ export function TrialBanner() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
+  const isPlatformAdmin = Boolean(user?.isPlatformAdmin || user?.role === 'ADMIN');
   const subscription = noraSub || (user as any)?.subscription || (user?.activeOrganization as any)?.subscription;
   const isTrialing = subscription?.status === "TRIALING";
-  const trialEndsAt = subscription?.trialEndsAt;
+  const targetEndDate = subscription?.trialEndsAt || subscription?.currentPeriodEnd;
 
   const { daysRemaining, urgency } = useMemo(() => {
-    if (!trialEndsAt) return { daysRemaining: 0, urgency: "neutral" };
+    if (!targetEndDate) return { daysRemaining: 0, urgency: "neutral" };
     
-    const diff = differenceInDays(new Date(trialEndsAt), new Date());
+    const targetMs = new Date(targetEndDate).getTime();
+    const nowMs = Date.now();
+    const diffMs = targetMs - nowMs;
+    
+    if (diffMs <= 0) {
+      return { daysRemaining: 0, urgency: "expired" };
+    }
+    
+    const days = Math.max(1, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
     
     let level = "neutral";
-    if (diff <= 0) level = "expired";
-    else if (diff <= 2) level = "critical";
-    else if (diff <= 4) level = "warning";
+    if (days <= 2) level = "critical";
+    else if (days <= 5) level = "warning";
     
-    return { daysRemaining: Math.max(0, diff), urgency: level };
-  }, [trialEndsAt]);
+    return { daysRemaining: days, urgency: level };
+  }, [targetEndDate]);
 
-  if (!mounted || !isTrialing || !isVisible || pathname === "/subscriptions" || pathname === "/checkout") {
+  if (!mounted || isPlatformAdmin || !isTrialing || !isVisible || pathname === "/subscriptions" || pathname === "/checkout") {
     return null;
   }
 

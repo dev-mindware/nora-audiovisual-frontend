@@ -2,7 +2,7 @@ import { z } from "zod";
 import { phoneNumberSchema, taxNumberSchema } from "./helps";
 
 export const companySchema = z.object({
-  taxNumber: taxNumberSchema,
+  taxNumber: z.string().trim().optional().nullable(),
   name: z
     .string()
     .trim()

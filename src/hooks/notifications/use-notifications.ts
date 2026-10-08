@@ -5,6 +5,8 @@ import { playSoundEffect, primeAudioPlayback } from "@/utils";
 import {
   useCurrentNotificationStore,
   useNotificationSettingsStore,
+  useAuthStore,
+  useTenantStore,
 } from "@/stores";
 import { NotificationParams, NotificationType } from "@/types/notification";
 import { notificationsService } from "@/services/notifications-service";
@@ -116,6 +118,12 @@ export function useNotifications(
     [playNotificationSound, showBrowserNotification],
   );
 
+  const { user } = useAuthStore();
+  const { activeOrganization } = useTenantStore();
+  const isPlatformAdmin = Boolean(user?.isPlatformAdmin || user?.role === 'ADMIN');
+  const hasTenant = Boolean(activeOrganization?.id);
+  const isNotificationsEnabled = !isPlatformAdmin && hasTenant;
+
   const TAKE = 5;
 
   const {
@@ -141,9 +149,11 @@ export function useNotifications(
       if (items.length < TAKE) return undefined;
       return allPages.length * TAKE;
     },
+    enabled: isNotificationsEnabled,
+    retry: false,
     staleTime: 1000 * 60,
-    // Polling (a API não expõe WebSocket); pausa quando o separador está em segundo plano
-    refetchInterval: 1000 * 15,
+    // Polling (a API não expõe WebSocket); pausa quando o separador está em segundo plano ou desativado
+    refetchInterval: isNotificationsEnabled ? 1000 * 20 : false,
     refetchIntervalInBackground: false,
   });
 

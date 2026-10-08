@@ -1,61 +1,29 @@
 "use client"
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui";
-import { NifVerificationField } from "@/components/common";
 import { RegisterFormData } from "@/schemas";
 import { useFormContext } from "react-hook-form";
 import { StepsHeader } from "./steps-header";
-import { useNifFormVerification } from "@/hooks";
 
 export function SecondStep() {
   const {
     register,
-    watch,
-    setValue,
-    setError,
-    clearErrors,
     formState: { errors },
   } = useFormContext<RegisterFormData>();
-  const taxNumber = watch("step2.company.taxNumber") || "";
   const companyPhoneField = register("step2.company.phone");
-  const { handleStatusChange, handleVerified } = useNifFormVerification({
-    setValue,
-    setError,
-    clearErrors,
-    taxNumberField: "step2.company.taxNumber",
-    nameField: "step2.company.name",
-  });
 
   return (
     <div className={cn("flex flex-col gap-6")}>
       <div className="flex flex-col items-center mt-4 gap-2 text-center">
-        <StepsHeader title="Dados da actividade" />
+        <StepsHeader title="Dados da Produtora" />
         <p className="max-w-sm text-xs leading-relaxed text-muted-foreground">
-          O Mindgest pode ser usado por empresas e por pessoas singulares.
+          Todo o processo fiscal e enquadramento de NIF é gerido e sincronizado centralmente no Mindgest.
         </p>
       </div>
       <div className="grid gap-6">
-        <NifVerificationField
-          label="NIF do Contribuinte"
-          placeholder="Introduza o NIF empresarial ou pessoal"
-          value={taxNumber}
-          onChange={(value) =>
-            setValue("step2.company.taxNumber", value, {
-              shouldDirty: true,
-              shouldTouch: true,
-              shouldValidate: true,
-            })
-          }
-          onVerified={handleVerified}
-          onStatusChange={handleStatusChange}
-          error={
-            errors?.step2?.company?.taxNumber &&
-            errors?.step2?.company?.taxNumber?.message
-          }
-        />
         <Input
-          startIcon="User"
-          label="Nome completo ou designação comercial"
+          startIcon="Building"
+          label="Nome da produtora ou estúdio"
           placeholder="Introduza o nome ou a designação comercial"
           {...register("step2.company.name")}
           error={

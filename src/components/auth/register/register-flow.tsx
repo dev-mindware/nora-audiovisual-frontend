@@ -133,7 +133,7 @@ export function RegisterFlow() {
       const isValid = await trigger(["name", "email", "password"]);
       if (isValid) setStep(2);
     } else if (step === 2) {
-      const isValid = await trigger(["organizationName", "organizationSlug", "taxId"]);
+      const isValid = await trigger(["organizationName", "organizationSlug"]);
       if (isValid) setStep(3);
     }
   };
@@ -321,13 +321,9 @@ export function RegisterFlow() {
               error={errors.organizationSlug?.message}
             />
 
-            <Input
-              label="NIF / Identificação Fiscal (Opcional)"
-              startIcon="FileText"
-              placeholder="5412345678"
-              {...register("taxId")}
-              error={errors.taxId?.message}
-            />
+            <div className="rounded-lg border border-border/70 bg-muted/20 p-3 text-xs text-muted-foreground leading-relaxed">
+              <span className="font-medium text-foreground">Gestão Fiscal Mindgest:</span> Os dados fiscais e de facturação (NIF, enquadramento de IVA AGT e SAF-T) serão geridos e sincronizados centralmente através do Mindgest.
+            </div>
           </div>
         )}
 

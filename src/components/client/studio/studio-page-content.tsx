@@ -1,11 +1,18 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useStudioResources, useStudioBookings, useCancelStudioBooking, useStudioFilters } from '@/hooks/studio';
+import {
+  useStudioResources,
+  useStudioBookings,
+  useCancelStudioBooking,
+  useDeleteStudioResource,
+  useStudioFilters,
+} from '@/hooks/studio';
 import { Button, Badge } from '@/components';
 import { FilterPopover } from '@/components/shared';
 import { StudioResource, StudioResourceType } from '@/types';
 import { StudioBookingModal } from './booking-modal';
+import { StudioResourceModal } from './studio-resource-modal';
 import {
   Building2,
   CalendarCheck,
@@ -17,7 +24,18 @@ import {
   Layers,
   CheckCircle2,
   CalendarRange,
+  Plus,
+  Pencil,
+  Trash2,
+  MoreVertical,
 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const RESOURCE_TYPE_OPTIONS = [
   { value: 'MAIN_STAGE', label: 'Palco Principal / Estúdio A' },
@@ -100,6 +118,8 @@ const DEFAULT_RESOURCES: StudioResource[] = [
 
 export function StudioPageContent() {
   const [selectedResource, setSelectedResource] = useState<StudioResource | null>(null);
+  const [isResourceModalOpen, setIsResourceModalOpen] = useState(false);
+  const [editingResource, setEditingResource] = useState<StudioResource | null>(null);
 
   const {
     resourceType,
@@ -115,6 +135,7 @@ export function StudioPageContent() {
     status: bookingStatus && bookingStatus !== 'ALL' ? bookingStatus : undefined,
   });
   const { mutate: cancelBooking } = useCancelStudioBooking();
+  const { mutate: deleteResource } = useDeleteStudioResource();
 
   const sourceResources = rawResources.length > 0 ? rawResources : DEFAULT_RESOURCES;
 
@@ -132,6 +153,12 @@ export function StudioPageContent() {
 
     return { totalSets, availableSets, activeBookings, totalCapacity };
   }, [sourceResources, bookings]);
+
+  const handleDeleteResource = (resource: StudioResource) => {
+    if (confirm(`Tem a certeza de que deseja eliminar o set "${resource.name}"?`)) {
+      deleteResource(resource.id);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -211,6 +238,17 @@ export function StudioPageContent() {
                 Limpar
               </Button>
             )}
+
+            <Button
+              onClick={() => {
+                setEditingResource(null);
+                setIsResourceModalOpen(true);
+              }}
+              size="sm"
+              className="rounded-none bg-primary text-primary-foreground hover:bg-primary/90 h-10 text-xs font-medium tracking-wide uppercase px-3.5 gap-1.5"
+            >
+              <Plus className="h-3.5 w-3.5" /> Novo Set / Espaço
+            </Button>
           </div>
         </div>
 
@@ -237,12 +275,45 @@ export function StudioPageContent() {
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-none border border-border/60 bg-muted/40 text-foreground">
                         <IconComp className="h-4 w-4" />
                       </div>
-                      <Badge
-                        variant="outline"
-                        className="rounded-none border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-mono uppercase tracking-wider px-2 py-0.5"
-                      >
-                        {res.status === 'AVAILABLE' ? 'Disponível' : res.status}
-                      </Badge>
+                      <div className="flex items-center gap-1">
+                        <Badge
+                          variant="outline"
+                          className="rounded-none border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-mono uppercase tracking-wider px-2 py-0.5"
+                        >
+                          {res.status === 'AVAILABLE' ? 'Disponível' : res.status}
+                        </Badge>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 w-7 p-0 rounded-none text-muted-foreground hover:text-foreground"
+                            >
+                              <MoreVertical className="h-3.5 w-3.5" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="rounded-none border-border">
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setEditingResource(res);
+                                setIsResourceModalOpen(true);
+                              }}
+                              className="text-xs cursor-pointer gap-2"
+                            >
+                              <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+                              Editar Set
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onClick={() => handleDeleteResource(res)}
+                              className="text-xs cursor-pointer text-destructive focus:text-destructive gap-2"
+                            >
+                              <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                              Eliminar Set
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
                     </div>
 
                     <div>
@@ -411,6 +482,15 @@ export function StudioPageContent() {
         isOpen={Boolean(selectedResource)}
         onClose={() => setSelectedResource(null)}
         resource={selectedResource}
+      />
+
+      <StudioResourceModal
+        isOpen={isResourceModalOpen}
+        onClose={() => {
+          setIsResourceModalOpen(false);
+          setEditingResource(null);
+        }}
+        resource={editingResource}
       />
     </div>
   );

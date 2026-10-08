@@ -34,6 +34,16 @@ export const studioService = {
     return res.data?.data || res.data;
   },
 
+  updateResource: async (id: string, data: Partial<CreateStudioResourcePayload>): Promise<StudioResource> => {
+    const res = await api.patch(`/studio/resources/${id}`, data);
+    return res.data?.data || res.data;
+  },
+
+  deleteResource: async (id: string): Promise<{ success: boolean; id: string }> => {
+    const res = await api.delete(`/studio/resources/${id}`);
+    return res.data?.data || res.data;
+  },
+
   getBookings: async (params?: { resourceId?: string; status?: string } | string): Promise<StudioBooking[]> => {
     try {
       const queryParams = typeof params === 'string' ? { resourceId: params } : params;

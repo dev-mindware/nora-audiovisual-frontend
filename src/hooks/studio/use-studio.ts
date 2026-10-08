@@ -53,6 +53,35 @@ export function useCreateStudioResource() {
   });
 }
 
+export function useUpdateStudioResource() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<CreateStudioResourcePayload> }) =>
+      studioService.updateResource(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [...STUDIO_QUERY_KEY, 'resources'] });
+      SucessMessage('Espaço / Set actualizado com sucesso!');
+    },
+    onError: (err) => {
+      ErrorMessage(getApiErrorMessage(err, 'Erro ao actualizar espaço de estúdio.'));
+    },
+  });
+}
+
+export function useDeleteStudioResource() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => studioService.deleteResource(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [...STUDIO_QUERY_KEY, 'resources'] });
+      SucessMessage('Espaço / Set eliminado com sucesso!');
+    },
+    onError: (err) => {
+      ErrorMessage(getApiErrorMessage(err, 'Erro ao eliminar espaço de estúdio.'));
+    },
+  });
+}
+
 export function useCancelStudioBooking() {
   const queryClient = useQueryClient();
   return useMutation({
