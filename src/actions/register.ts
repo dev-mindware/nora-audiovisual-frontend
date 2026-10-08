@@ -1,6 +1,5 @@
 "use server";
 
-import { z } from "zod";
 import { cookies } from "next/headers";
 import { User, Role } from "@/types";
 import { api } from "@/services/api";
@@ -20,18 +19,63 @@ export interface RegisterActionResult {
   error?: string;
 }
 
+/**
+ * Sincroniza a sessão do utilizador com os cookies de servidor do Next.js
+ */
+export async function syncSessionAction(
+  token: string,
+  role: Role = "OWNER"
+): Promise<boolean> {
+  try {
+    const cookieStore = await cookies();
+    cookieStore.set("nora_token", token, {
+      path: "/",
+      httpOnly: false,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 7 * 24 * 60 * 60,
+    });
+
+    await createSession({
+      accessToken: token,
+      refreshToken: token,
+      role,
+    });
+    return true;
+  } catch (err) {
+    console.warn("syncSessionAction: aviso ao gravar cookies de sessão:", err);
+    return false;
+  }
+}
+
 export async function registerAction(
   data: RegisterActionInput
 ): Promise<RegisterActionResult> {
   try {
-    const res = await api.post("/auth/register", data);
+    // Sanitiza payload: remove campos vazios para não violar schemas estritos no backend
+    const cleanPayload: Record<string, any> = {
+      name: data.name.trim(),
+      email: data.email.trim().toLowerCase(),
+      password: data.password,
+      organizationName: data.organizationName.trim(),
+      planCode: data.planCode,
+    };
+
+    if (data.organizationSlug?.trim()) {
+      cleanPayload.organizationSlug = data.organizationSlug.trim();
+    }
+    if (data.taxId?.trim()) {
+      cleanPayload.taxId = data.taxId.trim();
+    }
+
+    const res = await api.post("/auth/register", cleanPayload);
 
     const responseData = res.data?.data || res.data;
-    const user = responseData.user;
-    const activeOrganization = responseData.activeOrganization;
-    const memberships = responseData.memberships || [];
+    const rawUser = responseData?.user;
+    const rawOrg = responseData?.activeOrganization;
+    const rawMemberships = responseData?.memberships || responseData?.organizations || [];
 
-    if (!user) {
+    if (!rawUser) {
       return {
         user: null,
         error: "Falha ao criar conta. Tente novamente.",
@@ -40,7 +84,7 @@ export async function registerAction(
 
     // Extrai o token de sessão retornado pela API ou dos headers Set-Cookie
     let sessionToken = responseData.token || responseData.accessToken;
-    const setCookieHeader = res.headers["set-cookie"];
+    const setCookieHeader = res.headers?.["set-cookie"];
     if (!sessionToken && setCookieHeader) {
       const rawCookies = Array.isArray(setCookieHeader) ? setCookieHeader : [setCookieHeader];
       for (const cookieStr of rawCookies) {
@@ -55,43 +99,55 @@ export async function registerAction(
     }
     sessionToken = sessionToken || "session_valid";
 
-    // Limpa quaisquer cookies residuais duplicados do Fastify no domínio do Next.js
-    const cookieStore = await cookies();
-    cookieStore.delete("__Host-nora_session");
-    cookieStore.delete("nora_session");
-
-    // Define cookie público acessível ao axios no browser
-    cookieStore.set("nora_token", sessionToken, {
-      path: "/",
-      httpOnly: false,
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 7 * 24 * 60 * 60,
-    });
-
     const assignedRole: Role = "OWNER";
-    user.role = assignedRole;
 
-    await createSession({
-      accessToken: sessionToken,
-      refreshToken: sessionToken,
+    // Persiste os cookies de sessão de forma segura
+    await syncSessionAction(sessionToken, assignedRole);
+
+    // Retorna POJOs 100% serializáveis para garantir que o RSC Flight Protocol não quebre
+    const serializedUser: User = {
+      id: String(rawUser.id),
+      email: String(rawUser.email),
+      name: String(rawUser.name),
       role: assignedRole,
-    });
+      status: rawUser.status || "ACTIVE",
+    };
+
+    const serializedOrg = rawOrg
+      ? {
+          id: String(rawOrg.id),
+          name: String(rawOrg.name),
+          slug: String(rawOrg.slug || ""),
+        }
+      : undefined;
+
+    const serializedMemberships = Array.isArray(rawMemberships)
+      ? rawMemberships.map((m: any) => ({
+          organizationId: String(m.organizationId || m.id),
+          organizationName: String(m.organizationName || m.name || "Organização"),
+          roleId: String(m.roleId || m.role || "OWNER"),
+        }))
+      : [];
 
     return {
-      user,
-      activeOrganization,
-      memberships,
+      user: serializedUser,
+      activeOrganization: serializedOrg,
+      memberships: serializedMemberships,
       redirectPath: "/dashboard",
       token: sessionToken,
       message: "Organização e conta criadas com sucesso!",
     };
   } catch (error: any) {
     const apiError = error.response?.data?.error || error.response?.data;
-    const message = apiError?.message || error.message || "Erro ao registar organização.";
+    const message =
+      apiError?.message ||
+      error.response?.data?.message ||
+      error.message ||
+      "Erro ao registar organização.";
+
     return {
       user: null,
-      error: message,
+      error: typeof message === "string" ? message : "Erro ao registar organização.",
     };
   }
 }

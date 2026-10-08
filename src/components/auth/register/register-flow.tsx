@@ -12,7 +12,7 @@ import {
   Sparkles,
   Wand2,
 } from "lucide-react";
-import { registerAction } from "@/actions/register";
+import { registerAction, syncSessionAction, type RegisterActionResult } from "@/actions/register";
 import { registerActionSchema, type RegisterActionInput } from "@/schemas";
 import { Input, Button, ButtonSubmit } from "@/components/ui";
 import { PasswordStrengthBar } from "@/components/auth/_components";
@@ -20,6 +20,7 @@ import { useAuthStore } from "@/stores";
 import { useTenantStore } from "@/stores/tenant";
 import { ErrorMessage, SucessMessage } from "@/utils/messages";
 import { queryClient } from "@/lib";
+import { api } from "@/services/api";
 
 interface PlanOption {
   code: "INICIAL" | "PROFISSIONAL" | "BUSINESS";
@@ -168,12 +169,60 @@ export function RegisterFlow() {
   async function handleRegister(data: RegisterActionInput) {
     try {
       setIsAuthenticating(true);
-      const res = await registerAction(data);
+
+      // 1. Sanitiza campos opcionais para evitar enviar strings vazias à API
+      const cleanData: RegisterActionInput = {
+        name: data.name.trim(),
+        email: data.email.trim().toLowerCase(),
+        password: data.password,
+        organizationName: data.organizationName.trim(),
+        planCode: data.planCode,
+      };
+      if (data.organizationSlug?.trim()) {
+        cleanData.organizationSlug = data.organizationSlug.trim();
+      }
+      if (data.taxId?.trim()) {
+        cleanData.taxId = data.taxId.trim();
+      }
+
+      // 2. Executa a criação da conta (Server Action com fallback direto via API)
+      let res: RegisterActionResult;
+      try {
+        res = await registerAction(cleanData);
+      } catch (actionErr: any) {
+        // Fallback resiliente: chamada direta via Axios no browser se a Server Action falhar
+        const apiRes = await api.post("/auth/register", cleanData);
+        const payload = apiRes.data?.data || apiRes.data;
+        const token = payload?.token || payload?.accessToken;
+
+        if (token) {
+          localStorage.setItem("nora_token", token);
+          document.cookie = `nora_token=${token}; path=/; max-age=604800; SameSite=Lax`;
+          await syncSessionAction(token, "OWNER").catch(() => null);
+        }
+
+        res = {
+          user: {
+            ...payload.user,
+            role: "OWNER",
+          },
+          activeOrganization: payload.activeOrganization,
+          memberships: payload.memberships || payload.organizations,
+          redirectPath: "/dashboard",
+          token,
+          message: "Produtora registada com sucesso! Bem-vindo(a).",
+        };
+      }
 
       if (!res.user) {
         setIsAuthenticating(false);
         ErrorMessage(res.error || "Falha ao registar produtora. Tente novamente.");
         return;
+      }
+
+      if (res.token) {
+        localStorage.setItem("nora_token", res.token);
+        document.cookie = `nora_token=${res.token}; path=/; max-age=604800; SameSite=Lax`;
       }
 
       if (res.activeOrganization) {
@@ -187,9 +236,9 @@ export function RegisterFlow() {
       if (res.memberships && res.memberships.length > 0) {
         setOrganizations(
           res.memberships.map((m: any) => ({
-            id: m.organizationId,
-            name: m.organizationName || "Organização",
-            role: m.roleId,
+            id: m.organizationId || m.id,
+            name: m.organizationName || m.name || "Organização",
+            role: m.roleId || m.role,
           }))
         );
       }
@@ -201,7 +250,8 @@ export function RegisterFlow() {
       router.replace(res.redirectPath || "/dashboard");
     } catch (err: any) {
       setIsAuthenticating(false);
-      ErrorMessage(err.message || "Erro inesperado ao registar. Tente novamente.");
+      const apiMsg = err.response?.data?.message || err.response?.data?.error?.message;
+      ErrorMessage(apiMsg || err.message || "Erro inesperado ao registar. Tente novamente.");
     }
   }
 
