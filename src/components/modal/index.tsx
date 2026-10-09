@@ -118,7 +118,7 @@ export function GlobalModal({
           "max-h-[90dvh]",
 
           // Aparência
-          "rounded-2xl",
+          "rounded-xs",
           "border-border",
           "bg-card",
           "text-foreground",
@@ -158,7 +158,6 @@ export function GlobalModal({
               className={cn(
                 "relative shrink-0",
                 "space-y-1",
-                "border-b border-border/40",
                 "pb-3"
               )}
             >
@@ -244,7 +243,6 @@ export function GlobalModal({
           <DialogFooter
             className={cn(
               "mt-auto shrink-0 w-full min-w-0",
-              "border-t border-border/40",
               "pt-4",
               "flex flex-row flex-wrap items-center justify-end gap-2",
               "[&>button]:w-full",

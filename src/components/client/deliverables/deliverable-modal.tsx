@@ -45,6 +45,7 @@ export function DeliverableModal({ isOpen, onClose, defaultProjectId }: Delivera
       includedPhotosCount: 20,
       extraPhotoPrice: 2500,
       allowExtraPurchase: true,
+      hasWatermark: true,
     },
   });
 
@@ -80,6 +81,7 @@ export function DeliverableModal({ isOpen, onClose, defaultProjectId }: Delivera
         includedPhotosCount: isPhotoshoot ? Number(data.includedPhotosCount) : undefined,
         extraPhotoPrice: isPhotoshoot ? Number(data.extraPhotoPrice) : undefined,
         allowExtraPurchase: isPhotoshoot ? data.allowExtraPurchase : undefined,
+        hasWatermark: data.hasWatermark,
       } as any);
       handleCancel();
     } catch {
@@ -193,6 +195,23 @@ export function DeliverableModal({ isOpen, onClose, defaultProjectId }: Delivera
             </div>
           </div>
         )}
+
+        <div className="flex items-center justify-between p-3 border border-border bg-muted/20">
+          <div className="space-y-0.5">
+            <label htmlFor="hasWatermark" className="text-xs font-medium text-foreground block cursor-pointer">
+              Aplicar Marca d'Água de Prova Técnica
+            </label>
+            <p className="text-[11px] text-muted-foreground">
+              Aplica marcação sutil nas fotos e vídeos para proteção durante a fase de revisão e parcelamento.
+            </p>
+          </div>
+          <input
+            id="hasWatermark"
+            type="checkbox"
+            {...register('hasWatermark')}
+            className="h-4 w-4 rounded-none accent-primary cursor-pointer"
+          />
+        </div>
 
         <div className="space-y-1.5">
           <Textarea

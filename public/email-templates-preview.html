@@ -1,0 +1,1800 @@
+<!DOCTYPE html>
+<html lang="pt-AO">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nora Audiovisual — Catálogo Oficial de Templates de Email (38 Modelos • AO1945)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --app-bg: #090d16;
+      --app-surface: #0f172a;
+      --app-border: #1e293b;
+      --app-text: #f8fafc;
+      --app-muted: #94a3b8;
+      --primary: #0284c7;
+      --primary-light: rgba(2, 132, 199, 0.15);
+      --accent-ai: #8b5cf6;
+      --accent-auto: #d97706;
+      --success: #10b981;
+      --danger: #ef4444;
+
+      /* Variáveis de Tema do Email (Default: Light) */
+      --em-bg: #ffffff;
+      --em-text: #0f172a;
+      --em-muted: #64748b;
+      --em-border: #e2e8f0;
+      --em-card-bg: #f8fafc;
+      --em-row-border: #f1f5f9;
+      --em-footer-bg: #f8fafc;
+      --em-footer-border: #e2e8f0;
+    }
+
+    /* Tema Escuro para o Email */
+    body.em-dark-theme {
+      --em-bg: #0b1120;
+      --em-text: #f8fafc;
+      --em-muted: #94a3b8;
+      --em-border: #1e293b;
+      --em-card-bg: #0f172a;
+      --em-row-border: #1e293b;
+      --em-footer-bg: #070c18;
+      --em-footer-border: #1e293b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      border-radius: 0px !important; /* Identidade Nora: cantos estritamente retos */
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--app-bg);
+      color: var(--app-text);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 380px;
+      background-color: var(--app-surface);
+      border-right: 1px solid var(--app-border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .sidebar-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--app-border);
+    }
+
+    .brand-title {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-badge {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid rgba(2, 132, 199, 0.3);
+    }
+
+    .search-box {
+      margin-top: 12px;
+    }
+
+    .search-input {
+      width: 100%;
+      background: #090d16;
+      border: 1px solid var(--app-border);
+      color: #fff;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+    }
+
+    .category-filter {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      padding: 8px 16px;
+      border-bottom: 1px solid var(--app-border);
+      scrollbar-width: none;
+    }
+    .category-filter::-webkit-scrollbar { display: none; }
+
+    .cat-btn {
+      background: transparent;
+      border: 1px solid var(--app-border);
+      color: var(--app-muted);
+      font-size: 11px;
+      padding: 4px 8px;
+      font-weight: 500;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .cat-btn.active, .cat-btn:hover {
+      background: var(--app-border);
+      color: #fff;
+    }
+
+    .template-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+
+    .template-item {
+      padding: 10px 12px;
+      border: 1px solid transparent;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      transition: all 0.15s;
+      margin-bottom: 4px;
+      text-align: left;
+      width: 100%;
+    }
+
+    .template-item:hover {
+      background: rgba(255, 255, 255, 0.03);
+      border-color: var(--app-border);
+    }
+
+    .template-item.active {
+      background: rgba(2, 132, 199, 0.08);
+      border-color: var(--primary);
+    }
+
+    .template-item-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .template-item-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.3;
+    }
+
+    .template-item-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: var(--app-muted);
+    }
+
+    .badge {
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 1px 5px;
+      letter-spacing: 0.02em;
+      border: 1px solid transparent;
+    }
+
+    .badge-billing { background: rgba(16, 185, 129, 0.15); color: #10b981; border-color: rgba(16, 185, 129, 0.3); }
+    .badge-finance { background: rgba(14, 165, 233, 0.15); color: #0ea5e9; border-color: rgba(14, 165, 233, 0.3); }
+    .badge-trial { background: rgba(2, 132, 199, 0.15); color: #38bdf8; border-color: rgba(2, 132, 199, 0.3); }
+    .badge-budget { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border-color: rgba(59, 130, 246, 0.3); }
+    .badge-automate { background: rgba(217, 119, 6, 0.15); color: #f59e0b; border-color: rgba(217, 119, 6, 0.3); }
+    .badge-ai { background: rgba(139, 92, 246, 0.15); color: #a78bfa; border-color: rgba(139, 92, 246, 0.3); }
+    .badge-prod { background: rgba(236, 72, 153, 0.15); color: #f472b6; border-color: rgba(236, 72, 153, 0.3); }
+    .badge-security { background: rgba(239, 68, 68, 0.15); color: #f87171; border-color: rgba(239, 68, 68, 0.3); }
+
+    /* Main Preview Container */
+    .preview-pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #020617;
+      overflow: hidden;
+    }
+
+    .preview-header {
+      padding: 12px 24px;
+      background: var(--app-surface);
+      border-bottom: 1px solid var(--app-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .meta-details {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .meta-subject {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .meta-info-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 11px;
+      color: var(--app-muted);
+    }
+
+    .meta-info-item strong {
+      color: #cbd5e1;
+      font-weight: 600;
+    }
+
+    .view-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ctrl-group {
+      display: flex;
+      border: 1px solid var(--app-border);
+    }
+
+    .view-btn {
+      background: #090d16;
+      border: none;
+      color: var(--app-muted);
+      padding: 5px 10px;
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .view-btn:hover {
+      color: #fff;
+    }
+
+    .view-btn.active {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .preview-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 30px 20px;
+      display: flex;
+      justify-content: center;
+      background: radial-gradient(circle at top, #0f172a 0%, #020617 100%);
+    }
+
+    .email-frame-container {
+      transition: width 0.25s ease;
+      background: var(--em-bg);
+      color: var(--em-text);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+      height: fit-content;
+      border: 1px solid var(--em-border);
+    }
+
+    .frame-desktop {
+      width: 620px;
+    }
+
+    .frame-mobile {
+      width: 375px;
+    }
+
+    /* ============================================================
+       DESIGN SYSTEM NORA AUDIOVISUAL — EMAIL TEMPLATES (AO1945)
+       ============================================================ */
+    .em-wrap {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      padding: 28px 24px;
+      line-height: 1.55;
+      color: var(--em-text);
+      background: var(--em-bg);
+    }
+
+    /* Cabeçalho do Email com Contexto Dinâmico da Organização e Plano */
+    .em-header {
+      border-bottom: 1px solid var(--em-border);
+      padding-bottom: 14px;
+      margin-bottom: 20px;
+    }
+
+    .em-header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .em-brand-combo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .em-logo {
+      display: flex;
+      align-items: center;
+    }
+
+    .em-logo-dark { display: none !important; }
+    .em-logo-light { display: block !important; }
+
+    body.em-dark-theme .em-logo-dark { display: block !important; }
+    body.em-dark-theme .em-logo-light { display: none !important; }
+
+    .em-brand-sep {
+      width: 1px;
+      height: 22px;
+      background: var(--em-border);
+    }
+
+    .em-org-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .em-org-emblem {
+      width: 24px;
+      height: 24px;
+      background: #0284c7;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .em-org-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+    }
+
+    .em-org-name {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--em-text);
+    }
+
+    .em-org-sub {
+      font-size: 9px;
+      color: var(--em-muted);
+    }
+
+    .em-tag {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 2px 7px;
+      background: var(--em-card-bg);
+      color: var(--em-muted);
+      border: 1px solid var(--em-border);
+    }
+
+    /* Context Bar Dinâmica: Plano e Add-ons */
+    .em-context-bar {
+      margin-top: 10px;
+      padding: 6px 10px;
+      background: var(--em-card-bg);
+      border: 1px solid var(--em-border);
+      font-size: 10.5px;
+      color: var(--em-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .em-context-bar strong {
+      color: var(--em-text);
+      font-weight: 600;
+    }
+
+    .em-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--em-text);
+      line-height: 1.35;
+      margin-bottom: 12px;
+      letter-spacing: -0.01em;
+    }
+
+    .em-intro {
+      font-size: 13.5px;
+      color: var(--em-muted);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .em-intro strong {
+      color: var(--em-text);
+      font-weight: 600;
+    }
+
+    .em-card {
+      background: var(--em-card-bg);
+      border-left: 3px solid var(--primary);
+      border-top: 1px solid var(--em-border);
+      border-right: 1px solid var(--em-border);
+      border-bottom: 1px solid var(--em-border);
+      padding: 14px 16px;
+      margin: 18px 0;
+    }
+
+    .em-card.danger {
+      border-left-color: var(--danger);
+    }
+
+    .em-card.success {
+      border-left-color: var(--success);
+    }
+
+    .em-card.warning {
+      border-left-color: var(--accent-auto);
+    }
+
+    .em-card.ai {
+      border-left-color: var(--accent-ai);
+    }
+
+    .em-card.finance {
+      border-left-color: #0ea5e9;
+    }
+
+    .em-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      font-size: 12px;
+      border-bottom: 1px solid var(--em-row-border);
+    }
+    .em-row:last-child {
+      border-bottom: none;
+    }
+
+    .em-row-label {
+      color: var(--em-muted);
+      font-weight: 500;
+    }
+
+    .em-row-value {
+      color: var(--em-text);
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .em-code-box {
+      background: #090d16;
+      border: 1px solid #1e293b;
+      padding: 10px;
+      margin: 12px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #38bdf8;
+    }
+
+    .em-btn {
+      display: inline-block;
+      background: var(--primary);
+      color: #ffffff !important;
+      font-size: 12.5px;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 10px 20px;
+      margin-top: 16px;
+      letter-spacing: -0.01em;
+      text-align: center;
+      border: none;
+      transition: opacity 0.15s;
+    }
+
+    .em-btn:hover {
+      opacity: 0.9;
+    }
+
+    .em-btn.dark {
+      background: #0f172a;
+    }
+
+    .em-btn.danger {
+      background: var(--danger);
+    }
+
+    .em-btn.ai {
+      background: var(--accent-ai);
+    }
+
+    .em-btn.auto {
+      background: var(--accent-auto);
+    }
+
+    /* Rodapé Corporativo Padrão Oficial Nora Audiovisual */
+    .em-footer {
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: 1px solid var(--em-footer-border);
+      background: var(--em-footer-bg);
+      padding: 16px;
+      font-size: 11px;
+      color: var(--em-muted);
+      line-height: 1.55;
+    }
+
+    .em-footer-brand {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--em-text);
+    }
+
+    .em-footer-links {
+      display: flex;
+      gap: 12px;
+      margin: 8px 0;
+      font-size: 10.5px;
+    }
+
+    .em-footer-links a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .em-footer-links a:hover {
+      text-decoration: underline;
+    }
+
+    .em-footer-legal {
+      font-size: 10px;
+      color: var(--em-muted);
+      margin-top: 8px;
+      line-height: 1.4;
+      border-top: 1px dashed var(--em-border);
+      padding-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand-title">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <img src="/logo-dark.png" alt="Nora Audiovisual" onerror="this.onerror=null; this.src='./logo-dark.png';" style="height: 24px; width: auto; max-width: 160px; object-fit: contain;">
+        </div>
+        <span class="brand-badge">38 Modelos • AO1945</span>
+      </div>
+      <div class="search-box">
+        <input type="text" id="searchInput" class="search-input" placeholder="Pesquisar por assunto, código, módulo...">
+      </div>
+    </div>
+
+    <div class="category-filter" id="categoryFilter">
+      <button class="cat-btn active" data-cat="ALL">Todos (38)</button>
+      <button class="cat-btn" data-cat="TRIAL">Trial & Subscrição</button>
+      <button class="cat-btn" data-cat="BILLING">Cobrança & Fiscal AGT</button>
+      <button class="cat-btn" data-cat="FINANCE">Finanças & Despesas</button>
+      <button class="cat-btn" data-cat="BUDGET">Orçamentos</button>
+      <button class="cat-btn" data-cat="AUTOMATE">Nora Automate</button>
+      <button class="cat-btn" data-cat="AI">Nora AI</button>
+      <button class="cat-btn" data-cat="PROD">Produção & Estúdio</button>
+      <button class="cat-btn" data-cat="SECURITY">Segurança & Acessos</button>
+    </div>
+
+    <div class="template-list" id="templateList">
+      <!-- Inserido dinamicamente via JS -->
+    </div>
+  </aside>
+
+  <!-- Painel de Preview -->
+  <main class="preview-pane">
+    <header class="preview-header">
+      <div class="meta-details">
+        <div class="meta-subject" id="previewSubject">Selecione um modelo de notificação</div>
+        <div class="meta-info-row">
+          <div class="meta-info-item">ID: <strong id="previewCode">-</strong></div>
+          <div class="meta-info-item">Destinatário: <strong id="previewRecipient">-</strong></div>
+          <div class="meta-info-item">Gatilho: <strong id="previewTrigger">-</strong></div>
+        </div>
+      </div>
+
+      <div class="view-controls">
+        <!-- Alternador Dark / Light -->
+        <div class="ctrl-group">
+          <button class="view-btn active" id="btnThemeLight" onclick="setThemeMode('light')">Modo Claro</button>
+          <button class="view-btn" id="btnThemeDark" onclick="setThemeMode('dark')">Modo Escuro</button>
+        </div>
+
+        <!-- Alternador Viewport -->
+        <div class="ctrl-group">
+          <button class="view-btn active" id="btnDesktop" onclick="setViewMode('desktop')">Desktop (620px)</button>
+          <button class="view-btn" id="btnMobile" onclick="setViewMode('mobile')">Mobile (375px)</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="preview-body">
+      <div class="email-frame-container frame-desktop" id="emailContainer">
+        <!-- Renderização do HTML do Email -->
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Catálogo Oficial dos 38 Templates (Norma Ortográfica AO1945 de Angola, font-semibold no máximo)
+    const TEMPLATES = [
+      // ─────────────────────────────────────────────────────────────
+      // GRUPO A: TRIAL, SUBSCRIÇÃO & CICLO DE VIDA (6)
+      // ─────────────────────────────────────────────────────────────
+      {
+        id: "TRIAL_WELCOME",
+        category: "TRIAL",
+        title: "Boas-vindas ao Período de Testes (Plano Inicial)",
+        code: "trial.welcome",
+        subject: "Bem-vindo ao Nora Audiovisual — O estúdio digital da {{orgName}} está configurado",
+        recipient: "Responsável da Produtora",
+        trigger: "Após registo inicial e criação da organização",
+        html: `
+          <h1 class="em-title">O seu estúdio operacional está configurado</h1>
+          <p class="em-intro">Olá <strong>{{userName}}</strong>, seja bem-vindo à plataforma Nora Audiovisual. Durante os próximos 14 dias tem acesso completo aos recursos essenciais para estruturar a produção da sua equipa.</p>
+          <div class="em-card">
+            <div class="em-row"><span class="em-row-label">Organização Registada</span><span class="em-row-value">{{orgName}}</span></div>
+            <div class="em-row"><span class="em-row-label">Capacidade Inicial</span><span class="em-row-value">5 Projectos • 3 Membros • 50 GB</span></div>
+            <div class="em-row"><span class="em-row-label">Término da Avaliação</span><span class="em-row-value">{{trialEndsDate}}</span></div>
+          </div>
+          <p class="em-intro">Comece por registar o inventário de câmaras e objectivas da sua produtora ou crie a sua primeira folha de chamada (Call Sheet) para organizar a equipa técnica.</p>
+          <a href="{{dashboardUrl}}" class="em-btn">Aceder ao Painel Operacional</a>
+        `
+      },
+      {
+        id: "TRIAL_MIDPOINT",
+        category: "TRIAL",
+        title: "Acompanhamento a Meio do Período de Testes (Dia 7)",
+        code: "trial.midpoint",
+        subject: "Como estão as produções da {{orgName}}? Recomendações para a sua equipa",
+        recipient: "Responsável da Produtora",
+        trigger: "7 dias após o início do Trial",
+        html: `
+          <h1 class="em-title">A meio caminho do teste: tire o máximo partido</h1>
+          <p class="em-intro">Olá <strong>{{userName}}</strong>, já passaram 7 dias desde que configurou a <strong>{{orgName}}</strong>. Já experimentou o Portal de Clientes para aprovação de copiões e entrega de fotografias?</p>
+          <div class="em-card warning">
+            <div class="em-row"><span class="em-row-label">Projectos em Produção</span><span class="em-row-value">{{activeProjectsCount}} activos</span></div>
+            <div class="em-row"><span class="em-row-label">Armazenamento Ocupado</span><span class="em-row-value">{{storageUsedGb}} GB de 50 GB</span></div>
+            <div class="em-row"><span class="em-row-label">Tempo Restante de Teste</span><span class="em-row-value">7 dias</span></div>
+          </div>
+          <p class="em-intro">Sabia que o <strong>Plano Profissional</strong> permite até 20 projectos em simultâneo, 250 GB de armazenamento e relatórios financeiros automáticos com o Mindgest?</p>
+          <a href="{{upgradeUrl}}" class="em-btn">Consultar Planos e Fazer Upgrade</a>
+        `
+      },
+      {
+        id: "TRIAL_EXPIRING_3DAYS",
+        category: "TRIAL",
+        title: "Aviso de Avaliação a Terminar em 3 Dias",
+        code: "trial.expiring.3days",
+        subject: "Faltam 3 dias para o término do período de avaliação da {{orgName}}",
+        recipient: "Responsável da Produtora",
+        trigger: "72 horas antes de trialEndsAt",
+        html: `
+          <h1 class="em-title">Mantenha os fluxos de trabalho da sua produtora activos</h1>
+          <p class="em-intro">Olá <strong>{{userName}}</strong>, a subscrição de avaliação da <strong>{{orgName}}</strong> termina em 3 dias ({{trialEndsDate}}). Após esta data, a conta transitará para modo de leitura.</p>
+          <div class="em-card danger">
+            <div class="em-row"><span class="em-row-label">Data Limite de Avaliação</span><span class="em-row-value">{{trialEndsDate}} às 23:59</span></div>
+            <div class="em-row"><span class="em-row-label">Equipa Convocada</span><span class="em-row-value">{{membersCount}} profissionais</span></div>
+            <div class="em-row"><span class="em-row-label">Ficheiros e Entregáveis</span><span class="em-row-value">Permanecem integralmente guardados</span></div>
+          </div>
+          <p class="em-intro">Evite que a equipa técnica fique impedida de emitir orçamentos e novas folhas de rodagem. Regularize a subscrição com pagamento mensal ou anual com desconto.</p>
+          <a href="{{upgradeUrl}}" class="em-btn danger">Garantir Continuidade do Plano</a>
+        `
+      },
+      {
+        id: "TRIAL_EXPIRING_24H",
+        category: "TRIAL",
+        title: "Alerta Crítico: Últimas 24 Horas de Avaliação",
+        code: "trial.expiring.24h",
+        subject: "Último dia: O período de avaliação da {{orgName}} termina amanhã",
+        recipient: "Responsável da Produtora",
+        trigger: "24 horas antes de trialEndsAt",
+        html: `
+          <h1 class="em-title">Amanhã a conta passará para Modo Apenas Leitura</h1>
+          <p class="em-intro">Olá <strong>{{userName}}</strong>, restam menos de 24 horas para o encerramento do período de teste da <strong>{{orgName}}</strong>.</p>
+          <div class="em-card danger">
+            <p style="font-size: 12.5px; line-height: 1.55; color: var(--em-text);">
+              <strong>Condições após o término:</strong><br>
+              • Continuará a ter acesso de leitura a todos os projectos, orçamentos e relatórios existentes.<br>
+              • A criação de novas produções, agendamento de estúdios e envio de entregáveis ficarão suspensos até à subscrição do plano.
+            </p>
+          </div>
+          <a href="{{checkoutUrl}}" class="em-btn danger">Subscrever e Evitar Bloqueios</a>
+        `
+      },
+      {
+        id: "TRIAL_EXPIRED_READ_ONLY",
+        category: "TRIAL",
+        title: "Subscrição Expirada — Modo Exclusivo de Leitura",
+        code: "trial.expired.readonly",
+        subject: "Subscrição expirada — A sua conta está em Modo Exclusivo de Leitura",
+        recipient: "Responsável da Produtora",
+        trigger: "Instante de expiração da subscrição",
+        html: `
+          <h1 class="em-title">Os seus dados estão salvaguardados no Nora</h1>
+          <p class="em-intro">Olá <strong>{{userName}}</strong>, a subscrição da <strong>{{orgName}}</strong> expirou oficialmente. De acordo com as directrizes de protecção de dados:</p>
+          <div class="em-card">
+            <div class="em-row"><span class="em-row-label">Consulta de Registos Existentes</span><span class="em-row-value">Permitida (projectos, orçamentos, copiões)</span></div>
+            <div class="em-row"><span class="em-row-label">Novas Gravações e Edições</span><span class="em-row-value">Suspensas temporariamente</span></div>
+            <div class="em-row"><span class="em-row-label">Acções Administrativas Permitidas</span><span class="em-row-value">Subscrição de plano, edição de dados da org e perfil</span></div>
+          </div>
+          <p class="em-intro">Para desbloquear a produção de imediato, escolha o plano pretendido e submeta o comprovativo de liquidação.</p>
+          <a href="{{subscriptionsUrl}}" class="em-btn">Subscrever Plano e Regularizar</a>
+        `
+      },
+      {
+        id: "SUBSCRIPTION_RENEWAL_SUCCESS",
+        category: "TRIAL",
+        title: "Renovação Periódica de Subscrição Confirmada",
+        code: "subscription.renewed",
+        subject: "Renovação confirmada — A subscrição da {{orgName}} foi renovada",
+        recipient: "Responsável e Financeiro",
+        trigger: "Reconciliação e aprovação do novo ciclo de faturação",
+        html: `
+          <h1 class="em-title">Subscrição activa para o próximo período</h1>
+          <p class="em-intro">Olá <strong>{{userName}}</strong>, o plano <strong>{{planName}}</strong> da <strong>{{orgName}}</strong> foi renovado com sucesso.</p>
+          <div class="em-card success">
+            <div class="em-row"><span class="em-row-label">Plano Activo</span><span class="em-row-value">{{planName}}</span></div>
+            <div class="em-row"><span class="em-row-label">Novo Período de Validade</span><span class="em-row-value">Até {{periodEnd}}</span></div>
+            <div class="em-row"><span class="em-row-label">Montante Liquidado</span><span class="em-row-value">{{amountAoa}} AOA</span></div>
+          </div>
+          <a href="{{dashboardUrl}}" class="em-btn">Aceder ao Nora Studio</a>
+        `
+      },
+
+      // ─────────────────────────────────────────────────────────────
+      // GRUPO B: COBRANÇA, FATURAÇÃO FISCAL MINDGEST & AGT (6)
+      // ─────────────────────────────────────────────────────────────
+      {
+        id: "PAYMENT_PROOF_SUBMITTED",
+        category: "BILLING",
+        title: "Comprovativo de Liquidação Submetido",
+        code: "billing.proof.submitted",
+        subject: "Recebemos o comprovativo de liquidação — Nora Audiovisual",
+        recipient: "Responsável da Produtora",
+        trigger: "Upload de comprovativo no checkout da plataforma",
+        html: `
+          <h1 class="em-title">Comprovativo em validação financeira</h1>
+          <p class="em-intro">Olá <strong>{{userName}}</strong>, recebemos o documento de liquidação referente à subscrição do <strong>{{planName}}</strong>.</p>
+          <div class="em-card warning">
+            <div class="em-row"><span class="em-row-label">Método Escolhido</span><span class="em-row-value">{{paymentMethod}}</span></div>
+            <div class="em-row"><span class="em-row-label">Número de Borderô / Referência</span><span class="em-row-value">{{referenceNumber}}</span></div>
+            <div class="em-row"><span class="em-row-label">Prazo Médio de Verificação</span><span class="em-row-value">Até 2 horas úteis</span></div>
+          </div>
+          <p class="em-intro">Logo que a nossa equipa confirme a entrada dos fundos, as funcionalidades serão desbloqueadas automaticamente.</p>
+        `
+      },
+      {
+        id: "PAYMENT_PROOF_APPROVED",
+        category: "BILLING",
+        title: "Comprovativo Aprovado & Plano Desbloqueado",
+        code: "billing.proof.approved",
+        subject: "Pagamento aprovado — O plano {{planName}} da {{orgName}} está activo",
+        recipient: "Responsável da Produtora",
+        trigger: "Administrador valida e aprova o comprovativo",
+        html: `
+          <h1 class="em-title">Pagamento confirmado com sucesso</h1>
+          <p class="em-intro">Olá <strong>{{userName}}</strong>, o comprovativo foi aceite. A <strong>{{orgName}}</strong> está agora com capacidade integral desbloqueada.</p>
+          <div class="em-card success">
+            <div class="em-row"><span class="em-row-label">Plano em Vigor</span><span class="em-row-value">{{planName}}</span></div>
+            <div class="em-row"><span class="em-row-label">Projectos Concorrentes</span><span class="em-row-value">{{maxProjects}} activos</span></div>
+            <div class="em-row"><span class="em-row-label">Espaço de Armazenamento</span><span class="em-row-value">{{maxStorage}} GB</span></div>
+            <div class="em-row"><span class="em-row-label">Válido Até</span><span class="em-row-value">{{validUntil}}</span></div>
+          </div>
+          <a href="{{dashboardUrl}}" class="em-btn">Entrar no Painel de Produção</a>
+        `
+      },
+      {
+        id: "PAYMENT_PROOF_REJECTED",
+        category: "BILLING",
+        title: "Comprovativo Recusado (Requer Novo Envio)",
+        code: "billing.proof.rejected",
+        subject: "Atenção: Não foi possível validar o comprovativo da {{orgName}}",
+        recipient: "Responsável da Produtora",
+        trigger: "Administrador recusa comprovativo com justificação",
+        html: `
+          <h1 class="em-title">Necessário reenvio de documento legível</h1>
+          <p class="em-intro">Olá <strong>{{userName}}</strong>, infelizmente não nos foi possível validar o ficheiro submetido para a liquidação da subscrição.</p>
+          <div class="em-card danger">
+            <div class="em-row"><span class="em-row-label">Motivo Apontado</span><span class="em-row-value">{{rejectionReason}}</span></div>
+            <div class="em-row"><span class="em-row-label">Medida Correctiva</span><span class="em-row-value">Reenviar talão bancário com borderô legível</span></div>
+          </div>
+          <a href="{{checkoutUrl}}" class="em-btn danger">Submeter Novo Comprovativo</a>
+        `
+      },
+      {
+        id: "INVOICE_ISSUED_MINDGEST",
+        category: "BILLING",
+        title: "Factura Fiscal Certificada pela AGT (Mindgest)",
+        code: "billing.invoice.issued",
+        subject: "Factura-Recibo {{invoiceNumber}} emitida e certificada pela AGT",
+        recipient: "Cliente ou Responsável Financeiro",
+        trigger: "Webhook Mindgest confirma transição para ISSUED",
+        html: `
+          <h1 class="em-title">Documento fiscal certificado pela AGT</h1>
+          <p class="em-intro">Informamos que a Factura-Recibo fiscal emitida através do software de facturação certificado Mindgest encontra-se disponível.</p>
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding: 10px 12px; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.25);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <div style="display: flex; flex-direction: column;">
+              <span style="font-size: 11px; font-weight: 600; color: #10b981;">CERTIFICADO AGT Nº 344/AGT/2026 • MINDGEST FISCAL</span>
+              <span style="font-size: 10px; color: var(--em-muted);">Documento tributário assinado digitalmente de acordo com o regime fiscal de Angola</span>
+            </div>
+          </div>
+          <div class="em-card success">
+            <div class="em-row"><span class="em-row-label">Número da Factura</span><span class="em-row-value">{{invoiceNumber}}</span></div>
+            <div class="em-row"><span class="em-row-label">Montante Total</span><span class="em-row-value">{{totalAmount}} AOA</span></div>
+            <div class="em-row"><span class="em-row-label">Imposto (IVA 14%)</span><span class="em-row-value">{{taxAmount}} AOA</span></div>
+            <div class="em-row"><span class="em-row-label">Assinatura Digital AGT</span><span class="em-row-value">{{agtHash}}</span></div>
+          </div>
+          <a href="{{downloadPdfUrl}}" class="em-btn">Descarregar PDF Certificado</a>
+        `
+      },
+      {
+        id: "INVOICE_FAILED_MINDGEST",
+        category: "BILLING",
+        title: "Falha na Facturação Fiscal Mindgest (Contingência)",
+        code: "billing.invoice.failed",
+        subject: "Alerta Fiscal: Falha na comunicação de factura com o Mindgest",
+        recipient: "Departamento Financeiro da Produtora",
+        trigger: "Erro de comunicação no conector Mindgest",
+        html: `
+          <h1 class="em-title">Erro na certificação fiscal do pedido {{orderId}}</h1>
+          <p class="em-intro">O conector fiscal Mindgest não conseguiu concluir a certificação do documento fiscal por inconsistência de dados ou quebra de comunicação.</p>
+          <div class="em-card danger">
+            <div class="em-row"><span class="em-row-label">Código da Ocorrência</span><span class="em-row-value">{{errorCode}}</span></div>
+            <div class="em-row"><span class="em-row-label">Descrição Técnica</span><span class="em-row-value">{{errorDetail}}</span></div>
+          </div>
+          <a href="{{billingSettingsUrl}}" class="em-btn danger">Verificar Configurações Fiscais</a>
+        `
+      },
+      {
+        id: "PAYMENT_OVERDUE_ALERT",
+        category: "BILLING",
+        title: "Lembrete de Pagamento em Atraso (Cliente)",
+        code: "billing.payment.overdue",
+        subject: "Lembrete cordial: Pagamento pendente do projecto {{projectTitle}}",
+        recipient: "Cliente da Produtora",
+        trigger: "Vencimento de parcela de cliente atingido",
+        html: `
+          <h1 class="em-title">Aviso de vencimento de parcela contratual</h1>
+          <p class="em-intro">Estimado(a) <strong>{{clientName}}</strong>, enviamos este lembrete da produtora <strong>{{orgName}}</strong> respeitante à parcela vencida da produção <strong>{{projectTitle}}</strong>.</p>
+          <div class="em-card warning">
+            <div class="em-row"><span class="em-row-label">Montante em Aberto</span><span class="em-row-value">{{amountAoa}} AOA</span></div>
+            <div class="em-row"><span class="em-row-label">Data de Vencimento</span><span class="em-row-value">{{dueDate}}</span></div>
+            <div class="em-row"><span class="em-row-label">Coordenadas Bancárias (IBAN)</span><span class="em-row-value">{{orgIban}}</span></div>
+          </div>
+          <a href="{{portalPaymentUrl}}" class="em-btn">Aceder aos Detalhes de Pagamento</a>
+        `
+      },
+
+      // ─────────────────────────────────────────────────────────────
+      // GRUPO C: FINANÇAS, DESPESAS & RECEITAS (4) [NOVO]
+      // ─────────────────────────────────────────────────────────────
+      {
+        id: "FINANCE_EXPENSE_REGISTERED",
+        category: "FINANCE",
+        title: "Registo de Nova Despesa Operacional",
+        code: "finance.expense.registered",
+        subject: "Nova despesa registada: {{expenseTitle}} no projecto {{projectTitle}}",
+        recipient: "Produtor e Departamento Financeiro",
+        trigger: "Membro da produção submete nova despesa com comprovativo",
+        html: `
+          <h1 class="em-title">Despesa operacional lançada no projecto</h1>
+          <p class="em-intro">Foi adicionada uma nova despesa à produção <strong>{{projectTitle}}</strong> pela equipa de produção.</p>
+          <div class="em-card finance">
+            <div class="em-row"><span class="em-row-label">Descrição da Despesa</span><span class="em-row-value">{{expenseTitle}}</span></div>
+            <div class="em-row"><span class="em-row-label">Categoria</span><span class="em-row-value">{{expenseCategory}}</span></div>
+            <div class="em-row"><span class="em-row-label">Montante</span><span class="em-row-value">{{expenseAmountAoa}} AOA</span></div>
+            <div class="em-row"><span class="em-row-label">Fornecedor / Beneficiário</span><span class="em-row-value">{{supplierName}}</span></div>
+            <div class="em-row"><span class="em-row-label">Comprovativo Anexo</span><span class="em-row-value">Sim (recibo fiscal verificado)</span></div>
+          </div>
+          <a href="{{financeProjectUrl}}" class="em-btn">Consultar Controlo Financeiro</a>
+        `
+      },
+      {
+        id: "FINANCE_EXPENSE_APPROVAL_REQUIRED",
+        category: "FINANCE",
+        title: "Despesa a Exceder Teto Requer Aprovação",
+        code: "finance.expense.approval",
+        subject: "Aprovação pendente: Despesa de {{expenseAmountAoa}} AOA excede o teto orçamentado",
+        recipient: "Produtor Executivo / Diretor Financeiro",
+        trigger: "Despesa lançada ultrapassa limite de tolerância da rubrica",
+        html: `
+          <h1 class="em-title">Despesa requer autorização superior</h1>
+          <p class="em-intro">A despesa <strong>{{expenseTitle}}</strong> registada para a rubrica <strong>{{expenseCategory}}</strong> excede a margem de tolerância definida no orçamento de <strong>{{projectTitle}}</strong>.</p>
+          <div class="em-card danger">
+            <div class="em-row"><span class="em-row-label">Montante Solicitado</span><span class="em-row-value">{{expenseAmountAoa}} AOA</span></div>
+            <div class="em-row"><span class="em-row-label">Saldo Disponível na Rubrica</span><span class="em-row-value">{{availableBudgetAoa}} AOA</span></div>
+            <div class="em-row"><span class="em-row-label">Excesso Previsto</span><span class="em-row-value">+{{excessAmountAoa}} AOA</span></div>
+            <div class="em-row"><span class="em-row-label">Submetido por</span><span class="em-row-value">{{requestedBy}}</span></div>
+          </div>
+          <p class="em-intro">Por favor aprove ou recuse este lançamento para manter a integridade do fluxo de caixa.</p>
+          <a href="{{expenseApprovalUrl}}" class="em-btn danger">Aprovar ou Recusar Lançamento</a>
+        `
+      },
+      {
+        id: "FINANCE_REVENUE_REGISTERED",
+        category: "FINANCE",
+        title: "Registo de Receita / Adiantamento de Cliente",
+        code: "finance.revenue.registered",
+        subject: "Receita confirmada: Entrada de {{revenueAmountAoa}} AOA em {{projectTitle}}",
+        recipient: "Direção da Produtora e Financeiro",
+        trigger: "Confirmação de recebimento de cliente",
+        html: `
+          <h1 class="em-title">Entrada de receita confirmada em conta</h1>
+          <p class="em-intro">A entrada financeira respeitante ao cliente <strong>{{clientName}}</strong> foi conciliada no sistema.</p>
+          <div class="em-card success">
+            <div class="em-row"><span class="em-row-label">Projecto Financiado</span><span class="em-row-value">{{projectTitle}}</span></div>
+            <div class="em-row"><span class="em-row-label">Montante Recebido</span><span class="em-row-value">{{revenueAmountAoa}} AOA</span></div>
+            <div class="em-row"><span class="em-row-label">Origem do Movimento</span><span class="em-row-value">Adiantamento Inicial (50%)</span></div>
+            <div class="em-row"><span class="em-row-label">Conta Bancária Creditada</span><span class="em-row-value">{{bankAccountName}}</span></div>
+          </div>
+          <a href="{{financeOverviewUrl}}" class="em-btn">Visualizar Balanço de Caixa</a>
+        `
+      },
+      {
+        id: "FINANCE_CASHFLOW_SUMMARY",
+        category: "FINANCE",
+        title: "Balanço Periódico de Fluxo de Caixa",
+        code: "finance.cashflow.summary",
+        subject: "Resumo financeiro {{periodName}}: Saldo e execução da {{orgName}}",
+        recipient: "Direção Geral e Financeiro",
+        trigger: "Disparo automático semanal ou mensal",
+        html: `
+          <h1 class="em-title">Balanço consolidado de receitas e despesas</h1>
+          <p class="em-intro">Consulte o balanço de movimentações financeiras da produtora <strong>{{orgName}}</strong> referente ao período de <strong>{{periodName}}</strong>.</p>
+          <div class="em-card finance">
+            <div class="em-row"><span class="em-row-label">Total de Receitas Liquidadas</span><span class="em-row-value">{{totalRevenuesAoa}} AOA</span></div>
+            <div class="em-row"><span class="em-row-label">Total de Despesas Operacionais</span><span class="em-row-value">{{totalExpensesAoa}} AOA</span></div>
+            <div class="em-row"><span class="em-row-label">Resultado Operacional Líquido</span><span class="em-row-value">{{netOperatingIncomeAoa}} AOA</span></div>
+            <div class="em-row"><span class="em-row-label">Margem Operacional</span><span class="em-row-value">{{operatingMarginPercent}}%</span></div>
+          </div>
+          <a href="{{financeReportsUrl}}" class="em-btn">Aceder ao Relatório Financeiro Detalhado</a>
+        `
+      },
+
+      // ─────────────────────────────────────────────────────────────
+      // GRUPO D: ORÇAMENTOS & PROPOSTAS COMERCIAIS (5)
+      // ─────────────────────────────────────────────────────────────
+      {
+        id: "BUDGET_CREATED_FOR_CLIENT",
+        category: "BUDGET",
+        title: "Proposta Comercial Submetida ao Cliente",
+        code: "budget.sent",
+        subject: "Proposta Comercial: {{projectTitle}} da {{orgName}}",
+        recipient: "Cliente",
+        trigger: "Produtora clica em 'Enviar Proposta ao Cliente'",
+        html: `
+          <h1 class="em-title">A sua proposta comercial está concluída</h1>
+          <p class="em-intro">Estimado(a) <strong>{{clientName}}</strong>, a produtora <strong>{{orgName}}</strong> preparou a proposta orçamental detalhada para a produção <strong>{{projectTitle}}</strong>.</p>
+          <div class="em-card">
+            <div class="em-row"><span class="em-row-label">Investimento Global</span><span class="em-row-value">{{totalAoa}} AOA</span></div>
+            <div class="em-row"><span class="em-row-label">Resumo dos Entregáveis</span><span class="em-row-value">{{deliverablesSummary}}</span></div>
+            <div class="em-row"><span class="em-row-label">Prazo de Validade</span><span class="em-row-value">Válido até {{validUntil}}</span></div>
+          </div>
+          <p class="em-intro">Através do nosso portal pode analisar as rubricas orçamentadas, solicitar ajustamentos ou aprovar a proposta de forma directa.</p>
+          <a href="{{portalBudgetUrl}}" class="em-btn">Consultar Proposta no Portal</a>
+        `
+      },
+      {
+        id: "BUDGET_APPROVED_BY_CLIENT",
+        category: "BUDGET",
+        title: "Orçamento Aprovado pelo Cliente",
+        code: "budget.approved",
+        subject: "Proposta aprovada: O cliente aceitou o orçamento de {{projectTitle}}",
+        recipient: "Produtor Executivo e Financeiro",
+        trigger: "Cliente clica em 'Aprovar Orçamento' no Portal",
+        html: `
+          <h1 class="em-title">Excelente notícia! O cliente aprovou a proposta</h1>
+          <p class="em-intro">O cliente <strong>{{clientName}}</strong> acaba de validar o orçamento do projecto <strong>{{projectTitle}}</strong>.</p>
+          <div class="em-card success">
+            <div class="em-row"><span class="em-row-label">Montante Aprovado</span><span class="em-row-value">{{totalAoa}} AOA</span></div>
+            <div class="em-row"><span class="em-row-label">Aprovado por</span><span class="em-row-value">{{clientEmail}}</span></div>
+            <div class="em-row"><span class="em-row-label">Próximo Passo</span><span class="em-row-value">Emitir factura pró-forma e convocar rodagem</span></div>
+          </div>
+          <a href="{{projectUrl}}" class="em-btn">Iniciar Preparação da Produção</a>
+        `
+      },
+      {
+        id: "BUDGET_CHANGES_REQUESTED",
+        category: "BUDGET",
+        title: "Cliente Solicitou Ajustes no Orçamento",
+        code: "budget.changes_requested",
+        subject: "Pedido de revisão orçamental para o projecto {{projectTitle}}",
+        recipient: "Produtor Executivo",
+        trigger: "Cliente submete apontamentos de revisão no Portal",
+        html: `
+          <h1 class="em-title">O cliente solicitou ajustamentos na proposta</h1>
+          <p class="em-intro">Olá <strong>{{userName}}</strong>, o cliente <strong>{{clientName}}</strong> analisou a proposta de <strong>{{projectTitle}}</strong> e enviou notas de revisão.</p>
+          <div class="em-card warning">
+            <p style="font-size: 12.5px; font-style: italic; line-height: 1.5; color: var(--em-text);">
+              "{{clientNotes}}"
+            </p>
+          </div>
+          <a href="{{budgetEditUrl}}" class="em-btn">Ajustar e Reenviar Proposta</a>
+        `
+      },
+      {
+        id: "BUDGET_REJECTED_EXPIRED",
+        category: "BUDGET",
+        title: "Orçamento Não Aceite ou Prazo Esgotado",
+        code: "budget.rejected_expired",
+        subject: "Proposta encerrada: {{projectTitle}} não foi concretizada",
+        recipient: "Produtor Executivo",
+        trigger: "Cliente declina ou prazo de 15 dias sem resposta",
+        html: `
+          <h1 class="em-title">O orçamento de {{projectTitle}} foi encerrado</h1>
+          <p class="em-intro">A proposta orçamental no montante de <strong>{{totalAoa}} AOA</strong> atingiu o termo de validade ou foi declinada pelo cliente.</p>
+          <div class="em-card danger">
+            <div class="em-row"><span class="em-row-label">Estado da Proposta</span><span class="em-row-value">{{statusDescription}}</span></div>
+            <div class="em-row"><span class="em-row-label">Entidade Comercial</span><span class="em-row-value">{{clientName}}</span></div>
+          </div>
+          <a href="{{budgetsListUrl}}" class="em-btn dark">Consultar Histórico Comercial</a>
+        `
+      },
+      {
+        id: "BUDGET_FOLLOWUP_REMINDER",
+        category: "BUDGET",
+        title: "Lembrete Automático de Proposta Pendente",
+        code: "budget.client.reminder",
+        subject: "Lembrete cordial: Proposta orçamental da {{orgName}} para {{projectTitle}}",
+        recipient: "Cliente",
+        trigger: "Disparo automático após 5 dias sem resposta",
+        html: `
+          <h1 class="em-title">Estimado(a) {{clientName}}, tem alguma dúvida sobre a proposta?</h1>
+          <p class="em-intro">Esperamos que esteja bem. Enviamos este lembrete cordial respeitante à proposta comercial da produção <strong>{{projectTitle}}</strong>.</p>
+          <div class="em-card">
+            <div class="em-row"><span class="em-row-label">Validade Restante</span><span class="em-row-value">Expira em {{daysRemaining}} dias</span></div>
+            <div class="em-row"><span class="em-row-label">Montante Reservado</span><span class="em-row-value">{{totalAoa}} AOA</span></div>
+          </div>
+          <a href="{{portalBudgetUrl}}" class="em-btn">Aceder à Proposta e Responder</a>
+        `
+      },
+
+      // ─────────────────────────────────────────────────────────────
+      // GRUPO E: NORA AUTOMATE & WEBHOOKS (4)
+      // ─────────────────────────────────────────────────────────────
+      {
+        id: "AUTOMATION_WORKFLOW_TRIGGERED",
+        category: "AUTOMATE",
+        title: "Relatório de Execução de Regra Operacional",
+        code: "automate.workflow.executed",
+        subject: "Nora Automate: A regra \"{{workflowName}}\" disparou com êxito",
+        recipient: "Gestor do Fluxo",
+        trigger: "Execução concluída com status SUCCESS",
+        html: `
+          <h1 class="em-title">Regra automática executada com êxito</h1>
+          <p class="em-intro">O gatilho programado foi accionado e todas as acções parametrizadas foram concluídas.</p>
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding: 10px 12px; background: rgba(217, 119, 6, 0.08); border: 1px solid rgba(217, 119, 6, 0.25);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <div style="display: flex; flex-direction: column;">
+              <span style="font-size: 11px; font-weight: 600; color: #f59e0b;">NORA AUTOMATE • FLUXO OPERACIONAL</span>
+              <span style="font-size: 10px; color: var(--em-muted);">Execução automática baseada em gatilhos e regras de negócio da produtora</span>
+            </div>
+          </div>
+          <div class="em-card warning">
+            <div class="em-row"><span class="em-row-label">Designação da Regra</span><span class="em-row-value">{{workflowName}}</span></div>
+            <div class="em-row"><span class="em-row-label">Gatilho Accionado</span><span class="em-row-value">{{triggerType}}</span></div>
+            <div class="em-row"><span class="em-row-label">Acções Concluídas</span><span class="em-row-value">{{actionsExecutedCount}} acções com sucesso</span></div>
+            <div class="em-row"><span class="em-row-label">Tempo de Processamento</span><span class="em-row-value">{{executionDurationMs}} ms</span></div>
+          </div>
+          <a href="{{automateLogsUrl}}" class="em-btn auto">Consultar Histórico no Nora Automate</a>
+        `
+      },
+      {
+        id: "AUTOMATION_WEBHOOK_FAILED",
+        category: "AUTOMATE",
+        title: "Falha na Entrega de Webhook Externo",
+        code: "automate.webhook.failed",
+        subject: "Falha de Automação: O Webhook externo para {{targetHost}} não respondeu",
+        recipient: "Administrador Técnico",
+        trigger: "Webhook falhou após 5 retentativas com backoff",
+        html: `
+          <h1 class="em-title">Falha permanente na entrega de Webhook</h1>
+          <p class="em-intro">O servidor externo configurado na regra <strong>{{workflowName}}</strong> não respondeu com sucesso aos disparos automáticos.</p>
+          <div class="em-card danger">
+            <div class="em-row"><span class="em-row-label">Endereço de Destino</span><span class="em-row-value">{{webhookUrl}}</span></div>
+            <div class="em-row"><span class="em-row-label">Código HTTP / Resposta</span><span class="em-row-value">{{httpStatus}} • {{errorMessage}}</span></div>
+            <div class="em-row"><span class="em-row-label">Tentativas Esgotadas</span><span class="em-row-value">5 de 5 (Fila de Contingência)</span></div>
+          </div>
+          <a href="{{automateRuleUrl}}" class="em-btn danger">Verificar Endpoint e Ajustar Regra</a>
+        `
+      },
+      {
+        id: "AUTOMATION_QUOTA_EXCEEDED",
+        category: "AUTOMATE",
+        title: "Quota Mensal de Execuções Atingida",
+        code: "automate.quota.exceeded",
+        subject: "Atenção: A quota mensal de execuções do Nora Automate foi esgotada",
+        recipient: "Responsável da Produtora",
+        trigger: "Consumo de execuções atinge 100% da franquia mensal",
+        html: `
+          <h1 class="em-title">Fluxos temporariamente pausados por limite de quota</h1>
+          <p class="em-intro">A organização <strong>{{orgName}}</strong> atingiu o limite de execuções de automação estipulado no seu plano actual.</p>
+          <div class="em-card danger">
+            <div class="em-row"><span class="em-row-label">Execuções Realizadas</span><span class="em-row-value">{{usedExecutions}} de {{maxExecutions}}</span></div>
+            <div class="em-row"><span class="em-row-label">Data de Renovação de Quota</span><span class="em-row-value">{{renewalDate}}</span></div>
+          </div>
+          <p class="em-intro">Para restabelecer a execução contínua dos fluxos e webhooks, adicione capacidade extra ou faça upgrade do plano.</p>
+          <a href="{{upgradeAddonUrl}}" class="em-btn danger">Aumentar Capacidade de Automações</a>
+        `
+      },
+      {
+        id: "AUTOMATION_TEAM_DISPATCH",
+        category: "AUTOMATE",
+        title: "Despacho Automático para Departamento Técnico",
+        code: "automate.dispatch.team",
+        subject: "Convocatória Automática: {{workflowTitle}} — Departamento de {{departmentName}}",
+        recipient: "Profissionais do Departamento Seleccionado",
+        trigger: "Regra despacha aviso departamental",
+        html: `
+          <h1 class="em-title">{{workflowTitle}}</h1>
+          <p class="em-intro">Mensagem gerada automaticamente pelo fluxo operacional do estúdio.</p>
+          <div class="em-card warning">
+            <p style="font-size: 13px; line-height: 1.6; color: var(--em-text);">
+              {{customMessage}}
+            </p>
+          </div>
+          <a href="{{targetUrl}}" class="em-btn">Aceder à Folha no Nora Studio</a>
+        `
+      },
+
+      // ─────────────────────────────────────────────────────────────
+      // GRUPO F: NORA AI & INSIGHTS PREDITIVOS (4)
+      // ─────────────────────────────────────────────────────────────
+      {
+        id: "NORA_AI_BUDGET_DRIFT_ALERT",
+        category: "AI",
+        title: "Alerta de Derrapagem Orçamental Prevista",
+        code: "ai.budget.drift",
+        subject: "Nora AI: Risco de desvio orçamental detectado na produção {{projectTitle}}",
+        recipient: "Diretor Financeiro e Produtor",
+        trigger: "IA calcula projeção de custos reais > orçados acima de 15%",
+        html: `
+          <h1 class="em-title">Alerta Preventivo de Custos de Produção</h1>
+          <p class="em-intro">Cruzando as horas técnicas lançadas e os custos de aluguer de equipamento, a <strong>Nora AI</strong> projecta uma derrapagem orçamental em <strong>{{projectTitle}}</strong>.</p>
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding: 10px 12px; background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.25);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/></svg>
+            <div style="display: flex; flex-direction: column;">
+              <span style="font-size: 11px; font-weight: 600; color: #8b5cf6;">NORA AI CO-PILOT • ALERTA PREDITIVO DE PRODUÇÃO</span>
+              <span style="font-size: 10px; color: var(--em-muted);">Análise preditiva treinada para parâmetros da indústria audiovisual</span>
+            </div>
+          </div>
+          <div class="em-card ai">
+            <div class="em-row"><span class="em-row-label">Teto Orçado Inicial</span><span class="em-row-value">{{budgetCapAoa}} AOA</span></div>
+            <div class="em-row"><span class="em-row-label">Custo Projectado pela IA</span><span class="em-row-value">{{projectedCostAoa}} AOA (+{{driftPercent}}%)</span></div>
+            <div class="em-row"><span class="em-row-label">Rubrica Crítica do Desvio</span><span class="em-row-value">{{driftCategory}}</span></div>
+          </div>
+          <p class="em-intro"><strong>Recomendação da IA:</strong> Ajustar o plano de rodagem ou antecipar o bloqueio de horas adicionais de estúdio.</p>
+          <a href="{{insightsUrl}}" class="em-btn ai">Abrir Análise de Rentabilidade</a>
+        `
+      },
+      {
+        id: "NORA_AI_OPTIMAL_CREW_MATCH",
+        category: "AI",
+        title: "Sugestão Inteligente de Alocação de Equipa",
+        code: "ai.crew.match",
+        subject: "Nora AI: Recomendação de equipa técnica e equipamento para {{projectTitle}}",
+        recipient: "Diretor de Produção",
+        trigger: "Criação de nova produção de média/alta escala",
+        html: `
+          <h1 class="em-title">Sugestão de alocação de recursos pelo melhor custo-benefício</h1>
+          <p class="em-intro">Com base no calendário de rodagens e no material disponível no armazém, a Nora AI estruturou a seguinte convocatória sugerida:</p>
+          <div class="em-card ai">
+            <div class="em-row"><span class="em-row-label">Câmara Recomendada</span><span class="em-row-value">{{recommendedCamera}} (Disponível no armazém)</span></div>
+            <div class="em-row"><span class="em-row-label">Equipa Técnica Sugerida</span><span class="em-row-value">{{suggestedCrewNames}}</span></div>
+            <div class="em-row"><span class="em-row-label">Poupança Operacional Estimada</span><span class="em-row-value">~18% face a aluguer externo</span></div>
+          </div>
+          <a href="{{kanbanUrl}}" class="em-btn ai">Aplicar Convocatória no Quadro</a>
+        `
+      },
+      {
+        id: "NORA_AI_POST_MORTEM_INSIGHT",
+        category: "AI",
+        title: "Relatório Pós-Morte & Rentabilidade Real de Projecto",
+        code: "ai.postmortem.insight",
+        subject: "Nora AI: Conclusão e rentabilidade real da produção {{projectTitle}}",
+        recipient: "Direção da Produtora",
+        trigger: "Projecto transita para status COMPLETED",
+        html: `
+          <h1 class="em-title">Rentabilidade consolidada de {{projectTitle}}</h1>
+          <p class="em-intro">A produção foi concluída e a facturação fiscal liquidada. A <strong>Nora AI</strong> apurou a margem e o desvio real do projecto:</p>
+          <div class="em-card ai">
+            <div class="em-row"><span class="em-row-label">Receita Facturada</span><span class="em-row-value">{{revenueAoa}} AOA</span></div>
+            <div class="em-row"><span class="em-row-label">Custos Operacionais Reais</span><span class="em-row-value">{{expensesAoa}} AOA</span></div>
+            <div class="em-row"><span class="em-row-label">Margem Líquida Realizada</span><span class="em-row-value">{{profitMarginPercent}}% ({{netProfitAoa}} AOA)</span></div>
+            <div class="em-row"><span class="em-row-label">Precisão do Orçamento Inicial</span><span class="em-row-value">{{budgetAccuracyPercent}}%</span></div>
+          </div>
+          <a href="{{insightsReportUrl}}" class="em-btn ai">Consultar Relatório no Nora Insights</a>
+        `
+      },
+      {
+        id: "NORA_AI_STUDIO_CAPACITY_FORECAST",
+        category: "AI",
+        title: "Previsão de Saturação de Estúdio nos Próximos 15 Dias",
+        code: "ai.studio.forecast",
+        subject: "Nora AI: Alerta de sobrecarga nos estúdios e iluminação técnica",
+        recipient: "Gestor de Estúdios e Armazém",
+        trigger: "Varredura preditiva de ocupação",
+        html: `
+          <h1 class="em-title">Alerta de ocupação máxima nos estúdios</h1>
+          <p class="em-intro">A Nora AI prevê que entre <strong>{{peakStart}}</strong> e <strong>{{peakEnd}}</strong> a ocupação dos estúdios atingirá o limite de 100%.</p>
+          <div class="em-card ai">
+            <div class="em-row"><span class="em-row-label">Estúdio Principal (Plateau)</span><span class="em-row-value">5 produções coincidentes agendadas</span></div>
+            <div class="em-row"><span class="em-row-label">Item com Risco de Rutura</span><span class="em-row-value">Kits de Iluminação LED Aputure esgotados</span></div>
+          </div>
+          <a href="{{studioCalendarUrl}}" class="em-btn ai">Reorganizar Calendário de Rodagens</a>
+        `
+      },
+
+      // ─────────────────────────────────────────────────────────────
+      // GRUPO G: PRODUÇÃO, RODAGEM & ENTREGÁVEIS AUDIOVISUAIS (5)
+      // ─────────────────────────────────────────────────────────────
+      {
+        id: "CALL_SHEET_PUBLISHED",
+        category: "PROD",
+        title: "Ordem de Rodagem Oficial Publicada (Call Sheet)",
+        code: "prod.callsheet.published",
+        subject: "Ordem de Rodagem: {{projectTitle}} — Convocatória para {{shootDate}}",
+        recipient: "Equipa Técnica e Artística",
+        trigger: "Diretor de Produção publica a Call Sheet",
+        html: `
+          <h1 class="em-title">Ordem de Rodagem: {{projectTitle}}</h1>
+          <p class="em-intro">Olá <strong>{{crewMemberName}}</strong>, a folha técnica oficial para a próxima rodagem foi publicada.</p>
+          <div class="em-card" style="border-left-color: #db2777;">
+            <div class="em-row"><span class="em-row-label">Data de Rodagem</span><span class="em-row-value">{{shootDate}}</span></div>
+            <div class="em-row"><span class="em-row-label">Hora de Chamada Pessoal</span><span class="em-row-value">{{personalCallTime}}</span></div>
+            <div class="em-row"><span class="em-row-label">Localização / Set</span><span class="em-row-value">{{locationAddress}}</span></div>
+            <div class="em-row"><span class="em-row-label">Previsão do Primeiro Plano</span><span class="em-row-value">{{firstShotTime}}</span></div>
+          </div>
+          <p class="em-intro">Por favor confirme a sua comparência e pontualidade no painel operacional para controlo de quórum.</p>
+          <a href="{{callSheetUrl}}" class="em-btn" style="background: #db2777;">Confirmar Presença na Rodagem</a>
+        `
+      },
+      {
+        id: "CALL_SHEET_RSVP_CONFIRMED",
+        category: "PROD",
+        title: "Confirmação de Presença da Equipa Técnica",
+        code: "prod.callsheet.rsvp",
+        subject: "Confirmação de comparência: {{crewMemberName}} confirmou presença para {{shootDate}}",
+        recipient: "Direção de Produção",
+        trigger: "Membro da equipa técnica clica em 'Confirmar Presença'",
+        html: `
+          <h1 class="em-title">Comparência confirmada para a rodagem</h1>
+          <p class="em-intro">O profissional <strong>{{crewMemberName}}</strong> (Função: {{roleTitle}}) confirmou a sua presença para a rodagem da produção <strong>{{projectTitle}}</strong>.</p>
+          <div class="em-card success">
+            <div class="em-row"><span class="em-row-label">Quórum da Equipa Técnica</span><span class="em-row-value">{{confirmedCrew}} de {{totalCrew}} confirmados</span></div>
+            <div class="em-row"><span class="em-row-label">Hora de Chamada</span><span class="em-row-value">{{callTime}}</span></div>
+          </div>
+          <a href="{{callSheetDashboardUrl}}" class="em-btn">Aceder ao Mapa de Presenças</a>
+        `
+      },
+      {
+        id: "STUDIO_BOOKING_CONFLICT",
+        category: "PROD",
+        title: "Conflito de Agendamento em Estúdio",
+        code: "prod.studio.conflict",
+        subject: "Conflito de agenda: Dupla reserva detectada no {{studioName}}",
+        recipient: "Gestor de Estúdios e Produtores",
+        trigger: "Sobreposição de horários detectada na grelha",
+        html: `
+          <h1 class="em-title">Sobreposição de reservas no estúdio</h1>
+          <p class="em-intro">O espaço <strong>{{studioName}}</strong> tem dois projectos alocados para o mesmo intervalo horário.</p>
+          <div class="em-card danger">
+            <div class="em-row"><span class="em-row-label">Produção A</span><span class="em-row-value">{{projectAName}} (Produtor: {{producerAName}})</span></div>
+            <div class="em-row"><span class="em-row-label">Produção B</span><span class="em-row-value">{{projectBName}} (Produtor: {{producerBName}})</span></div>
+            <div class="em-row"><span class="em-row-label">Intervalo Coincidente</span><span class="em-row-value">{{conflictTimeRange}}</span></div>
+          </div>
+          <a href="{{studioScheduleUrl}}" class="em-btn danger">Desempatar Conflito na Grelha</a>
+        `
+      },
+      {
+        id: "EQUIPMENT_RETURN_OVERDUE",
+        category: "PROD",
+        title: "Atraso na Devolução de Material Técnico",
+        code: "prod.equipment.overdue",
+        subject: "Atenção: Devolução de equipamento técnico em atraso no armazém",
+        recipient: "Responsável pelo Empréstimo",
+        trigger: "Prazo de retorno expirou sem check-in no inventário",
+        html: `
+          <h1 class="em-title">Material técnico com devolução pendente</h1>
+          <p class="em-intro">Olá <strong>{{responsibleName}}</strong>, os equipamentos levantados para a produção de <strong>{{projectTitle}}</strong> deviam ter sido entregues no armazém até às {{expectedReturnTime}}.</p>
+          <div class="em-card danger">
+            <div class="em-row"><span class="em-row-label">Itens Pendentes de Check-in</span><span class="em-row-value">{{itemsList}}</span></div>
+            <div class="em-row"><span class="em-row-label">Armazém de Recolha</span><span class="em-row-value">{{warehouseLocation}}</span></div>
+          </div>
+          <a href="{{equipmentCheckinUrl}}" class="em-btn danger">Registar Devolução no Sistema</a>
+        `
+      },
+      {
+        id: "DELIVERABLE_PHOTOSHOOT_READY",
+        category: "PROD",
+        title: "Galeria de Fotografias Pronta para Seleção",
+        code: "prod.deliverable.photoshoot_ready",
+        subject: "Sessão fotográfica pronta: Seleccione as fotografias de {{projectTitle}}",
+        recipient: "Cliente",
+        trigger: "Produtora carrega a galeria e disponibiliza o link de prova",
+        html: `
+          <h1 class="em-title">As fotografias da sua sessão estão disponíveis</h1>
+          <p class="em-intro">Estimado(a) <strong>{{clientName}}</strong>, a equipa da <strong>{{orgName}}</strong> carregou as imagens da sessão fotográfica no portal.</p>
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding: 10px 12px; background: rgba(2, 132, 199, 0.08); border: 1px solid rgba(2, 132, 199, 0.25);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <div style="display: flex; flex-direction: column;">
+              <span style="font-size: 11px; font-weight: 600; color: #0284c7;">PORTAL DE ENTREGÁVEIS • GALERIA DE PROVA FOTOGRÁFICA</span>
+              <span style="font-size: 10px; color: var(--em-muted);">Imagens com marca d'água de proteção contra reprodução não autorizada</span>
+            </div>
+          </div>
+          <div class="em-card success">
+            <div class="em-row"><span class="em-row-label">Total de Imagens Apresentadas</span><span class="em-row-value">{{photosCount}} fotografias de prova</span></div>
+            <div class="em-row"><span class="em-row-label">Fotografias Incluídas no Pacote</span><span class="em-row-value">{{includedPhotos}} fotografias para aprovação final</span></div>
+            <div class="em-row"><span class="em-row-label">Ferramentas do Portal</span><span class="em-row-value">Zoom detalhado, notas de retoque e selecção individual</span></div>
+          </div>
+          <a href="{{portalGalleryUrl}}" class="em-btn">Abrir Galeria e Seleccionar</a>
+        `
+      },
+
+      // ─────────────────────────────────────────────────────────────
+      // GRUPO H: SEGURANÇA, ACESSO & CONVITES (4)
+      // ─────────────────────────────────────────────────────────────
+      {
+        id: "MEMBER_INVITATION",
+        category: "SECURITY",
+        title: "Convite de Membro com Credenciais de Acesso",
+        code: "security.member.invite",
+        subject: "Convite para colaborar na {{orgName}} — Dados de acesso ao Nora Studio",
+        recipient: "Novo Membro da Equipa",
+        trigger: "Adição de utilizador à organização em Configurações > Membros",
+        html: `
+          <h1 class="em-title">Junte-se à equipa técnica no Nora Studio</h1>
+          <p class="em-intro">Foi convidado para colaborar na produtora <strong>{{orgName}}</strong> com a função de <strong>{{roleTitle}}</strong>. Abaixo encontram-se as suas credenciais provisórias de primeiro acesso:</p>
+          <div class="em-card">
+            <div class="em-row"><span class="em-row-label">Organização</span><span class="em-row-value">{{orgName}}</span></div>
+            <div class="em-row"><span class="em-row-label">Função / Perfil</span><span class="em-row-value">{{roleTitle}}</span></div>
+            <div class="em-row"><span class="em-row-label">Email de Acesso (Login)</span><span class="em-row-value">{{invitedUserEmail}}</span></div>
+            <div class="em-row"><span class="em-row-label">Palavra-passe Temporária</span><span class="em-row-value" style="font-family: 'JetBrains Mono', monospace; color: var(--primary);">{{tempPassword}}</span></div>
+          </div>
+          <div class="em-code-box">
+            Instrução de Segurança: Por motivos de conformidade, ser-lhe-á solicitado que redefina esta palavra-passe no primeiro início de sessão.
+          </div>
+          <a href="{{acceptInviteUrl}}" class="em-btn">Activar Conta e Iniciar Sessão</a>
+        `
+      },
+      {
+        id: "PASSWORD_RESET",
+        category: "SECURITY",
+        title: "Redefinição de Palavra-passe",
+        code: "security.password.reset",
+        subject: "Recuperação de palavra-passe — Nora Audiovisual",
+        recipient: "Utilizador",
+        trigger: "Solicitação na página de recuperação de senha",
+        html: `
+          <h1 class="em-title">Redefinição de credenciais de acesso</h1>
+          <p class="em-intro">Olá <strong>{{userName}}</strong>, recebemos um pedido para redefinir a palavra-passe associada à sua conta.</p>
+          <div class="em-card warning">
+            <div class="em-row"><span class="em-row-label">Validade da Ligação</span><span class="em-row-value">60 minutos</span></div>
+            <div class="em-row"><span class="em-row-label">Dispositivo Solicitante</span><span class="em-row-value">{{browser}} • {{ipAddress}}</span></div>
+          </div>
+          <p class="em-intro">Se não efectuou este pedido, pode ignorar este email com segurança. As suas credenciais actuais permanecerão inalteradas.</p>
+          <a href="{{resetPasswordUrl}}" class="em-btn danger">Definir Nova Palavra-passe</a>
+        `
+      },
+      {
+        id: "SECURITY_NEW_DEVICE_LOGIN",
+        category: "SECURITY",
+        title: "Novo Início de Sessão em Dispositivo Não Reconhecido",
+        code: "security.new_device.login",
+        subject: "Alerta de Segurança: Novo início de sessão na sua conta Nora",
+        recipient: "Utilizador",
+        trigger: "Início de sessão em novo IP ou navegador",
+        html: `
+          <h1 class="em-title">Novo acesso à sua conta detectado</h1>
+          <p class="em-intro">A sua conta iniciou sessão a partir de um dispositivo ou localização geográfica que não reconhecemos anteriormente.</p>
+          <div class="em-card danger">
+            <div class="em-row"><span class="em-row-label">Data e Hora</span><span class="em-row-value">{{loginTime}}</span></div>
+            <div class="em-row"><span class="em-row-label">Endereço IP</span><span class="em-row-value">{{ipAddress}}</span></div>
+            <div class="em-row"><span class="em-row-label">Sistema / Navegador</span><span class="em-row-value">{{deviceInfo}}</span></div>
+          </div>
+          <p class="em-intro">Se foi você, não é necessária qualquer acção. Caso não reconheça este acesso, termine todas as sessões e active a autenticação em dois factores (2FA).</p>
+          <a href="{{securitySettingsUrl}}" class="em-btn danger">Proteger a Minha Conta</a>
+        `
+      },
+      {
+        id: "DELIVERABLE_APPROVED_BY_CLIENT",
+        category: "PROD",
+        title: "Cliente Concluiu Seleção e Aprovou Ficheiros",
+        code: "prod.deliverable.approved",
+        subject: "Entregáveis validados: {{clientName}} aprovou os ficheiros de {{projectTitle}}",
+        recipient: "Fotógrafo, Editor e Produtor",
+        trigger: "Cliente clica em 'Aprovar Entregáveis' no portal",
+        html: `
+          <h1 class="em-title">Aprovação final concluída pelo cliente</h1>
+          <p class="em-intro">O cliente validou a selecção de entregáveis da produção <strong>{{projectTitle}}</strong> no Portal de Clientes.</p>
+          <div class="em-card success">
+            <div class="em-row"><span class="em-row-label">Itens Aprovados</span><span class="em-row-value">{{approvedItemsCount}} ficheiros validados</span></div>
+            <div class="em-row"><span class="em-row-label">Notas Técnicas de Retoque</span><span class="em-row-value">{{notesCount}} apontamentos submetidos</span></div>
+            <div class="em-row"><span class="em-row-label">Exportação Final</span><span class="em-row-value">Ficheiros autorizados para entrega em alta resolução</span></div>
+          </div>
+          <a href="{{deliverablesManagerUrl}}" class="em-btn">Aceder aos Entregáveis Aprovados</a>
+        `
+      }
+    ];
+
+    // Variáveis Mock Realistas de Angola (AO1945)
+    const MOCK_VARS = {
+      userName: "Carlos Manuel",
+      orgName: "Kandandu Filmes Lda",
+      planName: "Plano Profissional",
+      activeAddonsSummary: "Nora Automate, Nora AI, +100 GB Armazenamento",
+      trialEndsDate: "23 de Outubro de 2026",
+      dashboardUrl: "https://app.nora.ao/dashboard",
+      activeProjectsCount: "3",
+      storageUsedGb: "18.4",
+      upgradeUrl: "https://app.nora.ao/subscriptions",
+      checkoutUrl: "https://app.nora.ao/checkout",
+      subscriptionsUrl: "https://app.nora.ao/subscriptions",
+      membersCount: "3",
+      periodEnd: "09 de Novembro de 2026",
+      amountAoa: "39.900,00",
+      paymentMethod: "Multicaixa Express (MCX)",
+      referenceNumber: "MCX-9948210-AO",
+      maxProjects: "20",
+      maxStorage: "250",
+      validUntil: "15 de Outubro de 2026",
+      rejectionReason: "Comprovativo ilegível ou sem número de borderô visível",
+      invoiceNumber: "FR MIND-2026/0481",
+      totalAmount: "45.486,00",
+      taxAmount: "5.586,00",
+      agtHash: "A89F-KC81-9921-PL09",
+      downloadPdfUrl: "https://app.nora.ao/invoices/FR-0481.pdf",
+      errorCode: "AGT_SIGNATURE_TIMEOUT",
+      errorDetail: "O conector Mindgest não obteve confirmação de validação fiscal do certificado",
+      billingSettingsUrl: "https://app.nora.ao/settings?tab=billing",
+      projectTitle: "Campanha Institucional BAI 2026",
+      dueDate: "20 de Outubro de 2026",
+      orgIban: "AO06 0040 0000 1234 5678 9012 3",
+      portalPaymentUrl: "https://app.nora.ao/portal/billing",
+      clientName: "Direcção de Marketing BAI",
+      totalAoa: "3.450.000,00",
+      deliverablesSummary: "1x Spot TV 60s + 3x Versões Redes Sociais + 40x Fotografias Tratadas",
+      portalBudgetUrl: "https://app.nora.ao/portal/budgets/bdg-881",
+      clientEmail: "marketing@bai.ao",
+      projectUrl: "https://app.nora.ao/projects/bai-2026",
+      clientNotes: "Solicitamos a inclusão de mais 1 diária de gravação nocturna na marginal de Luanda.",
+      budgetEditUrl: "https://app.nora.ao/budgets/bdg-881/edit",
+      budgetId: "PROP-BAI-01",
+      statusDescription: "Expirou após 15 dias sem confirmação",
+      budgetsListUrl: "https://app.nora.ao/budgets",
+      daysRemaining: "3",
+      workflowName: "Auto Notificação de Orçamento Aprovado",
+      triggerType: "BUDGET_APPROVED",
+      actionsExecutedCount: "3",
+      executionDurationMs: "42",
+      automateLogsUrl: "https://app.nora.ao/automate",
+      targetHost: "webhook.empresa.ao",
+      webhookUrl: "https://webhook.empresa.ao/nora/hooks",
+      httpStatus: "504 Gateway Timeout",
+      errorMessage: "Conexão rejeitada pelo servidor de destino",
+      automateRuleUrl: "https://app.nora.ao/automate",
+      usedExecutions: "500",
+      maxExecutions: "500",
+      renewalDate: "01 de Novembro de 2026",
+      upgradeAddonUrl: "https://app.nora.ao/subscriptions",
+      workflowTitle: "Alerta de Nova Rodagem Convocada",
+      departmentName: "Imagem & Câmara",
+      customMessage: "A rodagem do Spot BAI foi confirmada para sábado às 06:30 na Baía de Luanda.",
+      targetUrl: "https://app.nora.ao/call-sheets/cs-902",
+      budgetCapAoa: "2.800.000,00",
+      projectedCostAoa: "3.290.000,00",
+      driftPercent: "17.5",
+      driftCategory: "Aluguer de lentes anamórficas adicionais e horas de estúdio nocturnas",
+      insightsUrl: "https://app.nora.ao/insights",
+      recommendedCamera: "Sony FX6 Cinema Kit",
+      suggestedCrewNames: "DOP André Neves, Gaffer Mateus Silva",
+      kanbanUrl: "https://app.nora.ao/kanban",
+      revenueAoa: "3.450.000,00",
+      expensesAoa: "2.180.000,00",
+      profitMarginPercent: "36.8",
+      netProfitAoa: "1.270.000,00",
+      budgetAccuracyPercent: "94.2",
+      insightsReportUrl: "https://app.nora.ao/insights",
+      peakStart: "12 de Outubro",
+      peakEnd: "27 de Outubro",
+      studioCalendarUrl: "https://app.nora.ao/studio",
+      crewMemberName: "João Baptista",
+      shootDate: "14 de Outubro de 2026",
+      personalCallTime: "06:15",
+      locationAddress: "Estúdio Kandandu, Talatona, Luanda",
+      firstShotTime: "07:30",
+      callSheetUrl: "https://app.nora.ao/call-sheets/cs-101",
+      roleTitle: "Assistente de Câmara (1st AC)",
+      confirmedCrew: "12",
+      totalCrew: "14",
+      callTime: "06:15",
+      callSheetDashboardUrl: "https://app.nora.ao/call-sheets/cs-101/rsvp",
+      studioName: "Estúdio A (Plateau Acústico)",
+      projectAName: "Videoclipe Anselmo Ralph",
+      producerAName: "Teresa Bento",
+      projectBName: "Comercial Unitel Money",
+      producerBName: "Carlos Manuel",
+      conflictTimeRange: "18 de Outubro (08:00 - 18:00)",
+      studioScheduleUrl: "https://app.nora.ao/studio",
+      responsibleName: "Pedro Domingos",
+      expectedReturnTime: "08 de Outubro às 19:00",
+      itemsList: "1x Objectiva 50mm f/1.2 GM, 1x Monitor SmallHD Cine 7, 2x Baterias V-Mount",
+      warehouseLocation: "Armazém Central Nora, Talatona",
+      equipmentCheckinUrl: "https://app.nora.ao/equipment/checkin",
+      photosCount: "140",
+      includedPhotos: "25",
+      portalGalleryUrl: "https://app.nora.ao/portal/deliverables/del-photo-99",
+      deliverableTitle: "Sessão Fotográfica Institucional - Alta Resolução",
+      approvedItemsCount: "25",
+      notesCount: "4",
+      deliverablesManagerUrl: "https://app.nora.ao/deliverables",
+      invitedByName: "Carlos Manuel (Produtor Executivo)",
+      invitedUserEmail: "mateus.costa@kandandu.ao",
+      tempPassword: "Nora#2026!Kandandu",
+      acceptInviteUrl: "https://app.nora.ao/auth/invitation?token=inv-88129",
+      browser: "Chrome no macOS",
+      ipAddress: "105.172.44.18 (Luanda, AO)",
+      resetPasswordUrl: "https://app.nora.ao/auth/reset-password?token=rst-77192",
+      loginTime: "09 de Outubro de 2026 às 14:22",
+      deviceInfo: "Safari em iPhone 15 Pro (iOS 18) • Luanda, Angola",
+      securitySettingsUrl: "https://app.nora.ao/settings?tab=security",
+
+      // Variáveis do Módulo Financeiro (Despesas e Receitas)
+      expenseTitle: "Aluguer de Grupo Gerador 100kVA para Rodagem Externa",
+      expenseCategory: "Equipamentos & Infraestrutura",
+      expenseAmountAoa: "450.000,00",
+      supplierName: "Geradores Luanda Sul Lda",
+      financeProjectUrl: "https://app.nora.ao/projects/bai-2026/finance",
+      availableBudgetAoa: "300.000,00",
+      excessAmountAoa: "150.000,00",
+      requestedBy: "Teresa Bento (Diretora de Produção)",
+      expenseApprovalUrl: "https://app.nora.ao/finance/expenses/exp-9901/approve",
+      revenueAmountAoa: "1.725.000,00",
+      bankAccountName: "Conta BFA Operações AOA",
+      financeOverviewUrl: "https://app.nora.ao/finance",
+      periodName: "Setembro de 2026",
+      totalRevenuesAoa: "14.850.000,00",
+      totalExpensesAoa: "9.210.000,00",
+      netOperatingIncomeAoa: "5.640.000,00",
+      operatingMarginPercent: "37.9",
+      financeReportsUrl: "https://app.nora.ao/reports/finance"
+    };
+
+    let currentTemplate = TEMPLATES[0];
+    let currentCategory = "ALL";
+    let searchQuery = "";
+    let isDarkTheme = false;
+
+    // Construtor do Rodapé Padrão Oficial Nora Audiovisual
+    function getStandardFooter(vars) {
+      return `
+        <div class="em-footer">
+          <div class="em-footer-brand">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <img src="/logo-light.png" alt="Nora Audiovisual" class="em-logo-light" onerror="this.onerror=null; this.src='./logo-light.png';" style="height: 18px; width: auto; max-width: 120px; object-fit: contain;">
+              <img src="/logo-dark.png" alt="Nora Audiovisual" class="em-logo-dark" onerror="this.onerror=null; this.src='./logo-dark.png';" style="height: 18px; width: auto; max-width: 120px; object-fit: contain;">
+              <span style="font-weight: 500; font-size: 10px; color: var(--em-muted); padding-left: 8px; border-left: 1px solid var(--em-border);">Luanda • Angola</span>
+            </div>
+            <span style="font-weight: 500; font-size: 10px; color: var(--em-muted);">Plataforma Operacional <strong>Nora Audiovisual</strong></span>
+          </div>
+          <p style="margin: 4px 0;">Esta notificação foi emitida pelo sistema operacional do estúdio <strong>${vars.orgName}</strong>.</p>
+          <div class="em-footer-links">
+            <a href="${vars.dashboardUrl}">Aceder ao Painel</a> •
+            <a href="https://app.nora.ao/settings?tab=notifications">Preferências de Notificação</a> •
+            <a href="mailto:suporte@mindware.ao">Apoio Técnico</a>
+          </div>
+          <div class="em-footer-legal">
+            Documento gerado automaticamente nos termos da legislação angolana e normas de segurança digital. A informação transmitida é confidencial e destinada exclusivamente ao destinatário identificado.
+          </div>
+        </div>
+      `;
+    }
+
+    // Construtor do Cabeçalho Padrão com Logotipo e Co-Branding
+    function getStandardHeader(vars, categoryTag) {
+      return `
+        <div class="em-header">
+          <div class="em-header-top">
+            <div class="em-brand-combo">
+              <!-- Logotipo Oficial Nora Audiovisual -->
+              <div class="em-logo">
+                <img src="/logo-light.png" alt="Nora Audiovisual" class="em-logo-light" onerror="this.onerror=null; this.src='./logo-light.png';" style="height: 28px; width: auto; max-width: 170px; object-fit: contain;">
+                <img src="/logo-dark.png" alt="Nora Audiovisual" class="em-logo-dark" onerror="this.onerror=null; this.src='./logo-dark.png';" style="height: 28px; width: auto; max-width: 170px; object-fit: contain;">
+              </div>
+              <div class="em-brand-sep"></div>
+              <!-- Logotipo / Emblema da Produtora Emitente (Co-Branding) -->
+              <div class="em-org-brand">
+                <div class="em-org-emblem">KF</div>
+                <div class="em-org-info">
+                  <span class="em-org-name">${vars.orgName}</span>
+                  <span class="em-org-sub">Produtora Audiovisual</span>
+                </div>
+              </div>
+            </div>
+            <div class="em-tag">${categoryTag}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function interpolate(text, vars) {
+      let res = text;
+      for (const [k, v] of Object.entries(vars)) {
+        res = res.replaceAll(`{{${k}}}`, v);
+      }
+      return res;
+    }
+
+    function renderList() {
+      const listEl = document.getElementById("templateList");
+      listEl.innerHTML = "";
+
+      const filtered = TEMPLATES.filter(t => {
+        const matchesCat = currentCategory === "ALL" || t.category === currentCategory;
+        const matchesSearch = searchQuery === "" || 
+          t.title.toLowerCase().includes(searchQuery) ||
+          t.subject.toLowerCase().includes(searchQuery) ||
+          t.code.toLowerCase().includes(searchQuery);
+        return matchesCat && matchesSearch;
+      });
+
+      filtered.forEach(tmpl => {
+        const item = document.createElement("button");
+        item.className = `template-item ${tmpl.id === currentTemplate.id ? 'active' : ''}`;
+        
+        let badgeClass = "badge-trial";
+        if (tmpl.category === "BILLING") badgeClass = "badge-billing";
+        if (tmpl.category === "FINANCE") badgeClass = "badge-finance";
+        if (tmpl.category === "BUDGET") badgeClass = "badge-budget";
+        if (tmpl.category === "AUTOMATE") badgeClass = "badge-automate";
+        if (tmpl.category === "AI") badgeClass = "badge-ai";
+        if (tmpl.category === "PROD") badgeClass = "badge-prod";
+        if (tmpl.category === "SECURITY") badgeClass = "badge-security";
+
+        item.innerHTML = `
+          <div class="template-item-top">
+            <span class="badge ${badgeClass}">${tmpl.category}</span>
+            <span class="template-item-code">${tmpl.code}</span>
+          </div>
+          <div class="template-item-title">${tmpl.title}</div>
+        `;
+
+        item.onclick = () => {
+          currentTemplate = tmpl;
+          renderList();
+          renderPreview();
+        };
+
+        listEl.appendChild(item);
+      });
+    }
+
+    function renderPreview() {
+      const subject = interpolate(currentTemplate.subject, MOCK_VARS);
+      document.getElementById("previewSubject").textContent = subject;
+      document.getElementById("previewCode").textContent = currentTemplate.code;
+      document.getElementById("previewRecipient").textContent = currentTemplate.recipient;
+      document.getElementById("previewTrigger").textContent = currentTemplate.trigger;
+
+      const container = document.getElementById("emailContainer");
+      const categoryTag = `${currentTemplate.category} • NORA STUDIO`;
+
+      // Monta o template com Header Dinâmico + Conteúdo Específico + Rodapé Padrão
+      const fullHtml = `
+        <div class="em-wrap">
+          ${getStandardHeader(MOCK_VARS, categoryTag)}
+          ${interpolate(currentTemplate.html, MOCK_VARS)}
+          ${getStandardFooter(MOCK_VARS)}
+        </div>
+      `;
+
+      container.innerHTML = fullHtml;
+    }
+
+    function setThemeMode(mode) {
+      const body = document.body;
+      const btnLight = document.getElementById("btnThemeLight");
+      const btnDark = document.getElementById("btnThemeDark");
+
+      if (mode === "dark") {
+        body.classList.add("em-dark-theme");
+        btnDark.classList.add("active");
+        btnLight.classList.remove("active");
+        isDarkTheme = true;
+      } else {
+        body.classList.remove("em-dark-theme");
+        btnLight.classList.add("active");
+        btnDark.classList.remove("active");
+        isDarkTheme = false;
+      }
+    }
+
+    function setViewMode(mode) {
+      const container = document.getElementById("emailContainer");
+      const btnDesk = document.getElementById("btnDesktop");
+      const btnMob = document.getElementById("btnMobile");
+
+      if (mode === "mobile") {
+        container.className = "email-frame-container frame-mobile";
+        btnDesk.classList.remove("active");
+        btnMob.classList.add("active");
+      } else {
+        container.className = "email-frame-container frame-desktop";
+        btnMob.classList.remove("active");
+        btnDesk.classList.add("active");
+      }
+    }
+
+    // Filtros por Categoria
+    document.getElementById("categoryFilter").addEventListener("click", (e) => {
+      if (e.target.classList.contains("cat-btn")) {
+        document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+        e.target.classList.add("active");
+        currentCategory = e.target.getAttribute("data-cat");
+        renderList();
+      }
+    });
+
+    // Pesquisa
+    document.getElementById("searchInput").addEventListener("input", (e) => {
+      searchQuery = e.target.value.toLowerCase().trim();
+      renderList();
+    });
+
+    // Início
+    renderList();
+    renderPreview();
+  </script>
+</body>
+</html>

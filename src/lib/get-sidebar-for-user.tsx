@@ -31,13 +31,19 @@ export function getSidebarForUser(
 
         if (!planOk) return null;
 
+        const filteredSubs = item.items?.filter((sub) => {
+          const subPlanLevel = sub.minPlan ? (PLAN_HIERARCHY[sub.minPlan] ?? 0) : 0;
+          return subPlanLevel <= pendingPlanLevel;
+        });
+
+        if (item.items && (!filteredSubs || filteredSubs.length === 0)) {
+          return null;
+        }
+
         return {
           ...item,
           showUpgrade: true,
-          items: item.items?.filter((sub) => {
-            const subPlanLevel = sub.minPlan ? (PLAN_HIERARCHY[sub.minPlan] ?? 0) : 0;
-            return subPlanLevel <= pendingPlanLevel;
-          }),
+          items: filteredSubs,
         };
       })
       .filter(Boolean) as typeof items;
@@ -55,13 +61,18 @@ export function getSidebarForUser(
 
       return roleOk && planOk;
     })
-    .map((item) => ({
-      ...item,
-      items: item.items?.filter((sub) => {
+    .map((item) => {
+      if (!item.items) return item;
+      const filteredSubs = item.items.filter((sub) => {
         const roleOk = !sub.roles || sub.roles.includes(role);
         const subPlanLevel = sub.minPlan ? (PLAN_HIERARCHY[sub.minPlan] ?? 0) : 0;
         const planOk = !sub.minPlan || currentPlanLevel >= subPlanLevel;
         return roleOk && planOk;
-      }),
-    }));
+      });
+      return {
+        ...item,
+        items: filteredSubs,
+      };
+    })
+    .filter((item) => !item.items || item.items.length > 0);
 }

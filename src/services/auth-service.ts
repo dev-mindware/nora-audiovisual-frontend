@@ -64,4 +64,10 @@ export const authService = {
   disableMfa: async (data: { password: string; code: string }): Promise<void> => {
     await api.post("/auth/mfa/disable", data);
   },
+
+  updateProfile: async (data: { name: string }): Promise<User> => {
+    const response = await api.patch("/auth/me", data);
+    return response.data?.data || response.data;
+  },
 };
+

@@ -8,6 +8,7 @@ export const createDeliverableSchema = z.object({
   includedPhotosCount: z.coerce.number().min(0).optional(),
   extraPhotoPrice: z.coerce.number().min(0).optional(),
   allowExtraPurchase: z.boolean().optional(),
+  hasWatermark: z.boolean().optional(),
   notes: z.string().optional(),
 });
 

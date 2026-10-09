@@ -28,7 +28,7 @@ export interface AddOnItem {
 export interface SubscriptionData {
   id: string;
   organizationId: string;
-  status: 'ACTIVE' | 'PAST_DUE' | 'CANCELLED' | 'TRIALING' | 'PENDING' | 'SUSPENDED';
+  status: 'ACTIVE' | 'PAST_DUE' | 'CANCELLED' | 'TRIALING' | 'PENDING' | 'SUSPENDED' | 'EXPIRED';
   plan: PlanItem;
   billingCycle: 'MONTHLY' | 'ANNUAL';
   currentPeriodStart: string;

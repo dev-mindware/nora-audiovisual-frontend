@@ -12,13 +12,24 @@ import {
 } from "@/components";
 import { cn } from "@/lib/utils";
 
+export type NotificationFilterType =
+  | "all"
+  | "AI_ALERT"
+  | "AUTOMATE"
+  | "FINANCE"
+  | "FISCAL"
+  | "INFO"
+  | "WARNING"
+  | "ERROR"
+  | "SUCCESS";
+
 interface NotificationFiltersProps {
   searchTerm: string;
   setSearchTerm: (value: string) => void;
   filterStatus: "all" | "read" | "unread";
   setFilterStatus: (value: "all" | "read" | "unread") => void;
-  filterType: "all" | "INFO" | "WARNING" | "ERROR" | "SUCCESS" | "AI_ALERT";
-  setFilterType: (value: "all" | "INFO" | "WARNING" | "ERROR" | "SUCCESS" | "AI_ALERT") => void;
+  filterType: NotificationFilterType;
+  setFilterType: (value: NotificationFilterType) => void;
   compact?: boolean;
 }
 
@@ -28,12 +39,15 @@ const STATUS_LABELS: Record<"all" | "read" | "unread", string> = {
   unread: "Não Lidas",
 };
 
-const TYPE_LABELS: Record<"all" | "INFO" | "WARNING" | "ERROR" | "SUCCESS" | "AI_ALERT", string> = {
+const TYPE_LABELS: Record<NotificationFilterType, string> = {
   all: "Todos os tipos",
-  AI_ALERT: "Nora AI / Inteligentes",
+  AI_ALERT: "Nora AI",
+  AUTOMATE: "Nora Automate",
+  FINANCE: "Finanças & Tesouraria",
+  FISCAL: "Mindgest Fiscal AGT",
   INFO: "Informações",
   SUCCESS: "Sucesso / Validações",
-  WARNING: "Avisos",
+  WARNING: "Avisos & Prazos",
   ERROR: "Erros",
 };
 
@@ -60,7 +74,7 @@ export function NotificationFilters({
           placeholder="Buscar notificações..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10 bg-background"
+          className="pl-10 bg-background rounded-none"
         />
       </div>
 
@@ -70,14 +84,14 @@ export function NotificationFilters({
             <Button
               variant="outline"
               className={cn(
-                "border gap-2 shrink-0 transition-colors rounded-none",
+                "border gap-2 shrink-0 transition-colors rounded-none font-semibold text-xs",
                 isStatusFiltered && "border-primary text-primary bg-primary/5 hover:bg-primary/10"
               )}
             >
               <Icon name="ListFilter" className="h-4 w-4" />
               {isStatusFiltered ? STATUS_LABELS[filterStatus] : "Estado"}
               {isStatusFiltered && (
-                <span className="ml-1 flex h-2 w-2 bg-primary" />
+                <span className="ml-1 flex h-2 w-2 bg-primary rounded-none" />
               )}
             </Button>
           </DropdownMenuTrigger>
@@ -105,23 +119,34 @@ export function NotificationFilters({
             <Button
               variant="outline"
               className={cn(
-                "border gap-2 shrink-0 transition-colors rounded-none",
+                "border gap-2 shrink-0 transition-colors rounded-none font-semibold text-xs",
                 isTypeFiltered && "border-primary text-primary bg-primary/5 hover:bg-primary/10"
               )}
             >
               <Icon name="Tag" className="h-4 w-4" />
               {isTypeFiltered ? TYPE_LABELS[filterType] : "Tipo de alerta"}
               {isTypeFiltered && (
-                <span className="ml-1 flex h-2 w-2 bg-primary" />
+                <span className="ml-1 flex h-2 w-2 bg-primary rounded-none" />
               )}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="min-w-[160px] rounded-none">
+          <DropdownMenuContent align="end" className="min-w-[180px] rounded-none">
             <DropdownMenuLabel className="text-xs text-muted-foreground font-normal">
-              Filtrar por tipo
+              Filtrar por módulo / tipo
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {(["AI_ALERT", "INFO", "SUCCESS", "WARNING", "ERROR"] as const).map((type) => (
+            {(
+              [
+                "AI_ALERT",
+                "AUTOMATE",
+                "FINANCE",
+                "FISCAL",
+                "INFO",
+                "SUCCESS",
+                "WARNING",
+                "ERROR",
+              ] as const
+            ).map((type) => (
               <DropdownMenuCheckboxItem
                 key={type}
                 className="rounded-none cursor-pointer"

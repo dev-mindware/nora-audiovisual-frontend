@@ -222,6 +222,15 @@ export const portalService = {
     return res.data?.data || res.data;
   },
 
+  requestBudgetChanges: async (
+    token: string,
+    data: { clientName?: string; clientEmail?: string; notes: string }
+  ): Promise<{ success: boolean; message: string }> => {
+    const res = await publicApi.post(`/portal/budgets/view/${token}/request-changes`, data);
+    return res.data?.data || res.data;
+  },
+
+
   requestAssetDownload: async (
     token: string,
     assetId: string

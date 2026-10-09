@@ -54,6 +54,11 @@ export const registerActionSchema = z.object({
   organizationSlug: z.string().trim().optional(),
   taxId: z.string().trim().optional(),
   planCode: z.enum(["INICIAL", "PROFISSIONAL", "BUSINESS"]).default("INICIAL").optional(),
+  acceptTerms: z.literal(true, {
+    errorMap: () => ({
+      message: "É obrigatório aceitar os Termos de Utilização e a Política de Privacidade.",
+    }),
+  }),
 });
 
 export type RegisterActionInput = z.infer<typeof registerActionSchema>;

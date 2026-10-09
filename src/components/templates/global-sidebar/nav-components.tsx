@@ -14,24 +14,45 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { MenuItem } from "@/constants/menu-items";
+
 export function NavMenu({ items }: { items: MenuItem[] }) {
-  const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const pathname = usePathname();
   const { isMobile, setOpenMobile } = useSidebar();
 
-  const toggleSubmenu = (id: string) =>
-    setOpenSubmenu((prev) => (prev === id ? null : id));
-
   const isActive = (url: string) => {
+    if (url === "#" || !url) return false;
     const cleanUrl = url.split("?")[0];
     if (cleanUrl === "/admin") {
       return pathname === "/admin";
     }
     return pathname.startsWith(cleanUrl);
   };
+
+  const activeParentId = useMemo(() => {
+    const found = items.find((item) =>
+      item.items?.some((sub) => {
+        if (!sub.url || sub.url === "#") return false;
+        const cleanUrl = sub.url.split("?")[0];
+        if (cleanUrl === "/admin") return pathname === "/admin";
+        return pathname.startsWith(cleanUrl);
+      })
+    );
+    return found ? (found.name || found.url) : null;
+  }, [items, pathname]);
+
+  const [openSubmenu, setOpenSubmenu] = useState<string | null>(activeParentId);
+
+  useEffect(() => {
+    if (activeParentId) {
+      setOpenSubmenu(activeParentId);
+    }
+  }, [activeParentId]);
+
+  const toggleSubmenu = (id: string) =>
+    setOpenSubmenu((prev) => (prev === id ? null : id));
 
   const handleMobileClick = () => {
     if (isMobile) {

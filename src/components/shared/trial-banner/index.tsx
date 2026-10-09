@@ -23,15 +23,18 @@ export function TrialBanner() {
   const isTrialing = subscription?.status === "TRIALING";
   const targetEndDate = subscription?.trialEndsAt || subscription?.currentPeriodEnd;
 
-  const { daysRemaining, urgency } = useMemo(() => {
-    if (!targetEndDate) return { daysRemaining: 0, urgency: "neutral" };
+  const { daysRemaining, urgency, isExpired } = useMemo(() => {
+    if (subscription?.status === "EXPIRED") {
+      return { daysRemaining: 0, urgency: "expired", isExpired: true };
+    }
+    if (!targetEndDate) return { daysRemaining: 0, urgency: "neutral", isExpired: false };
     
     const targetMs = new Date(targetEndDate).getTime();
     const nowMs = Date.now();
     const diffMs = targetMs - nowMs;
     
     if (diffMs <= 0) {
-      return { daysRemaining: 0, urgency: "expired" };
+      return { daysRemaining: 0, urgency: "expired", isExpired: true };
     }
     
     const days = Math.max(1, Math.ceil(diffMs / (1000 * 60 * 60 * 24)));
@@ -40,10 +43,10 @@ export function TrialBanner() {
     if (days <= 2) level = "critical";
     else if (days <= 5) level = "warning";
     
-    return { daysRemaining: days, urgency: level };
-  }, [targetEndDate]);
+    return { daysRemaining: days, urgency: level, isExpired: false };
+  }, [subscription?.status, targetEndDate]);
 
-  if (!mounted || isPlatformAdmin || !isTrialing || !isVisible || pathname === "/subscriptions" || pathname === "/checkout") {
+  if (!mounted || isPlatformAdmin || (!isTrialing && !isExpired) || (!isExpired && !isVisible) || pathname === "/subscriptions" || pathname === "/checkout") {
     return null;
   }
 
@@ -55,10 +58,10 @@ export function TrialBanner() {
   };
 
   const urgencyIcon = {
-    neutral: <Clock className="h-4 w-4" />,
-    warning: <Clock className="h-4 w-4" />,
-    critical: <AlertCircle className="h-4 w-4" />,
-    expired: <AlertCircle className="h-4 w-4" />,
+    neutral: <Clock className="h-4 w-4 shrink-0" />,
+    warning: <Clock className="h-4 w-4 shrink-0" />,
+    critical: <AlertCircle className="h-4 w-4 shrink-0" />,
+    expired: <AlertCircle className="h-4 w-4 shrink-0" />,
   };
 
   const currentStyle = urgencyStyles[urgency as keyof typeof urgencyStyles];
@@ -66,47 +69,51 @@ export function TrialBanner() {
 
   return (
     <div className={cn(
-      "relative flex items-center justify-between gap-4 px-4 py-2 border-b text-sm font-medium transition-colors w-full z-50",
+      "relative flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-2 border-b text-xs sm:text-sm font-medium transition-colors w-full z-50",
       currentStyle
     )}>
-      <div className="flex items-center gap-2 flex-1 justify-center sm:justify-start">
+      <div className="flex items-center gap-2 flex-1 justify-center sm:justify-start text-center sm:text-left">
         {Icon}
         <span>
-          {urgency === "expired" ? (
-            "O seu período de teste expirou. Actualize o plano para continuar a utilizar todas as funcionalidades."
+          {isExpired ? (
+            <strong>Modo Apenas Leitura: A subscrição da sua organização expirou. Pode consultar todos os seus registos gravados anteriormente, mas novas criações e edições estão bloqueadas até regularizar o plano.</strong>
           ) : (
-            `Período de teste: ${daysRemaining} ${daysRemaining === 1 ? 'dia restante' : 'dias restantes'}. Actualize o plano para continuar a utilizar todas as funcionalidades.`
+            <>
+              <strong>Plano Inicial (Teste):</strong> {daysRemaining} {daysRemaining === 1 ? 'dia restante' : 'dias restantes'} (5 projectos, 3 membros, 50 GB). Actualize para o plano Pro para desbloquear Nora Suite e capacidade ilimitada.
+            </>
           )}
         </span>
       </div>
       
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 shrink-0">
         <Link href="/subscriptions">
           <Button 
             size="sm" 
-            variant={urgency === "expired" ? "secondary" : "default"}
+            variant={isExpired ? "secondary" : "default"}
             className={cn(
-              "h-7 text-xs px-3",
+              "h-7 text-xs px-3 rounded-none font-semibold",
               urgency === "warning" && "bg-amber-600 hover:bg-amber-700 text-white",
-              urgency === "critical" && "bg-destructive hover:bg-destructive/90 text-white"
+              urgency === "critical" && "bg-destructive hover:bg-destructive/90 text-white",
+              isExpired && "bg-white text-destructive hover:bg-white/90"
             )}
           >
-            Fazer Upgrade
+            {isExpired ? "Regularizar Subscrição" : "Fazer Upgrade"}
           </Button>
         </Link>
-        <button 
-          onClick={() => setIsVisible(false)}
-          className={cn(
-            "p-1 rounded-md opacity-70 hover:opacity-100 transition-opacity",
-            urgency === "warning" && "hover:bg-amber-500/20 text-amber-700",
-            urgency === "critical" && "hover:bg-destructive/20 text-destructive",
-            urgency === "expired" && "hover:bg-white/20 text-white",
-            urgency === "neutral" && "hover:bg-primary/10 text-primary"
-          )}
-          aria-label="Fechar banner"
-        >
-          <X className="h-4 w-4 hover:text-red-500" />
-        </button>
+        {!isExpired && (
+          <button 
+            onClick={() => setIsVisible(false)}
+            className={cn(
+              "p-1 rounded-none opacity-70 hover:opacity-100 transition-opacity",
+              urgency === "warning" && "hover:bg-amber-500/20 text-amber-700",
+              urgency === "critical" && "hover:bg-destructive/20 text-destructive",
+              urgency === "neutral" && "hover:bg-primary/10 text-primary"
+            )}
+            aria-label="Fechar aviso"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
       </div>
     </div>
   );

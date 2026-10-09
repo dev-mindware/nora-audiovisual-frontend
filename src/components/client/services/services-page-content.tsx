@@ -31,7 +31,13 @@ import {
   Power,
   Trash2,
   Tag,
+  Globe,
+  Copy,
+  ExternalLink,
 } from 'lucide-react';
+import Link from 'next/link';
+import { toast } from 'sonner';
+import { useTenantStore } from '@/stores/tenant/tenant-store';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -188,6 +194,20 @@ export function ServicesPageContent() {
       ? rawServices.reduce((acc, curr) => acc + Number(curr.price), 0) /
         totalServices
       : 0;
+  const categoriesCount = useMemo(() => {
+    return new Set(rawServices.map((s) => s.category)).size;
+  }, [rawServices]);
+
+  const { activeOrganization } = useTenantStore();
+  const orgSlug = activeOrganization?.slug || activeOrganization?.id || 'nora-studios';
+
+  const handleCopyPublicLink = () => {
+    if (typeof window !== 'undefined') {
+      const fullUrl = `${window.location.origin}/catalog/${orgSlug}`;
+      navigator.clipboard.writeText(fullUrl);
+      toast.success('Link do catálogo público copiado com sucesso!');
+    }
+  };
 
   const columns: ColumnDef<CatalogService>[] = useMemo(
     () => [
@@ -340,25 +360,71 @@ export function ServicesPageContent() {
 
   return (
     <div className="space-y-6">
-      {/* Cards de Métricas */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      {/* Banner de Catálogo Público com Link e Ações */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xs border border-primary/20 bg-primary/5">
+        <div className="flex items-center gap-2.5">
+          <div className="p-2 rounded-xs bg-primary/10 text-primary">
+            <Globe className="h-4 w-4" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-foreground">Catálogo Público da Produtora</span>
+              <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-semibold">Página Pública Dedicada</Badge>
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              A sua organização possui um link público próprio para partilhar com clientes e divulgar pacotes comerciais.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleCopyPublicLink}
+            className="text-xs gap-1.5 h-8 border-border rounded-xs"
+          >
+            <Copy className="h-3.5 w-3.5" />
+            Copiar Link
+          </Button>
+          <Button
+            asChild
+            size="sm"
+            className="text-xs gap-1.5 h-8 bg-primary text-primary-foreground rounded-xs"
+          >
+            <Link href={`/catalog/${orgSlug}`} target="_blank" rel="noopener noreferrer">
+              <ExternalLink className="h-3.5 w-3.5" />
+              Ver Página Pública
+            </Link>
+          </Button>
+        </div>
+      </div>
+
+      {/* 4 Cards de Métricas Padronizados */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 w-full">
         <DynamicMetricCard
           subtitle="Total no Catálogo"
           title={totalServices}
           icon="Briefcase"
-          description="Pacotes configurados para a produtora"
+          description="Pacotes configurados pela produtora"
         />
         <DynamicMetricCard
           subtitle="Serviços Ativos"
           title={activeServices}
           icon="CheckCheck"
-          description="Disponíveis para solicitação no Portal"
+          description="Disponíveis no catálogo público"
         />
         <DynamicMetricCard
           subtitle="Ticket Médio"
-          title={`${Math.round(avgPrice).toLocaleString('pt-AO')} AOA`}
+          title={`${Math.round(avgPrice).toLocaleString('pt-AO')} Kz`}
           icon="DollarSign"
-          description="Média de referência dos pacotes"
+          description="Valor base de referência dos pacotes"
+        />
+        <DynamicMetricCard
+          subtitle="Categorias Cobertas"
+          title={`${categoriesCount} Activas`}
+          icon="Tag"
+          description="Especialidades prontas no catálogo"
         />
       </div>
 

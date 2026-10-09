@@ -20,52 +20,47 @@ export function SubscriptionModal() {
 
   const handleRenew = () => {
     handleClose();
-    router.push("/billing");
+    router.push("/subscriptions");
   };
 
   return (
     <GlobalModal
       id={MODAL_ID}
-      canClose={false}
+      canClose={true}
       title={
-        <div className="flex flex-col items-center gap-4">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-destructive/10 mt-4">
-            <RefreshCcw className="h-10 w-10 text-destructive" />
+        <div className="flex flex-col items-center gap-3">
+          <div className="flex h-14 w-14 items-center justify-center rounded-none bg-destructive/10 mt-2">
+            <RefreshCcw className="h-7 w-7 text-destructive" />
           </div>
 
-          <div className="text-center">
-            <h2 className="text-2xl font-semibold tracking-tight mb-2">
-              Subscrição Expirada
+          <div className="text-center space-y-1.5">
+            <h2 className="text-xl font-bold tracking-tight text-foreground">
+              Subscrição Expirada — Modo Apenas Leitura
             </h2>
-            <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-              Olá {user?.name || "Utilizador"}, o seu plano{" "}
-              <strong>
-                {user?.company?.subscription?.plan?.name || "Premium"}
-              </strong>{" "}
-              expirou ou está inativo. Renove a sua subscrição para continuar a
-              usar todos os recursos.
+            <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed max-w-sm mx-auto">
+              Olá {user?.name || "Utilizador"}, a subscrição da sua organização expirou. Pode continuar a consultar todos os seus projectos e registos gravados anteriormente, mas a criação de novos conteúdos está suspensa.
             </p>
           </div>
         </div>
       }
-      className="p-8 bg-card rounded-2xl border shadow-[0_4px_24px_rgba(0,0,0,0.06)] outline-none border-none sm:max-w-md [&>button]:hidden text-center"
+      className="p-6 bg-card rounded-none border border-border shadow-lg sm:max-w-md text-center"
     >
-      <div className="flex flex-col items-center text-center space-y-6">
-        <div className="flex flex-col gap-3 pt-4 w-full mt-2">
+      <div className="flex flex-col items-center text-center space-y-4">
+        <div className="flex flex-col gap-2.5 pt-2 w-full">
           <Button
-            size="lg"
-            className="w-full text-base font-semibold bg-primary hover:bg-primary/80 duration-200 text-white border-0"
+            size="default"
+            className="w-full text-xs font-semibold rounded-none h-9"
             onClick={handleRenew}
           >
-            Renovar Assinatura
+            Regularizar Subscrição
           </Button>
 
           <Button
-            variant="ghost"
-            className="w-full text-muted-foreground hover:text-foreground"
+            variant="outline"
+            className="w-full text-xs rounded-none h-9 text-muted-foreground hover:text-foreground"
             onClick={handleClose}
           >
-            Agora não
+            Continuar a Consultar (Apenas Leitura)
           </Button>
         </div>
       </div>

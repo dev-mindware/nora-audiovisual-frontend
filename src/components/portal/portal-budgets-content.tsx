@@ -101,18 +101,26 @@ export function PortalBudgetsContent() {
   };
 
   const handleSubmitChanges = async () => {
+    if (!selectedBudget) return;
     if (!changesNotes.trim()) {
       toast.error('Descreva o ajuste pretendido.');
       return;
     }
     setIsSubmittingChanges(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      if (selectedBudget.shareToken) {
+        await portalService.requestBudgetChanges(selectedBudget.shareToken, {
+          clientName: user?.name || 'Cliente Autorizado',
+          clientEmail: user?.email,
+          notes: changesNotes.trim(),
+        });
+      }
       toast.success('Pedido de ajuste enviado à produção!');
       setShowChangesForm(false);
       setChangesNotes('');
-    } catch {
-      toast.error('Erro ao enviar pedido de ajuste.');
+      refetch();
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Erro ao enviar pedido de ajuste.');
     } finally {
       setIsSubmittingChanges(false);
     }

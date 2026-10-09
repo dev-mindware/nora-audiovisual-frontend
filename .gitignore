@@ -56,8 +56,10 @@ playwright/.cache/
 temp/
 tmp/
 
-# ── Knowledge Graph Artifacts ────────────────────────────────────────────────
+# ── Knowledge Graph Artifacts & AI Agents ────────────────────────────────────
 graphify-out/
+.graphify*
+.agents/
 
 # ── OS & IDEs ─────────────────────────────────────────────────────────────────
 .DS_Store

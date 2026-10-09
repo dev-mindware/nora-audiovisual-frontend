@@ -12,11 +12,13 @@ import {
   CardFooter,
 } from '@/components/ui';
 import { useAuthStore } from '@/stores';
-import { User, Mail, Phone, Briefcase, ShieldCheck, Camera } from 'lucide-react';
+import { User, Mail, Phone, Briefcase } from 'lucide-react';
 import { toast } from 'sonner';
+import { authService } from '@/services/auth-service';
 
 export function ProfileSettingsTab() {
   const user = useAuthStore((state) => state.user);
+  const setUser = useAuthStore((state) => state.setUser);
 
   const [name, setName] = useState(user?.name || '');
   const [email] = useState(user?.email || '');
@@ -26,13 +28,22 @@ export function ProfileSettingsTab() {
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!name.trim()) {
+      toast.error('O nome completo é obrigatório.');
+      return;
+    }
     setIsSaving(true);
     try {
-      // Simulação ou chamada de atualização de perfil
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      const updatedUser = await authService.updateProfile({ name: name.trim() });
+      if (user) {
+        setUser({
+          ...user,
+          name: updatedUser.name || name.trim(),
+        });
+      }
       toast.success('Perfil atualizado com sucesso!');
-    } catch {
-      toast.error('Erro ao atualizar os dados do perfil.');
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Erro ao atualizar os dados do perfil.');
     } finally {
       setIsSaving(false);
     }

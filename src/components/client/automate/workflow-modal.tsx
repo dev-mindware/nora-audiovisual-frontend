@@ -2,8 +2,11 @@
 
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'sonner';
 import { Button, ButtonSubmit, Input, RHFSelect, Textarea, Checkbox } from '@/components/ui';
 import { GlobalModal } from '@/components/modal';
+import { useAuthStore } from '@/stores/auth';
+import { useNoraSubscriptions } from '@/hooks/subscriptions';
 import { useAutomationRoles, useCreateWorkflow } from '@/hooks/automate';
 import { createWorkflowSchema, CreateWorkflowFormData } from '@/schemas';
 import type { WorkflowAction } from '@/services/automate-service';
@@ -58,6 +61,19 @@ interface WorkflowModalProps {
 }
 
 export function WorkflowModal({ isOpen, onClose }: WorkflowModalProps) {
+  const { user } = useAuthStore();
+  const { subscription } = useNoraSubscriptions();
+  const isPlatformAdmin = Boolean(user?.isPlatformAdmin || user?.role === 'ADMIN');
+  const isExpired = subscription?.status === 'EXPIRED';
+  const isTrial = subscription?.status === 'TRIALING' || subscription?.plan?.code === 'INICIAL';
+  const hasAutomateAddon = Boolean(
+    subscription?.items?.some((it) => it.addOnCode === 'NORA_AUTOMATE' && it.quantity > 0)
+  );
+  const canCreate =
+    isPlatformAdmin ||
+    (!isExpired &&
+      (hasAutomateAddon || (!isTrial && subscription?.plan?.code && subscription.plan.code !== 'INICIAL')));
+
   const { mutateAsync: createWorkflow, isPending } = useCreateWorkflow();
   const { data: roles = [] } = useAutomationRoles();
 
@@ -81,6 +97,10 @@ export function WorkflowModal({ isOpen, onClose }: WorkflowModalProps) {
   };
 
   const onSubmit = async (data: CreateWorkflowFormData) => {
+    if (!canCreate) {
+      toast.error('Nora Automate não está disponível para o plano atual.');
+      return;
+    }
     try {
       await createWorkflow({
         name: data.name,
@@ -108,12 +128,19 @@ export function WorkflowModal({ isOpen, onClose }: WorkflowModalProps) {
           <Button type="button" variant="outline" onClick={handleCancel}>
             Cancelar
           </Button>
-          <ButtonSubmit form="workflow-form" isLoading={isPending}>
+          <ButtonSubmit form="workflow-form" isLoading={isPending} disabled={!canCreate}>
             Criar fluxo
           </ButtonSubmit>
         </>
       }
     >
+      {!canCreate && (
+        <div className="p-3 mb-4 bg-destructive/10 border border-destructive/20 text-xs text-destructive rounded-none">
+          {isExpired
+            ? 'A subscrição da sua organização expirou. A criação de novos fluxos está suspensa no modo exclusivo de leitura.'
+            : 'Nora Automate não está incluído no seu plano atual (ou plano Inicial de teste). Actualize a subscrição ou contrate o add-on Nora Automate para criar fluxos.'}
+        </div>
+      )}
       <form id="workflow-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Input
           label="Nome do fluxo *"

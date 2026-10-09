@@ -64,7 +64,7 @@ export function useAccessControl(allowed: Role[], checkPlan = true): AccessResul
       }
     }
 
-    const PLAN_BYPASS_ROLES: Role[] = ["ADMIN", "OWNER"];
+    const PLAN_BYPASS_ROLES: Role[] = ["ADMIN"];
     const shouldCheckPlan = checkPlan && !PLAN_BYPASS_ROLES.includes(user.role);
 
     if (shouldCheckPlan && matchingItem?.minPlan) {
@@ -114,8 +114,9 @@ export function usePlanAccess(): PlanAccessResult {
   );
 
   const currentPlanLevel = useMemo(() => {
-    const plan = (user?.company?.subscription?.plan.name as PlanType) || "Base";
-    return PLAN_HIERARCHY[plan] ?? 0;
+    const sub = (user as any)?.subscription || (user?.activeOrganization as any)?.subscription || user?.company?.subscription;
+    const planName = (sub?.plan?.name || sub?.planName || "Base") as PlanType;
+    return PLAN_HIERARCHY[planName] ?? 0;
   }, [user]);
 
   if (isAuthenticating) {
@@ -123,6 +124,10 @@ export function usePlanAccess(): PlanAccessResult {
   }
 
   if (!user) {
+    return { hasAccess: true, isLoading: false };
+  }
+
+  if (user.isPlatformAdmin || user.role === "ADMIN") {
     return { hasAccess: true, isLoading: false };
   }
 

@@ -20,7 +20,8 @@ import {
 } from "lucide-react";
 import { registerAction, syncSessionAction, type RegisterActionResult } from "@/actions/register";
 import { registerActionSchema, type RegisterActionInput } from "@/schemas";
-import { Input, Button, ButtonSubmit } from "@/components/ui";
+import { Input, Button, ButtonSubmit, Checkbox } from "@/components/ui";
+import { cn } from "@/lib/utils";
 import { PasswordStrengthBar } from "@/components/auth/_components";
 import { useAuthStore, useModal } from "@/stores";
 import { useTenantStore } from "@/stores/tenant";
@@ -55,6 +56,7 @@ export function RegisterFlow() {
       organizationSlug: "",
       taxId: "",
       planCode: "INICIAL",
+      acceptTerms: false as any,
     },
   });
 
@@ -128,6 +130,7 @@ export function RegisterFlow() {
         password: data.password,
         organizationName: data.organizationName.trim(),
         planCode: "INICIAL",
+        acceptTerms: data.acceptTerms,
       };
       if (data.organizationSlug?.trim()) {
         cleanData.organizationSlug = data.organizationSlug.trim();
@@ -231,7 +234,7 @@ export function RegisterFlow() {
         {[1, 2].map((s) => (
           <div
             key={s}
-            className={`h-1.5 rounded-full transition-all duration-300 ${
+            className={`h-1.5 rounded-none transition-all duration-300 ${
               s === step
                 ? "w-8 bg-primary"
                 : s < step
@@ -327,7 +330,7 @@ export function RegisterFlow() {
             />
 
             {/* Trial & Benefícios do Pacote Inicial */}
-            <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 text-xs text-foreground space-y-3">
+            <div className="rounded-none border border-primary/20 bg-primary/5 p-4 text-xs text-foreground space-y-3">
               <div className="flex items-center gap-2 font-semibold text-primary">
                 <Sparkles className="h-4 w-4 shrink-0 text-primary" />
                 <span>Trial de 7 Dias — Pacote Inicial Activado</span>
@@ -360,8 +363,60 @@ export function RegisterFlow() {
               </div>
             </div>
 
-            <div className="rounded-lg border border-border/70 bg-muted/20 p-3 text-xs text-muted-foreground leading-relaxed">
-              <span className="font-medium text-foreground">Gestão Fiscal Mindgest:</span> Os dados fiscais e de facturação (NIF, enquadramento de IVA AGT e SAF-T) serão geridos e sincronizados centralmente através do Mindgest.
+            <div className="rounded-none border border-border/70 bg-muted/20 p-3 text-xs text-muted-foreground leading-relaxed">
+              <span className="font-semibold text-foreground">Gestão Fiscal Mindgest:</span> Os dados fiscais e de facturação (NIF, enquadramento de IVA AGT e SAF-T) serão geridos e sincronizados centralmente através do conector certificado Mindgest.
+            </div>
+
+            {/* Checkbox de Aceitação Legal de Angola (Termos & Políticas) */}
+            <div className="space-y-1.5 pt-1">
+              <div
+                className={cn(
+                  "flex items-start gap-3 p-3.5 border rounded-none bg-card/60 transition-colors",
+                  errors.acceptTerms
+                    ? "border-destructive bg-destructive/5"
+                    : "border-border/70 hover:border-primary/50"
+                )}
+              >
+                <Checkbox
+                  id="acceptTerms"
+                  checked={watch("acceptTerms") === true}
+                  onCheckedChange={(checked) => {
+                    setValue("acceptTerms", checked === true ? true : (false as any), {
+                      shouldValidate: true,
+                    });
+                  }}
+                  className="mt-0.5 rounded-none shrink-0"
+                />
+                <label
+                  htmlFor="acceptTerms"
+                  className="text-xs text-muted-foreground leading-relaxed cursor-pointer select-none"
+                >
+                  Declaro que li, compreendi e aceito integralmente os{" "}
+                  <Link
+                    href="/terms"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-primary underline underline-offset-2 hover:text-primary/80 transition-colors"
+                  >
+                    Termos de Utilização do Serviço
+                  </Link>{" "}
+                  e a{" "}
+                  <Link
+                    href="/privacy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-primary underline underline-offset-2 hover:text-primary/80 transition-colors"
+                  >
+                    Política de Privacidade e Protecção de Dados
+                  </Link>{" "}
+                  ao abrigo da Lei n.º 22/11 (LPDP) e da legislação aplicável na República de Angola.
+                </label>
+              </div>
+              {errors.acceptTerms?.message && (
+                <p className="text-xs text-destructive font-medium pl-1">
+                  {errors.acceptTerms.message}
+                </p>
+              )}
             </div>
           </div>
         )}
@@ -374,7 +429,7 @@ export function RegisterFlow() {
               variant="outline"
               onClick={handleBack}
               disabled={isSubmitting}
-              className="gap-1.5 h-10 px-4"
+              className="gap-1.5 h-10 px-4 rounded-none font-semibold"
             >
               <ChevronLeft className="h-4 w-4" />
               <span>Voltar</span>
@@ -385,7 +440,7 @@ export function RegisterFlow() {
             <Button
               type="button"
               onClick={handleNext}
-              className="flex-1 h-10 font-semibold gap-2"
+              className="flex-1 h-10 font-semibold gap-2 rounded-none"
             >
               <span>Continuar</span>
               <ChevronRight className="h-4 w-4" />
@@ -393,7 +448,7 @@ export function RegisterFlow() {
           ) : (
             <ButtonSubmit
               isLoading={isSubmitting}
-              className="flex-1 h-10 font-semibold gap-2"
+              className="flex-1 h-10 font-semibold gap-2 rounded-none"
             >
               {isSubmitting ? (
                 "A criar produtora..."

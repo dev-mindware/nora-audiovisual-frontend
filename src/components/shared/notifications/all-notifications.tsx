@@ -4,7 +4,7 @@ import { useNotifications } from "@/hooks";
 import { TitleList, Button, Icon } from "@/components";
 import { AllNotificationsSkeleton } from "@/components/common/skeletons";
 import { NotificationList } from "./notification-list";
-import { NotificationFilters } from "./notification-filters";
+import { NotificationFilters, NotificationFilterType } from "./notification-filters";
 import Link from "next/link";
 import { NotificationParams } from "@/types/notification";
 
@@ -13,9 +13,7 @@ export function AllNotifications() {
   const [filterStatus, setFilterStatus] = useState<"all" | "read" | "unread">(
     "all",
   );
-  const [filterType, setFilterType] = useState<
-    "all" | "INFO" | "WARNING" | "ERROR" | "SUCCESS" | "AI_ALERT"
-  >("all");
+  const [filterType, setFilterType] = useState<NotificationFilterType>("all");
 
   const apiFilters = useMemo(() => {
     const filters: Omit<NotificationParams, "skip" | "take"> = {};
@@ -50,17 +48,43 @@ export function AllNotifications() {
     if (filterType === "all") return true;
 
     const rawType = String(n.type || "").toUpperCase();
+    const titleUpper = n.title.toUpperCase();
     const isAiAlert =
-      n.isAiAlert ||
+      Boolean(n.isAiAlert) ||
       rawType === "AI_ALERT" ||
-      n.title.toUpperCase().includes("NORA AI") ||
-      n.title.toUpperCase().includes("MIND AI") ||
-      n.title.toUpperCase().includes("ALERTA INTELIGENTE");
+      rawType === "AI" ||
+      titleUpper.includes("NORA AI") ||
+      titleUpper.includes("MIND AI") ||
+      titleUpper.includes("INTELIGÊNCIA ARTIFICIAL");
 
     if (filterType === "AI_ALERT") return isAiAlert;
-    if (filterType === "SUCCESS") return rawType === "SUCCESS" || rawType === "SUCESSO";
-    if (filterType === "WARNING") return rawType === "WARNING" || rawType === "ATENÇÃO";
-    if (filterType === "ERROR") return rawType === "ERROR" || rawType === "ERRO";
+    if (filterType === "AUTOMATE")
+      return (
+        rawType === "AUTOMATE" ||
+        titleUpper.includes("NORA AUTOMATE") ||
+        titleUpper.includes("WORKFLOW") ||
+        titleUpper.includes("FLUXO DE AUTOMAÇÃO")
+      );
+    if (filterType === "FINANCE")
+      return (
+        rawType === "FINANCE" ||
+        titleUpper.includes("DESPESA") ||
+        titleUpper.includes("RECEITA") ||
+        titleUpper.includes("FLUXO DE CAIXA")
+      );
+    if (filterType === "FISCAL")
+      return (
+        rawType === "TAX" ||
+        rawType === "FISCAL" ||
+        titleUpper.includes("AGT") ||
+        titleUpper.includes("FACTURA-RECIBO")
+      );
+    if (filterType === "SUCCESS")
+      return rawType === "SUCCESS" || rawType === "SUCESSO";
+    if (filterType === "WARNING")
+      return rawType === "WARNING" || rawType === "ATENÇÃO";
+    if (filterType === "ERROR")
+      return rawType === "ERROR" || rawType === "ERRO";
     if (filterType === "INFO") return rawType === "INFO";
 
     return rawType === filterType;
@@ -80,13 +104,18 @@ export function AllNotifications() {
       >
         <div className="flex gap-2">
           {unreadCount > 0 && (
-            <Button onClick={handleMarkAllAsRead} disabled={isMarkingAllAsRead} variant="outline">
+            <Button
+              onClick={handleMarkAllAsRead}
+              disabled={isMarkingAllAsRead}
+              variant="outline"
+              className="rounded-none font-semibold"
+            >
               <Icon name="CheckCheck" className="mr-2 h-4 w-4" />
               Marcar tudo como lido
             </Button>
           )}
           <Link href="/settings?tab=notifications">
-            <Button>
+            <Button className="rounded-none font-semibold">
               <Icon name="Settings" className="mr-2 h-4 w-4" />
               Configurações
             </Button>
@@ -103,7 +132,7 @@ export function AllNotifications() {
         setFilterType={setFilterType}
       />
 
-      <div className="bg-card rounded-xl border shadow-sm overflow-hidden">
+      <div className="bg-card rounded-none border border-border/40 shadow-sm overflow-hidden">
         <NotificationList
           className="h-[calc(100vh-20rem)] min-h-[15rem]"
           notifications={filteredNotifications}

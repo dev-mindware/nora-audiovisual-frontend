@@ -59,6 +59,7 @@ export async function registerAction(
       password: data.password,
       organizationName: data.organizationName.trim(),
       planCode: data.planCode || "INICIAL",
+      acceptTerms: data.acceptTerms,
     };
 
     if (data.organizationSlug?.trim()) {

@@ -134,34 +134,56 @@ export function PortalBudgetView({ token }: PortalBudgetViewProps) {
           <ItemStatusBadge status={budget.status} className="py-1 px-3 text-sm font-semibold" />
         </div>
 
-        {/* Line Items Table */}
+        {/* Line Items Table & Mobile Cards */}
         <Card className="p-0 gap-0 overflow-hidden shadow-xs">
-          <Table className="min-w-full text-left text-xs">
-            <TableHeader className="bg-muted/40 font-semibold text-muted-foreground">
-              <TableRow>
-                <TableHead className="px-5 py-3.5">Categoria / Linha de Produção</TableHead>
-                <TableHead className="px-5 py-3.5">Descrição Técnica</TableHead>
-                <TableHead className="px-5 py-3.5 text-center">Qtd</TableHead>
-                <TableHead className="px-5 py-3.5 text-right">Preço Unitário</TableHead>
-                <TableHead className="px-5 py-3.5 text-right">Total</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody className="divide-y divide-border/60">
-              {budget.items.map((item) => (
-                <TableRow key={item.id} className="hover:bg-muted/20">
-                  <TableCell className="px-5 py-4 font-semibold text-foreground">{item.category}</TableCell>
-                  <TableCell className="px-5 py-4 text-muted-foreground">{item.description}</TableCell>
-                  <TableCell className="px-5 py-4 text-center font-mono">{item.quantity}</TableCell>
-                  <TableCell className="px-5 py-4 text-right font-mono text-muted-foreground">
-                    {item.unitPrice.toLocaleString('pt-AO')} Kz
-                  </TableCell>
-                  <TableCell className="px-5 py-4 text-right font-mono font-semibold text-foreground">
-                    {(item.quantity * item.unitPrice).toLocaleString('pt-AO')} Kz
-                  </TableCell>
+          {/* Desktop Table View */}
+          <div className="hidden md:block overflow-x-auto">
+            <Table className="min-w-full text-left text-xs">
+              <TableHeader className="bg-muted/40 font-semibold text-muted-foreground">
+                <TableRow>
+                  <TableHead className="px-5 py-3.5">Categoria / Linha de Produção</TableHead>
+                  <TableHead className="px-5 py-3.5">Descrição Técnica</TableHead>
+                  <TableHead className="px-5 py-3.5 text-center">Qtd</TableHead>
+                  <TableHead className="px-5 py-3.5 text-right">Preço Unitário</TableHead>
+                  <TableHead className="px-5 py-3.5 text-right">Total</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody className="divide-y divide-border/60">
+                {budget.items.map((item) => (
+                  <TableRow key={item.id} className="hover:bg-muted/20">
+                    <TableCell className="px-5 py-4 font-semibold text-foreground">{item.category}</TableCell>
+                    <TableCell className="px-5 py-4 text-muted-foreground">{item.description}</TableCell>
+                    <TableCell className="px-5 py-4 text-center font-mono">{item.quantity}</TableCell>
+                    <TableCell className="px-5 py-4 text-right font-mono text-muted-foreground">
+                      {item.unitPrice.toLocaleString('pt-AO')} Kz
+                    </TableCell>
+                    <TableCell className="px-5 py-4 text-right font-mono font-semibold text-foreground">
+                      {(item.quantity * item.unitPrice).toLocaleString('pt-AO')} Kz
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Mobile Cards View (Next.js Responsive UI Pattern) */}
+          <div className="md:hidden divide-y divide-border/60 p-4 space-y-3">
+            {budget.items.map((item) => (
+              <div key={item.id} className="pt-3 first:pt-0 space-y-2">
+                <div className="flex items-start justify-between gap-2">
+                  <span className="text-xs font-semibold text-foreground">{item.category}</span>
+                  <span className="text-xs font-mono font-bold text-foreground shrink-0">
+                    {(item.quantity * item.unitPrice).toLocaleString('pt-AO')} Kz
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground">{item.description}</p>
+                <div className="flex items-center justify-between text-[11px] text-muted-foreground font-mono pt-1">
+                  <span>Qtd: {item.quantity}</span>
+                  <span>Unit: {item.unitPrice.toLocaleString('pt-AO')} Kz</span>
+                </div>
+              </div>
+            ))}
+          </div>
 
           {/* Totals Summary Footer */}
           <CardFooter className="border-t border-border bg-muted/20 p-6 flex-col items-stretch space-y-2 text-xs">

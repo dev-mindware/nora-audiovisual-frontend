@@ -344,6 +344,7 @@ export interface Deliverable {
   includedPhotosCount?: number;
   extraPhotoPrice?: number;
   allowExtraPurchase?: boolean;
+  hasWatermark?: boolean;
   approvedAt?: string | null;
   approvedBy?: string | null;
   feedbackNotes?: string | null;

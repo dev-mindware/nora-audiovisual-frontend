@@ -39,5 +39,6 @@ export function OTPModal({ message }: { message: string }) {
         </Button>
       }
     />
+    
   );
 }

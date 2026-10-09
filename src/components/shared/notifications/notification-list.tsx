@@ -57,7 +57,7 @@ export function NotificationList({
           <div className="flex items-center gap-2">
             <h3 className="font-semibold text-foreground text-sm">Notificações</h3>
             {unreadNotifications.length > 0 && (
-              <span className="text-[11px] bg-primary/10 text-primary font-medium px-2 py-0.5 rounded-full">
+              <span className="text-[11px] bg-primary/10 text-primary font-semibold px-2 py-0.5 rounded-none">
                 {unreadNotifications.length} nova{unreadNotifications.length > 1 ? "s" : ""}
               </span>
             )}

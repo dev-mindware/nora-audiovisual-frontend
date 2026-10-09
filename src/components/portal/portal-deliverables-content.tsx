@@ -5,12 +5,10 @@ import { useDeliverablesList } from '@/hooks/deliverables';
 import { Deliverable, ReviewComment } from '@/types';
 import { portalService } from '@/services/portal-service';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { ItemStatusBadge } from '@/components';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
-  Video,
   Play,
   Pause,
   RotateCcw,
@@ -22,10 +20,14 @@ import {
   Search,
   MessageSquare,
   Send,
+  Camera,
+  Download,
+  ShieldAlert,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { useAuthStore } from '@/stores';
+import { PortalPhotoshootGallery } from './portal-photoshoot-gallery';
 
 const TYPE_LABELS: Record<string, string> = {
   FINAL_MASTER: 'Master Final',
@@ -34,6 +36,7 @@ const TYPE_LABELS: Record<string, string> = {
   TRAILER: 'Trailer',
   SOCIAL_CUT: 'Redes (9:16)',
   RAW: 'Bruto',
+  PHOTOSHOOT: 'Sessão Fotográfica',
 };
 
 function formatTimecode(seconds: number): string {
@@ -41,6 +44,31 @@ function formatTimecode(seconds: number): string {
   const secs = Math.floor(seconds % 60);
   const frames = Math.floor((seconds % 1) * 25);
   return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${String(frames).padStart(2, '0')}`;
+}
+
+// Download direto sem abrir nova janela
+async function downloadDirectly(url: string, filename: string): Promise<boolean> {
+  try {
+    const res = await fetch(url, { mode: 'cors' });
+    if (!res.ok) throw new Error('Falha HTTP');
+    const blob = await res.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = blobUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(() => window.URL.revokeObjectURL(blobUrl), 1000);
+    return true;
+  } catch {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.target = '_self';
+    link.click();
+    return true;
+  }
 }
 
 export function PortalDeliverablesContent() {
@@ -69,7 +97,10 @@ export function PortalDeliverablesContent() {
   const [isSubmittingChanges, setIsSubmittingChanges] = useState(false);
 
   const { data, isLoading, refetch } = useDeliverablesList();
-  const deliverables: Deliverable[] = useMemo(() => data?.data || [], [data]);
+
+  const deliverables: Deliverable[] = useMemo(() => {
+    return data?.data || [];
+  }, [data?.data]);
 
   const filteredDeliverables = useMemo(() => {
     return deliverables.filter((item: Deliverable) => {
@@ -113,7 +144,6 @@ export function PortalDeliverablesContent() {
       setIsPlaying(false);
     } else {
       videoRef.current.play().catch(() => { });
-      setIsPlaying(true);
     }
   };
 
@@ -168,9 +198,11 @@ export function PortalDeliverablesContent() {
     }
   };
 
-  const handleRequestChanges = async () => {
+  const handleRequestChanges = async (notesParam?: string) => {
+    const notesToSend = notesParam || changesNotes;
+
     if (!selectedDeliverable?.shareToken) return;
-    if (!changesNotes.trim()) {
+    if (!notesToSend.trim()) {
       toast.error('Descreva as alterações pretendidas.');
       return;
     }
@@ -180,9 +212,9 @@ export function PortalDeliverablesContent() {
       await portalService.requestChanges(selectedDeliverable.shareToken, {
         clientName: user?.name || 'Cliente Autorizado',
         clientEmail: user?.email,
-        feedbackNotes: changesNotes.trim(),
+        feedbackNotes: notesToSend.trim(),
       });
-      toast.success('Pedido de alterações enviado à montagem.');
+      toast.success('Pedido de alterações enviado à equipa.');
       setShowChangesForm(false);
       refetch();
     } catch (err: any) {
@@ -192,12 +224,24 @@ export function PortalDeliverablesContent() {
     }
   };
 
+  const handleDownloadVideo = async (item: Deliverable) => {
+    const url = item.mediaUrl || 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
+    toast.loading('A preparar descarregamento do vídeo...', { id: 'dl-video' });
+    const filename = `${item.title.replace(/\s+/g, '_')}_v${item.version}.mp4`;
+    const ok = await downloadDirectly(url, filename);
+    if (ok) {
+      toast.success('Transferência de vídeo iniciada!', { id: 'dl-video' });
+    } else {
+      toast.error('Erro ao transferir arquivo.', { id: 'dl-video' });
+    }
+  };
+
   const pendingCount = deliverables.filter((d: Deliverable) => d.status === 'PUBLISHED').length;
   const approvedCount = deliverables.filter((d: Deliverable) => d.status === 'APPROVED').length;
 
   return (
     <div className="space-y-6">
-      {/* Minimal Header */}
+      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
         <div>
           <h1 className="text-xl font-semibold tracking-tight text-foreground">
@@ -205,8 +249,8 @@ export function PortalDeliverablesContent() {
           </h1>
           <p className="text-xs text-muted-foreground mt-0.5">
             {pendingCount > 0
-              ? `${pendingCount} corte aguarda a sua revisão técnica`
-              : 'Nenhum corte pendente de aprovação'}
+              ? `${pendingCount} entregável aguarda a sua revisão técnica`
+              : 'Nenhum entregável pendente de aprovação'}
           </p>
         </div>
 
@@ -243,19 +287,29 @@ export function PortalDeliverablesContent() {
 
       {isLoading ? (
         <div className="border border-border p-12 text-center text-xs font-mono text-muted-foreground bg-card">
-          A carregar cortes e sala de projeção...
+          A carregar entregáveis e sala de projeção...
         </div>
       ) : deliverables.length === 0 ? (
-        <div className="border border-dashed border-border p-12 text-center bg-card space-y-2">
-          <Video className="h-8 w-8 text-muted-foreground mx-auto opacity-40" />
-          <h3 className="text-sm font-semibold text-foreground">Sem Vídeos Disponíveis</h3>
-          <p className="text-xs text-muted-foreground">
-            A equipa de montagem ainda não disponibilizou cortes para esta conta.
-          </p>
+        /* Multimodal Inclusive Empty State */
+        <div className="border border-dashed border-border p-12 text-center bg-card space-y-4">
+          <div className="flex items-center justify-center gap-3">
+            <div className="p-3 bg-muted border border-border">
+              <Film className="h-6 w-6 text-muted-foreground opacity-70" />
+            </div>
+            <div className="p-3 bg-primary/10 border border-primary/20">
+              <Camera className="h-6 w-6 text-primary" />
+            </div>
+          </div>
+          <div className="max-w-md mx-auto space-y-1.5">
+            <h3 className="text-sm font-semibold text-foreground">Sem Entregáveis Disponíveis</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              A equipa de produção ainda não disponibilizou cortes de vídeo ou galerias de sessões fotográficas para esta conta.
+            </p>
+          </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Left Column: Cuts List (3 cols on desktop) */}
+          {/* Left Column: Deliverables List (3 cols on desktop) */}
           <div className="lg:col-span-4 xl:col-span-3 space-y-3">
             <div className="relative">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
@@ -270,21 +324,23 @@ export function PortalDeliverablesContent() {
             <div className="space-y-2">
               {filteredDeliverables.map((item: Deliverable) => {
                 const isSelected = selectedDeliverable?.id === item.id;
-                const isApproved = item.status === 'APPROVED';
-                const isChanges = item.status === 'CHANGES_REQUESTED';
-                const isPending = item.status === 'PUBLISHED';
 
                 return (
                   <div
                     key={item.id}
                     onClick={() => setSelectedId(item.id)}
                     className={`cursor-pointer p-3 border transition-colors ${isSelected
-                        ? 'border-primary bg-primary/5 text-foreground'
-                        : 'border-border bg-card hover:border-muted-foreground/40'
+                      ? 'border-primary bg-primary/5 text-foreground'
+                      : 'border-border bg-card hover:border-muted-foreground/40'
                       }`}
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-semibold font-mono">
+                      <span className="text-xs font-semibold font-mono flex items-center gap-1.5">
+                        {item.type === 'PHOTOSHOOT' ? (
+                          <Camera className="h-3 w-3 text-primary" />
+                        ) : (
+                          <Film className="h-3 w-3 text-muted-foreground" />
+                        )}
                         v{item.version} • {TYPE_LABELS[item.type] || item.type}
                       </span>
                       <ItemStatusBadge status={item.status} />
@@ -305,288 +361,318 @@ export function PortalDeliverablesContent() {
             </div>
           </div>
 
-          {/* Right Column: Sleek Video Review Console (9 cols on desktop) */}
+          {/* Right Column: Console (Video Player or Photoshoot Proofing Gallery) */}
           <div className="lg:col-span-8 xl:col-span-9">
             {selectedDeliverable ? (
-              <div className="border border-border bg-card p-6 lg:p-8 space-y-6">
-                {/* Video Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono uppercase text-muted-foreground">
-                        v{selectedDeliverable.version} • {TYPE_LABELS[selectedDeliverable.type] || selectedDeliverable.type}
-                      </span>
-                      <span className="text-muted-foreground/40">•</span>
-                      <span className="text-xs font-mono text-muted-foreground">
-                        {selectedDeliverable.project?.title || 'Projecto'}
-                      </span>
-                    </div>
-
-                    <h2 className="text-lg font-semibold text-foreground mt-0.5">
-                      {selectedDeliverable.title}
-                    </h2>
-                  </div>
-
-                  <ItemStatusBadge status={selectedDeliverable.status} />
-                </div>
-
-                {/* 16:9 Video Player */}
-                <div className="space-y-2">
-                  <div className="relative aspect-video bg-black/90 border border-border flex items-center justify-center overflow-hidden">
-                    <video
-                      ref={videoRef}
-                      src={
-                        selectedDeliverable.mediaUrl ||
-                        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
-                      }
-                      onTimeUpdate={() => {
-                        if (videoRef.current) setCurrentTime(videoRef.current.currentTime);
-                      }}
-                      onLoadedMetadata={() => {
-                        if (videoRef.current) setDuration(videoRef.current.duration);
-                      }}
-                      onEnded={() => setIsPlaying(false)}
-                      className="w-full h-full object-contain cursor-pointer"
-                      onClick={handlePlayPause}
-                    />
-
-                    {!isPlaying && (
-                      <div
-                        onClick={handlePlayPause}
-                        className="absolute inset-0 bg-black/30 flex items-center justify-center cursor-pointer"
-                      >
-                        <div className="h-12 w-12 bg-primary/90 text-primary-foreground flex items-center justify-center rounded-none shadow-md">
-                          <Play className="h-6 w-6 ml-0.5" />
-                        </div>
+              selectedDeliverable.type === 'PHOTOSHOOT' ? (
+                <PortalPhotoshootGallery
+                  deliverable={selectedDeliverable}
+                  onApproveAll={handleApprove}
+                  onRequestChanges={(notes) => handleRequestChanges(notes)}
+                />
+              ) : (
+                <div className="border border-border bg-card p-6 lg:p-8 space-y-6">
+                  {/* Video Header */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-mono uppercase text-muted-foreground">
+                          v{selectedDeliverable.version} • {TYPE_LABELS[selectedDeliverable.type] || selectedDeliverable.type}
+                        </span>
+                        <span className="text-muted-foreground/40">•</span>
+                        <span className="text-xs font-mono text-muted-foreground">
+                          {selectedDeliverable.project?.title || 'Projecto'}
+                        </span>
                       </div>
-                    )}
 
-                    {/* HUD Timecode */}
-                    <div className="absolute top-2.5 left-2.5 bg-black/80 px-2 py-0.5 border border-white/20 font-mono text-xs text-white pointer-events-none">
-                      {formatTimecode(currentTime)} / {formatTimecode(duration || 0)}
+                      <h2 className="text-lg font-semibold text-foreground mt-0.5">
+                        {selectedDeliverable.title}
+                      </h2>
+                    </div>
+
+                    <ItemStatusBadge status={selectedDeliverable.status} />
+                  </div>
+
+                  {/* 16:9 Video Player */}
+                  <div className="space-y-2">
+                    <div className="relative aspect-video bg-black/90 border border-border flex items-center justify-center overflow-hidden">
+                      <video
+                        ref={videoRef}
+                        src={
+                          selectedDeliverable.mediaUrl ||
+                          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'
+                        }
+                        onTimeUpdate={() => {
+                          if (videoRef.current) setCurrentTime(videoRef.current.currentTime);
+                        }}
+                        onLoadedMetadata={() => {
+                          if (videoRef.current) setDuration(videoRef.current.duration);
+                        }}
+                        onEnded={() => setIsPlaying(false)}
+                        className="w-full h-full object-contain cursor-pointer"
+                        onClick={handlePlayPause}
+                      />
+
+                      {/* Marca d'Água Sutil para Vídeos em Copião (Se configurada pelo estúdio) */}
+                      {selectedDeliverable.hasWatermark && selectedDeliverable.status !== 'APPROVED' && (
+                        <div className="absolute inset-0 pointer-events-none select-none flex items-center justify-center overflow-hidden">
+                          <div className="transform -rotate-15 select-none text-center opacity-20">
+                            <span className="font-mono text-xs md:text-sm tracking-[0.35em] font-medium text-white uppercase drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] border-y border-white/30 py-1 px-6">
+                              NORA COPIÃO • PROVA TÉCNICA
+                            </span>
+                          </div>
+                        </div>
+                      )}
+
+                      {!isPlaying && (
+                        <div
+                          onClick={handlePlayPause}
+                          className="absolute inset-0 bg-black/30 flex items-center justify-center cursor-pointer"
+                        >
+                          <div className="h-12 w-12 bg-primary/90 text-primary-foreground flex items-center justify-center rounded-none shadow-md">
+                            <Play className="h-6 w-6 ml-0.5" />
+                          </div>
+                        </div>
+                      )}
+
+                      {/* HUD Timecode */}
+                      <div className="absolute top-2.5 left-2.5 bg-black/80 px-2 py-0.5 border border-white/20 font-mono text-xs text-white pointer-events-none">
+                        {formatTimecode(currentTime)} / {formatTimecode(duration || 0)}
+                      </div>
+                    </div>
+
+                    {/* Scrubber & Controls */}
+                    <div className="space-y-1 bg-muted/20 p-2.5 border border-border font-mono text-xs">
+                      <input
+                        type="range"
+                        min={0}
+                        max={duration || 100}
+                        step={0.04}
+                        value={currentTime}
+                        onChange={(e) => handleSeek(Number(e.target.value))}
+                        className="w-full h-1.5 bg-muted rounded-none appearance-none cursor-pointer accent-primary"
+                      />
+
+                      <div className="flex items-center justify-between pt-1">
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={handlePlayPause}
+                            className="rounded-none h-6 px-2.5 text-[11px] gap-1 border-border"
+                          >
+                            {isPlaying ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3" />}
+                            <span>{isPlaying ? 'Pausar' : 'Reproduzir'}</span>
+                          </Button>
+
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleSkip(-5)}
+                            className="rounded-none h-6 px-1.5 text-[11px] text-muted-foreground"
+                          >
+                            <RotateCcw className="h-2.5 w-2.5 mr-0.5" /> -5s
+                          </Button>
+
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleSkip(5)}
+                            className="rounded-none h-6 px-1.5 text-[11px] text-muted-foreground"
+                          >
+                            <RotateCw className="h-2.5 w-2.5 mr-0.5" /> +5s
+                          </Button>
+                        </div>
+
+                        <span className="text-[11px] text-muted-foreground">
+                          {formatTimecode(currentTime)}
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Scrubber & Controls */}
-                  <div className="space-y-1 bg-muted/20 p-2.5 border border-border font-mono text-xs">
-                    <input
-                      type="range"
-                      min={0}
-                      max={duration || 100}
-                      step={0.04}
-                      value={currentTime}
-                      onChange={(e) => handleSeek(Number(e.target.value))}
-                      className="w-full h-1.5 bg-muted rounded-none appearance-none cursor-pointer accent-primary"
-                    />
+                  {/* Timecode Comments */}
+                  <div className="space-y-3 border-t border-border pt-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground font-mono flex items-center gap-1.5">
+                        <MessageSquare className="h-3.5 w-3.5 text-primary" />
+                        Notas ({comments.length})
+                      </span>
+                      <span className="text-[10px] text-muted-foreground font-mono">
+                        Clique no timecode para saltar no vídeo
+                      </span>
+                    </div>
 
-                    <div className="flex items-center justify-between pt-1">
+                    <form onSubmit={handleAddComment} className="flex gap-2">
+                      <div className="bg-muted px-2 py-1 font-mono text-xs text-primary font-semibold border border-border flex items-center">
+                        {formatTimecode(currentTime)}
+                      </div>
+                      <Input
+                        value={newCommentText}
+                        onChange={(e) => setNewCommentText(e.target.value)}
+                        placeholder="Adicionar nota neste timecode..."
+                        className="rounded-none text-xs border-border bg-card h-8 flex-1"
+                      />
+                      <Button
+                        type="submit"
+                        disabled={!newCommentText.trim()}
+                        className="rounded-none bg-primary text-primary-foreground hover:bg-primary/90 text-xs h-8 px-3"
+                      >
+                        <Send className="h-3 w-3" />
+                      </Button>
+                    </form>
+
+                    <div className="space-y-1.5 max-h-36 overflow-y-auto">
+                      {comments.map((comm) => (
+                        <div
+                          key={comm.id}
+                          className="border border-border p-2 bg-muted/10 flex items-center justify-between gap-3 text-xs"
+                        >
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleSeek(comm.timecodeSeconds)}
+                              className="px-1.5 py-0.5 bg-primary/10 text-primary border border-primary/30 font-mono text-[10px] font-semibold"
+                            >
+                              {formatTimecode(comm.timecodeSeconds)}
+                            </button>
+                            <span className="text-foreground">{comm.content}</span>
+                          </div>
+                          <span className="text-[10px] text-muted-foreground font-mono">
+                            {format(new Date(comm.createdAt), 'HH:mm')}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="border-t border-border pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      {selectedDeliverable.status === 'APPROVED' ? (
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-semibold text-xs">
+                            <CheckCircle2 className="h-4 w-4" />
+                            <span>Versão Aprovada</span>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleDownloadVideo(selectedDeliverable)}
+                            className="rounded-none text-xs h-7 border-border gap-1.5"
+                          >
+                            <Download className="h-3 w-3" />
+                            <span>Descarregar Master</span>
+                          </Button>
+                        </div>
+                      ) : selectedDeliverable.status === 'CHANGES_REQUESTED' ? (
+                        <div className="flex items-center gap-1.5 text-rose-600 dark:text-rose-400 font-semibold text-xs">
+                          <AlertTriangle className="h-4 w-4" />
+                          <span>Alterações em Curso</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-semibold text-xs">
+                          <Clock className="h-4 w-4" />
+                          <span>Aguardando o seu parecer</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {selectedDeliverable.status === 'PUBLISHED' && (
                       <div className="flex items-center gap-2">
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={handlePlayPause}
-                          className="rounded-none h-6 px-2.5 text-[11px] gap-1 border-border"
+                          onClick={() => {
+                            setShowChangesForm(!showChangesForm);
+                            setShowApproveForm(false);
+                          }}
+                          className="rounded-none text-xs h-8 border-border"
                         >
-                          {isPlaying ? <Pause className="h-3 w-3" /> : <Play className="h-3 w-3" />}
-                          <span>{isPlaying ? 'Pausar' : 'Reproduzir'}</span>
+                          Solicitar Alterações
                         </Button>
 
                         <Button
                           size="sm"
-                          variant="ghost"
-                          onClick={() => handleSkip(-5)}
-                          className="rounded-none h-6 px-1.5 text-[11px] text-muted-foreground"
+                          onClick={() => {
+                            setShowApproveForm(true);
+                            setShowChangesForm(false);
+                          }}
+                          className="rounded-none bg-emerald-600 hover:bg-emerald-700 text-white text-xs h-8 px-4 gap-1.5 font-semibold"
                         >
-                          <RotateCcw className="h-2.5 w-2.5 mr-0.5" /> -5s
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                          <span>Aprovar Versão</span>
                         </Button>
-
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => handleSkip(5)}
-                          className="rounded-none h-6 px-1.5 text-[11px] text-muted-foreground"
-                        >
-                          <RotateCw className="h-2.5 w-2.5 mr-0.5" /> +5s
-                        </Button>
-                      </div>
-
-                      <span className="text-[11px] text-muted-foreground">
-                        {formatTimecode(currentTime)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Timecode Comments */}
-                <div className="space-y-3 border-t border-border pt-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground font-mono flex items-center gap-1.5">
-                      <MessageSquare className="h-3.5 w-3.5 text-primary" />
-                      Notas ({comments.length})
-                    </span>
-                    <span className="text-[10px] text-muted-foreground font-mono">
-                      Clique no timecode para saltar no vídeo
-                    </span>
-                  </div>
-
-                  <form onSubmit={handleAddComment} className="flex gap-2">
-                    <div className="bg-muted px-2 py-1 font-mono text-xs text-primary font-semibold border border-border flex items-center">
-                      {formatTimecode(currentTime)}
-                    </div>
-                    <Input
-                      value={newCommentText}
-                      onChange={(e) => setNewCommentText(e.target.value)}
-                      placeholder="Adicionar nota neste timecode..."
-                      className="rounded-none text-xs border-border bg-card h-8 flex-1"
-                    />
-                    <Button
-                      type="submit"
-                      disabled={!newCommentText.trim()}
-                      className="rounded-none bg-primary text-primary-foreground hover:bg-primary/90 text-xs h-8 px-3"
-                    >
-                      <Send className="h-3 w-3" />
-                    </Button>
-                  </form>
-
-                  <div className="space-y-1.5 max-h-36 overflow-y-auto">
-                    {comments.map((comm) => (
-                      <div
-                        key={comm.id}
-                        className="border border-border p-2 bg-muted/10 flex items-center justify-between gap-3 text-xs"
-                      >
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() => handleSeek(comm.timecodeSeconds)}
-                            className="px-1.5 py-0.5 bg-primary/10 text-primary border border-primary/30 font-mono text-[10px] font-semibold"
-                          >
-                            {formatTimecode(comm.timecodeSeconds)}
-                          </button>
-                          <span className="text-foreground">{comm.content}</span>
-                        </div>
-                        <span className="text-[10px] text-muted-foreground font-mono">
-                          {format(new Date(comm.createdAt), 'HH:mm')}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className="border-t border-border pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div>
-                    {selectedDeliverable.status === 'APPROVED' ? (
-                      <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-semibold text-xs">
-                        <CheckCircle2 className="h-4 w-4" />
-                        <span>Versão Aprovada</span>
-                      </div>
-                    ) : selectedDeliverable.status === 'CHANGES_REQUESTED' ? (
-                      <div className="flex items-center gap-1.5 text-rose-600 dark:text-rose-400 font-semibold text-xs">
-                        <AlertTriangle className="h-4 w-4" />
-                        <span>Alterações em Curso</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-semibold text-xs">
-                        <Clock className="h-4 w-4" />
-                        <span>Aguardando o seu parecer</span>
                       </div>
                     )}
                   </div>
 
-                  {selectedDeliverable.status === 'PUBLISHED' && (
-                    <div className="flex items-center gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          setShowChangesForm(!showChangesForm);
-                          setShowApproveForm(false);
-                        }}
-                        className="rounded-none text-xs h-8 border-border"
-                      >
-                        Solicitar Alterações
-                      </Button>
+                  {/* Inline confirmation drawers */}
+                  {showApproveForm && (
+                    <div className="border border-emerald-500/30 bg-muted/20 p-3 space-y-2 animate-in fade-in">
+                      <span className="text-xs font-semibold text-foreground block">
+                        Confirmar Aprovação da Versão v{selectedDeliverable.version}
+                      </span>
+                      <Textarea
+                        value={approveNotes}
+                        onChange={(e) => setApproveNotes(e.target.value)}
+                        placeholder="Observações opcionais..."
+                        className="rounded-none text-xs border-border bg-card min-h-[50px]"
+                      />
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setShowApproveForm(false)}
+                          className="rounded-none text-xs h-7"
+                        >
+                          Cancelar
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={handleApprove}
+                          disabled={isApproving}
+                          className="rounded-none bg-emerald-600 hover:bg-emerald-700 text-white text-xs h-7"
+                        >
+                          {isApproving ? 'A registar...' : 'Confirmar Aprovação'}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
 
-                      <Button
-                        size="sm"
-                        onClick={() => {
-                          setShowApproveForm(true);
-                          setShowChangesForm(false);
-                        }}
-                        className="rounded-none bg-emerald-600 hover:bg-emerald-700 text-white text-xs h-8 px-4 gap-1.5 font-semibold"
-                      >
-                        <CheckCircle2 className="h-3.5 w-3.5" />
-                        <span>Aprovar Versão</span>
-                      </Button>
+                  {showChangesForm && (
+                    <div className="border border-amber-500/30 bg-muted/20 p-3 space-y-2 animate-in fade-in">
+                      <span className="text-xs font-semibold text-foreground block">
+                        Descrever Alterações de Montagem
+                      </span>
+                      <Textarea
+                        value={changesNotes}
+                        onChange={(e) => setChangesNotes(e.target.value)}
+                        placeholder="Descreva o que deve ser ajustado..."
+                        className="rounded-none text-xs border-border bg-card min-h-[60px]"
+                      />
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setShowChangesForm(false)}
+                          className="rounded-none text-xs h-7"
+                        >
+                          Cancelar
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => handleRequestChanges()}
+                          disabled={isSubmittingChanges}
+                          className="rounded-none bg-amber-600 hover:bg-amber-700 text-white text-xs h-7"
+                        >
+                          {isSubmittingChanges ? 'A enviar...' : 'Enviar à Montagem'}
+                        </Button>
+                      </div>
                     </div>
                   )}
                 </div>
-
-                {/* Inline confirmation drawers */}
-                {showApproveForm && (
-                  <div className="border border-emerald-500/30 bg-muted/20 p-3 space-y-2 animate-in fade-in">
-                    <span className="text-xs font-semibold text-foreground block">
-                      Confirmar Aprovação da Versão v{selectedDeliverable.version}
-                    </span>
-                    <Textarea
-                      value={approveNotes}
-                      onChange={(e) => setApproveNotes(e.target.value)}
-                      placeholder="Observações opcionais..."
-                      className="rounded-none text-xs border-border bg-card min-h-[50px]"
-                    />
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => setShowApproveForm(false)}
-                        className="rounded-none text-xs h-7"
-                      >
-                        Cancelar
-                      </Button>
-                      <Button
-                        size="sm"
-                        onClick={handleApprove}
-                        disabled={isApproving}
-                        className="rounded-none bg-emerald-600 hover:bg-emerald-700 text-white text-xs h-7"
-                      >
-                        {isApproving ? 'A registar...' : 'Confirmar Aprovação'}
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                {showChangesForm && (
-                  <div className="border border-amber-500/30 bg-muted/20 p-3 space-y-2 animate-in fade-in">
-                    <span className="text-xs font-semibold text-foreground block">
-                      Descrever Alterações de Montagem
-                    </span>
-                    <Textarea
-                      value={changesNotes}
-                      onChange={(e) => setChangesNotes(e.target.value)}
-                      placeholder="Descreva o que deve ser ajustado..."
-                      className="rounded-none text-xs border-border bg-card min-h-[60px]"
-                    />
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => setShowChangesForm(false)}
-                        className="rounded-none text-xs h-7"
-                      >
-                        Cancelar
-                      </Button>
-                      <Button
-                        size="sm"
-                        onClick={handleRequestChanges}
-                        disabled={isSubmittingChanges}
-                        className="rounded-none bg-amber-600 hover:bg-amber-700 text-white text-xs h-7"
-                      >
-                        {isSubmittingChanges ? 'A enviar...' : 'Enviar à Montagem'}
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </div>
+              )
             ) : null}
           </div>
         </div>
