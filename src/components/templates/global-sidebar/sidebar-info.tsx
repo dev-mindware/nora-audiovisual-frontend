@@ -88,7 +88,7 @@ export function SidebarCompanyInfo() {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-60 rounded-xl border border-border/80 bg-card p-1.5 shadow-xl backdrop-blur-xl"
+            className="w-(--radix-dropdown-menu-trigger-width) min-w-60 rounded-xs border border-border/80 bg-card p-1.5 shadow-xl backdrop-blur-xl"
             align="start"
             side={isMobile ? "bottom" : "right"}
             sideOffset={6}
@@ -105,10 +105,10 @@ export function SidebarCompanyInfo() {
                   <DropdownMenuItem
                     key={org.id}
                     onClick={() => handleSwitch(org.id)}
-                    className="flex items-center justify-between gap-2.5 rounded-lg px-2.5 py-2 text-xs font-medium cursor-pointer hover:bg-muted focus:bg-muted transition-colors"
+                    className="flex items-center justify-between gap-2.5 rounded-xs px-2.5 py-2 text-xs font-medium cursor-pointer hover:bg-muted focus:bg-muted transition-colors"
                   >
                     <div className="flex items-center gap-2 truncate">
-                      <div className="flex items-center justify-center rounded-md border border-border/80 size-6 bg-muted/50">
+                      <div className="flex items-center justify-center rounded-xs border border-border/80 size-6 bg-muted/50">
                         <Icon name="Building2" className="size-3.5 text-primary" />
                       </div>
                       <span className="truncate">{org.name}</span>
@@ -121,7 +121,7 @@ export function SidebarCompanyInfo() {
               })
             ) : (
               <div className="flex items-center gap-2.5 px-2.5 py-2 text-xs text-foreground">
-                <div className="flex items-center justify-center rounded-md border border-border/80 size-6 bg-primary/10 text-primary">
+                <div className="flex items-center justify-center rounded-xs border border-border/80 size-6 bg-primary/10 text-primary">
                   <Icon name="Film" className="size-3.5" />
                 </div>
                 <div className="flex flex-col truncate">

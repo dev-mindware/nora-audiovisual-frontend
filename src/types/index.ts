@@ -16,5 +16,5 @@ export * from "./items";
 export * from "./entities";
 export * from "./contributor";
 export * from "./cashier";
-export * from "./category";
+export type { CategoryData, CategoryResponse } from "./category";
 export * from "./tax";

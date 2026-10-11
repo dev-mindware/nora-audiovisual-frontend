@@ -19,6 +19,8 @@ import {
 } from '@/hooks/services';
 import { CatalogService, CatalogServiceCategory } from '@/types';
 import { ServiceModal } from './service-modal';
+import { ManageCategoriesModal } from '@/components/client/categories';
+import { useCategories } from '@/hooks/categories';
 import {
   Briefcase,
   Plus,
@@ -31,6 +33,7 @@ import {
   Power,
   Trash2,
   Tag,
+  Tags,
   Globe,
   Copy,
   ExternalLink,
@@ -94,8 +97,11 @@ const SORT_OPTIONS: SortOption[] = [
 
 export function ServicesPageContent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isManageCategoriesOpen, setIsManageCategoriesOpen] = useState(false);
   const [selectedServiceToEdit, setSelectedServiceToEdit] =
     useState<CatalogService | null>(null);
+
+  const { data: dbCategories = [] } = useCategories('SERVICE');
 
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('ALL');
@@ -470,6 +476,14 @@ export function ServicesPageContent() {
               >
                 Tabela
               </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsManageCategoriesOpen(true)}
+                className="text-xs h-9 gap-1.5"
+              >
+                <Tags className="h-4 w-4" /> Categorias
+              </Button>
               <Button onClick={handleOpenCreate} size="sm" className="h-9 gap-1.5">
                 <Plus className="h-4 w-4" /> Novo Serviço
               </Button>
@@ -694,6 +708,14 @@ export function ServicesPageContent() {
                 >
                   Tabela
                 </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsManageCategoriesOpen(true)}
+                  className="text-xs h-9 gap-1.5"
+                >
+                  <Tags className="h-4 w-4" /> Categorias
+                </Button>
                 <Button onClick={handleOpenCreate} size="sm" className="h-9 gap-1.5">
                   <Plus className="h-4 w-4" /> Novo Serviço
                 </Button>
@@ -718,6 +740,13 @@ export function ServicesPageContent() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         serviceToEdit={selectedServiceToEdit}
+      />
+
+      {/* Modal de Gestão de Categorias */}
+      <ManageCategoriesModal
+        isOpen={isManageCategoriesOpen}
+        onClose={() => setIsManageCategoriesOpen(false)}
+        type="SERVICE"
       />
     </div>
   );

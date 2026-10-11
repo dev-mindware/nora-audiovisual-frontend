@@ -441,7 +441,8 @@ export type ExpenseCategory =
   | 'RENTAL'
   | 'PERMITS'
   | 'FREELANCER'
-  | 'MISC';
+  | 'MISC'
+  | (string & {});
 
 export type ExpenseStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
@@ -550,5 +551,37 @@ export interface RequestPortalServicePayload {
   clientEmail?: string;
   clientPhone?: string;
 }
+
+export type CategoryScope = 'SERVICE' | 'EQUIPMENT' | 'STUDIO' | 'EXPENSE' | 'BUDGET' | 'OTHER';
+
+export interface Category {
+  id: string;
+  organizationId: string;
+  name: string;
+  slug?: string;
+  type: CategoryScope;
+  description?: string | null;
+  color?: string | null;
+  icon?: string | null;
+  isDefault: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateCategoryPayload {
+  name: string;
+  type?: CategoryScope;
+  description?: string;
+  color?: string;
+  icon?: string;
+}
+
+export interface UpdateCategoryPayload {
+  name?: string;
+  description?: string;
+  color?: string;
+  icon?: string;
+}
+
 
 

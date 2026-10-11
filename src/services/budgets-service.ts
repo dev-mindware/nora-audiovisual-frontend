@@ -20,6 +20,7 @@ export interface CreateBudgetPayload {
   discount?: number;
   estimatedTax?: number;
   validUntil?: string;
+  notes?: string;
   items: Array<{
     category: string;
     description: string;

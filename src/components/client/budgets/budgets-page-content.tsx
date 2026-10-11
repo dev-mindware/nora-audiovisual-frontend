@@ -14,7 +14,7 @@ import {
 import { FilterPopover } from '@/components/shared';
 import { useBudgets, useSendBudget, useDuplicateBudget, useChangeBudgetStatus, useBudgetsFilters } from '@/hooks/budgets';
 import { Budget } from '@/types';
-import { BudgetModal } from './budget-modal';
+import { BudgetDrawer } from './budget-drawer';
 import { MindgestInvoiceModal } from './mindgest-invoice-modal';
 import { Plus, FileSpreadsheet, Send, Check, FileCheck, Copy, MoreHorizontal } from 'lucide-react';
 import {
@@ -265,7 +265,7 @@ export function BudgetsPageContent() {
         }}
       />
 
-      <BudgetModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <BudgetDrawer isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       <MindgestInvoiceModal
         budget={selectedBudgetForInvoice}
         isOpen={isInvoiceModalOpen}

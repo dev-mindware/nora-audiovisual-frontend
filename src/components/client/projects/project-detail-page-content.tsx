@@ -27,7 +27,7 @@ import {
 import { EmptyState, ItemStatusBadge, DynamicMetricCard, UniversalTable } from '@/components';
 import { CallSheetModal } from './call-sheet-modal';
 import { MemberModal } from './member-modal';
-import { DeliverableModal } from '@/components/client/deliverables/deliverable-modal';
+import { DeliverableDrawer } from '@/components/client/deliverables/deliverable-drawer';
 import { RecordExpenseModal, RecordPaymentModal } from '@/components/client/finance';
 import {
   useExpenses,
@@ -847,7 +847,7 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
         projectId={projectId}
       />
 
-      <DeliverableModal
+      <DeliverableDrawer
         isOpen={isDeliverableModalOpen}
         onClose={() => setIsDeliverableModalOpen(false)}
         defaultProjectId={projectId}

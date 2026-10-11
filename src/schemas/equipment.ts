@@ -3,15 +3,7 @@ import { z } from 'zod';
 export const createEquipmentSchema = z.object({
   name: z.string().min(2, 'O nome do equipamento é obrigatório'),
   code: z.string().optional(),
-  category: z.enum([
-    'CAMERA',
-    'LENS',
-    'LIGHTING',
-    'AUDIO',
-    'GRIP',
-    'DRONE',
-    'ACCESSORY',
-  ]),
+  category: z.string().min(1, 'A categoria é obrigatória'),
   serialNumber: z.string().optional(),
   ownershipType: z.enum(['OWNED', 'RENTED']),
   condition: z.enum(['EXCELLENT', 'GOOD', 'FAIR', 'DAMAGED']),

@@ -21,7 +21,9 @@ import { EquipmentModal } from './equipment-modal';
 import { ReservationModal } from './reservation-modal';
 import { CheckoutModal } from './checkout-modal';
 import { CheckinModal } from './checkin-modal';
-import { Camera, Plus, Calendar, ArrowUpRight, ArrowDownLeft, MoreHorizontal, Filter, RotateCcw } from 'lucide-react';
+import { ManageCategoriesModal } from '@/components/client/categories';
+import { useCategories } from '@/hooks/categories';
+import { Camera, Plus, Calendar, ArrowUpRight, ArrowDownLeft, MoreHorizontal, Filter, RotateCcw, FolderTree } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
   DropdownMenu,
@@ -59,9 +61,26 @@ const SORT_OPTIONS: SortOption[] = [
 
 export function EquipmentPageContent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isManageCategoriesOpen, setIsManageCategoriesOpen] = useState(false);
   const [selectedEquipmentForReservation, setSelectedEquipmentForReservation] = useState<Equipment | null>(null);
   const [selectedEquipmentForCheckout, setSelectedEquipmentForCheckout] = useState<Equipment | null>(null);
   const [selectedEquipmentForCheckin, setSelectedEquipmentForCheckin] = useState<Equipment | null>(null);
+
+  const { data: customCategories = [] } = useCategories('EQUIPMENT');
+
+  const combinedCategoryOptions = useMemo(() => {
+    const list = [{ value: 'ALL', label: 'Todas as Categorias' }];
+    const map = new Map<string, string>();
+    CATEGORY_OPTIONS.filter((c) => c.value !== 'ALL').forEach((c) => map.set(c.value, c.label));
+    customCategories.forEach((c) => {
+      const slug = c.slug || c.name;
+      if (!map.has(slug)) map.set(slug, c.name);
+    });
+    map.forEach((label, value) => {
+      list.push({ value, label });
+    });
+    return list;
+  }, [customCategories]);
 
   const {
     filters,
@@ -114,7 +133,7 @@ export function EquipmentPageContent() {
         header: 'Categoria',
         cell: ({ row }) => {
           const item = row.original;
-          const catOption = CATEGORY_OPTIONS.find((c) => c.value === item.category);
+          const catOption = combinedCategoryOptions.find((c) => c.value === item.category);
           return (
             <span className="text-xs font-medium text-foreground">
               {catOption?.label || item.category}
@@ -190,7 +209,7 @@ export function EquipmentPageContent() {
         },
       },
     ],
-    []
+    [combinedCategoryOptions]
   );
 
   // Configuração das secções para o MobileFilterBottomSheet
@@ -199,7 +218,7 @@ export function EquipmentPageContent() {
       {
         id: 'category',
         title: 'Categoria de Equipamento',
-        options: CATEGORY_OPTIONS.filter((c) => c.value !== 'ALL').map((c) => ({
+        options: combinedCategoryOptions.filter((c) => c.value !== 'ALL').map((c) => ({
           label: c.label,
           value: c.value,
         })),
@@ -215,7 +234,7 @@ export function EquipmentPageContent() {
         multiple: false,
       },
     ],
-    []
+    [combinedCategoryOptions]
   );
 
   const appliedMobileFilters: Record<string, string[]> = useMemo(
@@ -250,7 +269,7 @@ export function EquipmentPageContent() {
             <FilterPopover
               icon="Tag"
               label="Categoria"
-              options={CATEGORY_OPTIONS}
+              options={combinedCategoryOptions}
               value={category}
               onChange={(val) => setCategory(val || 'ALL')}
             />
@@ -288,13 +307,25 @@ export function EquipmentPageContent() {
         }}
         toolbar={{
           actions: (
-            <Button
-              onClick={() => setIsModalOpen(true)}
-              size="sm"
-              className="h-10 sm:h-9 min-h-[44px] sm:min-h-0 text-xs gap-1.5 shrink-0 rounded-none px-3.5"
-            >
-              <Plus className="h-4 w-4" /> Novo Equipamento
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setIsManageCategoriesOpen(true)}
+                className="h-10 sm:h-9 min-h-[44px] sm:min-h-0 text-xs gap-1.5 shrink-0 rounded-none px-3 border-border/80 hover:bg-muted/60"
+              >
+                <FolderTree className="h-3.5 w-3.5 text-muted-foreground" />
+                Categorias
+              </Button>
+              <Button
+                onClick={() => setIsModalOpen(true)}
+                size="sm"
+                className="h-10 sm:h-9 min-h-[44px] sm:min-h-0 text-xs gap-1.5 shrink-0 rounded-none px-3.5"
+              >
+                <Plus className="h-4 w-4" /> Novo Equipamento
+              </Button>
+            </div>
           ),
         }}
         emptyState={{
@@ -312,6 +343,11 @@ export function EquipmentPageContent() {
       />
 
       <EquipmentModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <ManageCategoriesModal
+        isOpen={isManageCategoriesOpen}
+        onClose={() => setIsManageCategoriesOpen(false)}
+        scope="EQUIPMENT"
+      />
       {selectedEquipmentForReservation && (
         <ReservationModal
           equipment={selectedEquipmentForReservation}

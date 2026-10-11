@@ -9,7 +9,7 @@ import {
 } from '@/components';
 import { FilterPopover } from '@/components/shared';
 import { Deliverable, ReviewComment } from '@/types';
-import { DeliverableModal } from './deliverable-modal';
+import { DeliverableDrawer } from './deliverable-drawer';
 import { DeliverableTypesModal } from './deliverable-types-modal';
 import { DeliverableFeedbackModal } from './deliverable-feedback-modal';
 import { VideoReviewPlayer } from './video-review-player';
@@ -571,7 +571,7 @@ export function DeliverablesPageContent() {
         </div>
       )}
 
-      <DeliverableModal
+      <DeliverableDrawer
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         defaultProjectId={projectId || undefined}

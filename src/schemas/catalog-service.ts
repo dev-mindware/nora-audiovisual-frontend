@@ -19,7 +19,7 @@ export const catalogServiceCategoryEnum = z.enum([
 
 export const catalogServiceFormSchema = z.object({
   name: z.string().min(2, 'O nome deve ter pelo menos 2 caracteres'),
-  category: catalogServiceCategoryEnum,
+  category: z.string().min(1, 'Selecione ou crie uma categoria'),
   description: z.string().optional(),
   price: z.coerce.number().min(0, 'O valor não pode ser negativo'),
   currency: z.string().default('AOA'),

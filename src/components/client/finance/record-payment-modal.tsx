@@ -11,6 +11,7 @@ import {
   PaginatedSelect,
   RHFSelect,
 } from '@/components';
+import { RHFInputCurrency } from '@/components/ui/input-currency';
 import { useRecordPayment } from '@/hooks/finance';
 import { useProjects } from '@/hooks/projects';
 import { paymentSchema, PaymentFormData } from '@/schemas';
@@ -173,20 +174,16 @@ export function RecordPaymentModal({
           />
         </div>
 
-        {/* Valor */}
-        <div className="space-y-1.5">
-          <Input
-            type="number"
-            step="0.01"
-            min="1"
-            label="Valor Recebido (AOA) *"
-            placeholder="Ex: 500000"
-            startIcon="DollarSign"
-            {...register('amount', { valueAsNumber: true })}
-            error={errors.amount?.message}
-            className="h-9 text-xs font-mono rounded-none"
-          />
-        </div>
+        {/* Valor com Formatação Monetária AOA */}
+        <RHFInputCurrency
+          control={control}
+          name="amount"
+          label="Valor Recebido (AOA) *"
+          placeholder="0,00"
+          currency="Kz"
+          startIcon="DollarSign"
+          className="rounded-xs"
+        />
 
         {/* Referência / Comprovativo Bancário */}
         <div className="space-y-1.5">

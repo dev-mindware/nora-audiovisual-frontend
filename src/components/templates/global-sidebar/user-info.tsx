@@ -37,8 +37,8 @@ export function UserInfo() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-muted-foreground"
             >
-              <Avatar className="w-8 h-8 rounded-lg">
-                <AvatarFallback className="rounded-lg bg-primary/20 text-primary font-semibold">
+              <Avatar className="w-8 h-8 rounded-xs">
+                <AvatarFallback className="rounded-xs bg-primary/20 text-primary font-semibold">
                   {user.name?.[0]?.toUpperCase() || "U"}
                 </AvatarFallback>
               </Avatar>
@@ -50,15 +50,15 @@ export function UserInfo() {
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-xs"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="w-8 h-8 rounded-lg">
-                  <AvatarFallback className="rounded-lg bg-primary/20 text-primary font-semibold">
+                <Avatar className="w-8 h-8 rounded-xs">
+                  <AvatarFallback className="rounded-xs bg-primary/20 text-primary font-semibold">
                     {user.name?.[0]?.toUpperCase() || "U"}
                   </AvatarFallback>
                 </Avatar>

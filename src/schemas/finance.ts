@@ -18,9 +18,7 @@ export type PaymentFormData = z.infer<typeof paymentSchema>;
 
 export const expenseSchema = z.object({
   projectId: z.string({ required_error: 'Selecione o projeto associado' }).min(1, 'Selecione o projeto associado'),
-  category: z.enum(['FOOD', 'FUEL', 'RENTAL', 'PERMITS', 'FREELANCER', 'MISC'], {
-    required_error: 'Selecione a categoria da despesa',
-  }),
+  category: z.string().min(1, 'Selecione a categoria da despesa'),
   amount: z
     .number({ invalid_type_error: 'Informe um valor válido' })
     .positive('O valor deve ser maior que zero'),
