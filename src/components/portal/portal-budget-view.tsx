@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { portalService, PortalBudget, AcceptBudgetPayload } from '@/services/portal-service';
 import {
+  Button,
   ButtonSubmit,
   Input,
   Badge,
@@ -28,6 +29,7 @@ import {
   Calendar,
   Building,
   ShieldCheck,
+  Download,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -45,6 +47,22 @@ export function PortalBudgetView({ token }: PortalBudgetViewProps) {
   const [clientEmail, setClientEmail] = useState('');
   const [notes, setNotes] = useState('');
   const [isAccepting, setIsAccepting] = useState(false);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+
+  const handleDownloadPdf = async () => {
+    try {
+      setIsDownloadingPdf(true);
+      await portalService.downloadBudgetPdf(
+        token,
+        `Orcamento_${budget?.clientName ? budget.clientName.replace(/\s+/g, '_') : 'Oficial'}_v${budget?.version || 1}.pdf`,
+      );
+      toast.success('Download do orçamento oficial iniciado!');
+    } catch {
+      toast.error('Não foi possível transferir o orçamento em PDF.');
+    } finally {
+      setIsDownloadingPdf(false);
+    }
+  };
 
   useEffect(() => {
     portalService
@@ -131,7 +149,19 @@ export function PortalBudgetView({ token }: PortalBudgetViewProps) {
             </p>
           </div>
 
-          <ItemStatusBadge status={budget.status} className="py-1 px-3 text-sm font-semibold" />
+          <div className="flex items-center gap-3 self-start sm:self-center">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownloadPdf}
+              disabled={isDownloadingPdf}
+              className="text-xs font-semibold gap-1.5 h-8 border-border rounded-xs hover:bg-muted"
+            >
+              <Download className="h-3.5 w-3.5 text-primary" />
+              <span>{isDownloadingPdf ? 'Descarregando...' : 'Baixar PDF'}</span>
+            </Button>
+            <ItemStatusBadge status={budget.status} className="py-1 px-3 text-sm font-semibold" />
+          </div>
         </div>
 
         {/* Line Items Table & Mobile Cards */}

@@ -70,9 +70,29 @@ export function useSendBudget() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => budgetsService.sendToClient(id),
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: BUDGETS_QUERY_KEY });
-      SucessMessage('Proposta enviada ao cliente com link de aprovação!');
+      if (data?.emailSent && data?.recipientEmail) {
+        SucessMessage(`Proposta e PDF enviados automaticamente por email para ${data.recipientEmail}!`);
+      } else {
+        SucessMessage('Proposta disponibilizada com link de aprovação no portal!');
+      }
+    },
+    onError: (err) => {
+      ErrorMessage(getApiErrorMessage(err, 'Erro ao enviar proposta comercial.'));
+    },
+  });
+}
+
+export function useDownloadBudgetPdf() {
+  return useMutation({
+    mutationFn: ({ id, filename }: { id: string; filename?: string }) =>
+      budgetsService.downloadPdf(id, filename),
+    onSuccess: () => {
+      SucessMessage('Download do orçamento em PDF iniciado!');
+    },
+    onError: (err) => {
+      ErrorMessage(getApiErrorMessage(err, 'Falha ao descarregar PDF do orçamento.'));
     },
   });
 }

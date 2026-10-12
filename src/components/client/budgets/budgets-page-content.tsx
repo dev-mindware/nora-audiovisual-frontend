@@ -12,11 +12,18 @@ import {
   SortOption,
 } from '@/components/custom/universal-table';
 import { FilterPopover } from '@/components/shared';
-import { useBudgets, useSendBudget, useDuplicateBudget, useChangeBudgetStatus, useBudgetsFilters } from '@/hooks/budgets';
+import {
+  useBudgets,
+  useSendBudget,
+  useDuplicateBudget,
+  useChangeBudgetStatus,
+  useDownloadBudgetPdf,
+  useBudgetsFilters,
+} from '@/hooks/budgets';
 import { Budget } from '@/types';
 import { BudgetDrawer } from './budget-drawer';
 import { MindgestInvoiceModal } from './mindgest-invoice-modal';
-import { Plus, FileSpreadsheet, Send, Check, FileCheck, Copy, MoreHorizontal } from 'lucide-react';
+import { Plus, FileSpreadsheet, Send, Check, FileCheck, Copy, Download, MoreHorizontal } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -63,6 +70,7 @@ export function BudgetsPageContent() {
   const { mutate: sendBudget } = useSendBudget();
   const { mutate: duplicateBudget } = useDuplicateBudget();
   const { mutate: changeStatus } = useChangeBudgetStatus();
+  const { mutate: downloadPdf } = useDownloadBudgetPdf();
 
   const budgets = data?.data || [];
 
@@ -156,6 +164,16 @@ export function BudgetsPageContent() {
                     <FileCheck className="mr-2 h-4 w-4" /> Emitir Factura Mindgest
                   </DropdownMenuItem>
                 )}
+                <DropdownMenuItem
+                  onClick={() =>
+                    downloadPdf({
+                      id: item.id,
+                      filename: `Orcamento_${item.id.slice(0, 8).toUpperCase()}_v${item.version}.pdf`,
+                    })
+                  }
+                >
+                  <Download className="mr-2 h-4 w-4" /> Baixar Orçamento (PDF)
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => duplicateBudget(item.id)}>
                   <Copy className="mr-2 h-4 w-4" /> Duplicar Versão
                 </DropdownMenuItem>
@@ -165,7 +183,7 @@ export function BudgetsPageContent() {
         },
       },
     ],
-    [sendBudget, duplicateBudget, changeStatus]
+    [sendBudget, duplicateBudget, changeStatus, downloadPdf]
   );
 
   // Configuração das secções para o MobileFilterBottomSheet

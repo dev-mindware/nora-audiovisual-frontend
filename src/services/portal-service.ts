@@ -238,4 +238,19 @@ export const portalService = {
     const res = await publicApi.post(`/portal/deliverables/view/${token}/assets/${assetId}/download`);
     return res.data?.data || res.data;
   },
+
+  downloadBudgetPdf: async (token: string, customFilename?: string): Promise<void> => {
+    const res = await publicApi.get(`/portal/budgets/view/${token}/pdf`, {
+      responseType: 'blob',
+    });
+    const blob = new Blob([res.data], { type: 'application/pdf' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = customFilename || 'Orcamento_Proposta.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  },
 };

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import {
   publicCatalogService,
@@ -27,6 +28,9 @@ import {
   ChevronRight,
   X,
 } from 'lucide-react';
+import { BrandLogo } from '@/components';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { SidebarInset } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
@@ -154,18 +158,18 @@ export function PublicCatalogPage({ orgSlug }: PublicCatalogPageProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+      <SidebarInset className="bg-background flex flex-1 flex-col min-w-0 w-full min-h-screen items-center justify-center p-6 text-foreground">
         <div className="space-y-3 text-center">
           <div className="h-8 w-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-xs text-muted-foreground font-medium">Carregando catálogo oficial...</p>
         </div>
-      </div>
+      </SidebarInset>
     );
   }
 
   if (error || !organization) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center">
+      <SidebarInset className="bg-background flex flex-1 flex-col min-w-0 w-full min-h-screen items-center justify-center p-6 text-center text-foreground">
         <div className="p-4 rounded-full bg-rose-500/10 text-rose-500 mb-3">
           <Clapperboard className="h-8 w-8" />
         </div>
@@ -173,72 +177,93 @@ export function PublicCatalogPage({ orgSlug }: PublicCatalogPageProps) {
         <p className="text-xs text-muted-foreground max-w-sm mt-1">
           Não foi possível localizar o catálogo da produtora solicitada. Verifique o link e tente novamente.
         </p>
-      </div>
+      </SidebarInset>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
-      {/* Top Banner & Header da Produtora */}
-      <header className="border-b border-border bg-card/60 backdrop-blur-md sticky top-0 z-30">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-lg text-foreground tracking-tight">
-                {organization.name}
-              </span>
-              <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[10px] font-semibold gap-1">
-                <ShieldCheck className="h-3 w-3" />
-                Catálogo Oficial
-              </Badge>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {organization.legalName || 'Portfólio comercial de pacotes e soluções audiovisuais'}
-            </p>
-          </div>
+    <SidebarInset className="bg-background flex flex-1 flex-col min-w-0 w-full min-h-screen text-foreground selection:bg-primary selection:text-primary-foreground font-sans">
+      {/* Top Banner & Header da Produtora — Largura Total */}
+      <header className="sticky top-0 z-40 w-full border-b border-border/80 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 print:hidden">
+        <div className="w-full px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between gap-4">
+            {/* Left: BrandLogo & Produtora */}
+            <div className="flex items-center gap-3 sm:gap-4">
+              <Link href="/" className="inline-flex items-center">
+                <BrandLogo variant="full" size="sm" priority />
+              </Link>
 
-          <div className="flex items-center gap-2.5">
-            <Button
-              onClick={() => handleOpenInquiry()}
-              size="sm"
-              className="text-xs font-semibold gap-1.5 bg-primary text-primary-foreground rounded-xs h-9 px-4 shadow-sm"
-            >
-              <Sparkles className="h-3.5 w-3.5" />
-              Solicitar Orçamento Geral
-            </Button>
+              <div className="h-5 w-px bg-border/80 hidden sm:block" />
+
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-sm sm:text-base text-foreground tracking-tight">
+                  {organization.name}
+                </span>
+                <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 text-[10px] font-semibold gap-1">
+                  <ShieldCheck className="h-3 w-3" />
+                  Catálogo Oficial
+                </Badge>
+              </div>
+            </div>
+
+            {/* Right: Solicitar Orçamento Geral + ThemeToggle */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Button
+                onClick={() => handleOpenInquiry()}
+                size="sm"
+                className="text-xs font-semibold gap-1.5 bg-primary text-primary-foreground rounded-xs h-9 px-4 shadow-sm"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>Solicitar Orçamento Geral</span>
+              </Button>
+
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="border-b border-border bg-gradient-to-b from-muted/30 to-background py-10 px-4 sm:px-6">
-        <div className="max-w-4xl mx-auto text-center space-y-3">
-          <Badge variant="outline" className="text-xs text-primary border-primary/20 bg-primary/5 px-3 py-1 rounded-full">
-            Produção Cinematográfica • Publicidade • Estúdios
-          </Badge>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+      {/* Hero Section — Largura Total com Conteúdo Centralizado */}
+      <section className="w-full border-b border-border/80 bg-muted/20 py-8 sm:py-12 print:py-4">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 border border-primary/30 bg-primary/5 text-primary text-xs font-semibold rounded-full uppercase tracking-wider">
+            <Clapperboard className="h-3.5 w-3.5" />
+            <span>Produção Cinematográfica • Publicidade • Estúdios</span>
+          </div>
+
+          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-foreground leading-tight">
             Serviços &amp; Pacotes Oficiais de Produção
           </h1>
-          <p className="text-xs sm:text-sm text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+
+          <p className="text-xs sm:text-sm md:text-base text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Consulte a tabela oficial de serviços de {organization.name}. Equipas de ponta, captação 4K/8K, estúdios cyclorama e pós-produção completa para o seu projeto.
           </p>
 
-          {/* Barra de Pesquisa */}
-          <div className="pt-3 max-w-md mx-auto relative">
+          {/* Quick Search Bar */}
+          <div className="pt-3 max-w-xl mx-auto relative print:hidden">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <input
+            <Input
               type="text"
               placeholder="Pesquisar por pacote, comercial, videoclipe..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full h-10 pl-10 pr-4 rounded-xs border border-border bg-card text-xs text-foreground placeholder:text-muted-foreground shadow-xs focus:outline-none focus:ring-1 focus:ring-primary"
+              className="pl-10 h-10 rounded-xs bg-background border-border/80 text-xs sm:text-sm focus-visible:ring-1 focus-visible:ring-primary shadow-xs"
             />
+            {search && (
+              <button
+                type="button"
+                onClick={() => setSearch('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground font-semibold"
+              >
+                Limpar
+              </button>
+            )}
           </div>
         </div>
       </section>
 
       {/* Main Content: Filtros & Grid de Serviços */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full space-y-6">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-6">
         {/* Filtros em Pílulas */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none">
           {availableCategories.map((cat) => {
@@ -450,18 +475,27 @@ export function PublicCatalogPage({ orgSlug }: PublicCatalogPageProps) {
         </DialogContent>
       </Dialog>
 
-      {/* Footer */}
-      <footer className="border-t border-border bg-card/40 py-6 px-4 text-center text-xs text-muted-foreground">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-          <span>
-            © {new Date().getFullYear()} {organization.name}. Todos os direitos reservados.
-          </span>
-          <span className="flex items-center gap-1.5 font-medium text-foreground">
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
-            Powered by Nora Audiovisual Management Platform
-          </span>
+      {/* Footer Padronizado — Largura Total com Conteúdo Centralizado */}
+      <footer className="w-full border-t border-border/80 bg-muted/20 py-8 text-xs text-muted-foreground mt-auto print:hidden">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-6 text-center sm:text-left">
+            <span>&copy; {new Date().getFullYear()} {organization.name}. Todos os direitos reservados.</span>
+            <span>Nora Audiovisual Management Platform</span>
+          </div>
+
+          <div className="flex items-center gap-6 font-semibold">
+            <Link href="/terms" className="hover:text-foreground transition-colors">
+              Termos de Uso
+            </Link>
+            <Link href="/privacy" className="hover:text-foreground transition-colors">
+              Privacidade & APD
+            </Link>
+            <Link href="/auth/register" className="hover:text-foreground transition-colors">
+              Criar Conta
+            </Link>
+          </div>
         </div>
       </footer>
-    </div>
+    </SidebarInset>
   );
 }

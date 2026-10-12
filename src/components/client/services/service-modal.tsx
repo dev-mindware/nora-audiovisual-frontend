@@ -67,7 +67,7 @@ export function ServiceModal({
       description: '',
       price: 0,
       currency: 'AOA',
-      durationHours: 8,
+      durationHours: 0,
       benefits: [],
       deliverablesIncluded: [],
       isActive: true,
@@ -100,33 +100,34 @@ export function ServiceModal({
   const deliverables = watch('deliverablesIncluded') || [];
 
   useEffect(() => {
-    if (serviceToEdit && isOpen) {
-      reset({
-        name: serviceToEdit.name,
-        category: serviceToEdit.category,
-        description: serviceToEdit.description || '',
-        price: Number(serviceToEdit.price) || 0,
-        currency: serviceToEdit.currency || 'AOA',
-        durationHours: serviceToEdit.durationHours || 0,
-        benefits: serviceToEdit.benefits || [],
-        deliverablesIncluded: serviceToEdit.deliverablesIncluded || [],
-        isActive: serviceToEdit.isActive,
-      });
-    } else if (!serviceToEdit && isOpen) {
-      const defaultCat = categories[0]?.value || 'COMMERCIAL';
-      reset({
-        name: '',
-        category: defaultCat,
-        description: '',
-        price: 0,
-        currency: 'AOA',
-        durationHours: 8,
-        benefits: [], // Sem itens mockados por padrão
-        deliverablesIncluded: [], // Sem itens mockados por padrão
-        isActive: true,
-      });
+    if (isOpen) {
+      if (serviceToEdit) {
+        reset({
+          name: serviceToEdit.name,
+          category: serviceToEdit.category,
+          description: serviceToEdit.description || '',
+          price: Number(serviceToEdit.price) || 0,
+          currency: serviceToEdit.currency || 'AOA',
+          durationHours: serviceToEdit.durationHours ?? 0,
+          benefits: serviceToEdit.benefits || [],
+          deliverablesIncluded: serviceToEdit.deliverablesIncluded || [],
+          isActive: serviceToEdit.isActive,
+        });
+      } else {
+        reset({
+          name: '',
+          category: '',
+          description: '',
+          price: 0,
+          currency: 'AOA',
+          durationHours: 0,
+          benefits: [],
+          deliverablesIncluded: [],
+          isActive: true,
+        });
+      }
     }
-  }, [serviceToEdit, isOpen, reset, categories]);
+  }, [serviceToEdit, isOpen, reset]);
 
   const handleAddBenefit = () => {
     const trimmed = benefitInput.trim();
@@ -187,12 +188,12 @@ export function ServiceModal({
       <GlobalModal
         isOpen={isOpen}
         onClose={onClose}
-        size="lg"
+        size="xl"
         title={serviceToEdit ? 'Editar Serviço do Catálogo' : 'Novo Serviço no Catálogo'}
         description="Configure pacotes de serviços padronizados para gerar propostas comerciais automáticas e permitir solicitações pelo Portal do Cliente."
         icon={<Briefcase className="h-5 w-5 text-primary" />}
         footer={
-          <div className="flex items-center justify-end gap-2 w-full">
+          <>
             <Button
               type="button"
               variant="outline"
@@ -211,7 +212,7 @@ export function ServiceModal({
             >
               {serviceToEdit ? 'Salvar Alterações' : 'Criar Serviço no Catálogo'}
             </ButtonSubmit>
-          </div>
+          </>
         }
       >
         <form
@@ -300,8 +301,11 @@ export function ServiceModal({
                   <Input
                     type="quantity"
                     label="Duração Estimada (Horas)"
-                    value={field.value ?? 8}
-                    onChange={(e: any) => field.onChange(Number(e.target.value) || 0)}
+                    value={field.value ?? 0}
+                    onChange={(e: any) => {
+                      const val = Number(e.target.value);
+                      field.onChange(isNaN(val) ? 0 : val);
+                    }}
                   />
                 )}
               />
@@ -343,7 +347,7 @@ export function ServiceModal({
             </label>
             <textarea
               rows={2}
-              className="w-full text-xs rounded-xs border border-border bg-transparent px-3 py-1.5 shadow-xs placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring"
+              className="w-full text-xs rounded-xs border border-border bg-transparent px-3 py-1.5 shadow-xs placeholder:text-muted-foreground focus-visible:outline-hidden "
               placeholder="Descreva o escopo, metodologia de filmagem e diferenciais..."
               {...register('description')}
             />

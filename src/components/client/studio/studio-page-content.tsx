@@ -8,34 +8,15 @@ import {
   useDeleteStudioResource,
   useStudioFilters,
 } from '@/hooks/studio';
-import { Button, Badge, ItemStatusBadge } from '@/components';
+import { Button } from '@/components';
 import { FilterPopover } from '@/components/shared';
 import { StudioResource, StudioResourceType } from '@/types';
 import { StudioBookingModal } from './booking-modal';
 import { StudioResourceModal } from './studio-resource-modal';
-import {
-  Building2,
-  CalendarCheck,
-  Users,
-  Video,
-  Mic,
-  Tv,
-  Clock,
-  Layers,
-  CheckCircle2,
-  CalendarRange,
-  Plus,
-  Pencil,
-  Trash2,
-  MoreVertical,
-} from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { StudioResourceCard } from './studio-resource-card';
+import { StudioMetrics } from './studio-metrics';
+import { StudioBookingRow } from './studio-booking-row';
+import { CalendarCheck, Plus } from 'lucide-react';
 
 const RESOURCE_TYPE_OPTIONS = [
   { value: 'MAIN_STAGE', label: 'Palco Principal / Estúdio A' },
@@ -49,25 +30,6 @@ const BOOKING_STATUS_OPTIONS = [
   { value: 'CONFIRMED', label: 'Confirmado' },
   { value: 'CANCELLED', label: 'Cancelado' },
 ];
-
-const RESOURCE_TYPE_LABELS: Record<StudioResourceType, { label: string; icon: typeof Building2 }> = {
-  MAIN_STAGE: {
-    label: 'Palco Principal / Estúdio A',
-    icon: Building2,
-  },
-  SOUND_BOOTH: {
-    label: 'Cabine de Som / Foley / Dobragem',
-    icon: Mic,
-  },
-  CYCLORAMA: {
-    label: 'Ciclorama Infinito (Chroma / Branco)',
-    icon: Video,
-  },
-  EDIT_SUITE: {
-    label: 'Ilha de Edição & Color Grading',
-    icon: Tv,
-  },
-};
 
 const DEFAULT_RESOURCES: StudioResource[] = [
   {
@@ -98,21 +60,21 @@ const DEFAULT_RESOURCES: StudioResource[] = [
     name: 'Cabine de Dobragem & ADR',
     type: 'SOUND_BOOTH' as StudioResourceType,
     capacity: 4,
-    hourlyRate: 25000,
-    dailyRate: 180000,
+    hourlyRate: 18000,
+    dailyRate: 120000,
     status: 'AVAILABLE',
-    description: 'Cabine flutuante tratada para captação de vozes, foley e mix estéreo.',
+    description: 'Cabine com microfones Neumann e acoplamento direto à ilha ProTools.',
   },
   {
     id: 'suite-1',
     organizationId: 'demo',
-    name: 'Ilha Master DaVinci Resolve',
+    name: 'Ilha Master de Gradação & Som',
     type: 'EDIT_SUITE' as StudioResourceType,
     capacity: 6,
-    hourlyRate: 20000,
-    dailyRate: 150000,
+    hourlyRate: 25000,
+    dailyRate: 180000,
     status: 'AVAILABLE',
-    description: 'Monitorização calibrada Flanders Scientific 4K HDR e console color.',
+    description: 'Monitores calibrados OLED 4K com DaVinci Resolve Studio.',
   },
 ];
 
@@ -124,90 +86,55 @@ export function StudioPageContent() {
   const {
     resourceType,
     bookingStatus,
-    resourceId,
     setResourceType,
     setBookingStatus,
   } = useStudioFilters();
 
-  const { data: rawResources = [], isLoading: loadingResources } = useStudioResources();
-  const { data: bookings = [], isLoading: loadingBookings } = useStudioBookings({
-    resourceId: resourceId || undefined,
-    status: bookingStatus && bookingStatus !== 'ALL' ? bookingStatus : undefined,
-  });
+  const { data: dbResources, isLoading: loadingResources } = useStudioResources();
+  const { data: dbBookings, isLoading: loadingBookings } = useStudioBookings();
+
   const { mutate: cancelBooking } = useCancelStudioBooking();
   const { mutate: deleteResource } = useDeleteStudioResource();
 
-  const sourceResources = rawResources.length > 0 ? rawResources : DEFAULT_RESOURCES;
+  const sourceResources = useMemo(() => {
+    if (dbResources && dbResources.length > 0) return dbResources;
+    return DEFAULT_RESOURCES;
+  }, [dbResources]);
 
   const resources = useMemo(() => {
-    if (!resourceType || resourceType === 'ALL') return sourceResources;
+    if (!resourceType) return sourceResources;
     return sourceResources.filter((r) => r.type === resourceType);
   }, [sourceResources, resourceType]);
 
-  // Estatísticas minimalistas de estúdio
+  const bookings = useMemo(() => {
+    const list = dbBookings || [];
+    if (!bookingStatus) return list;
+    return list.filter((b) => b.status === bookingStatus);
+  }, [dbBookings, bookingStatus]);
+
   const stats = useMemo(() => {
     const totalSets = sourceResources.length;
     const availableSets = sourceResources.filter((r) => r.status === 'AVAILABLE').length;
-    const activeBookings = bookings.filter((b) => b.status === 'CONFIRMED' || b.status === 'PENDING').length;
-    const totalCapacity = sourceResources.reduce((acc, curr) => acc + (curr.capacity || 0), 0);
-
+    const activeBookings = (dbBookings || []).filter((b) => b.status === 'CONFIRMED').length;
+    const totalCapacity = sourceResources.reduce((acc, r) => acc + (r.capacity || 0), 0);
     return { totalSets, availableSets, activeBookings, totalCapacity };
-  }, [sourceResources, bookings]);
+  }, [sourceResources, dbBookings]);
 
-  const handleDeleteResource = (resource: StudioResource) => {
-    if (confirm(`Tem a certeza de que deseja eliminar o set "${resource.name}"?`)) {
-      deleteResource(resource.id);
+  const handleDeleteResource = (res: StudioResource) => {
+    if (confirm(`Tem a certeza que deseja eliminar o espaço "${res.name}"?`)) {
+      deleteResource(res.id);
     }
   };
 
   return (
     <div className="space-y-6">
-      {/* Resumo de Operações Minimalista */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="rounded-none border border-border/70 bg-card p-4">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Espaços Totais</span>
-            <Layers className="h-4 w-4 text-muted-foreground/60" />
-          </div>
-          <div className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
-            {stats.totalSets}
-          </div>
-          <span className="text-[11px] text-muted-foreground mt-0.5 block">Sets e ilhas de edição</span>
-        </div>
-
-        <div className="rounded-none border border-border/70 bg-card p-4">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Disponíveis</span>
-            <CheckCircle2 className="h-4 w-4 text-emerald-600/70 dark:text-emerald-400/70" />
-          </div>
-          <div className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
-            {stats.availableSets}
-          </div>
-          <span className="text-[11px] text-emerald-600 dark:text-emerald-400 mt-0.5 block">Prontos para rodagem</span>
-        </div>
-
-        <div className="rounded-none border border-border/70 bg-card p-4">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Ocupação / Agenda</span>
-            <CalendarRange className="h-4 w-4 text-primary/70" />
-          </div>
-          <div className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
-            {stats.activeBookings}
-          </div>
-          <span className="text-[11px] text-muted-foreground mt-0.5 block">Marcações ativas</span>
-        </div>
-
-        <div className="rounded-none border border-border/70 bg-card p-4">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Capacidade Total</span>
-            <Users className="h-4 w-4 text-muted-foreground/60" />
-          </div>
-          <div className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
-            {stats.totalCapacity} <span className="text-xs font-normal text-muted-foreground">pax</span>
-          </div>
-          <span className="text-[11px] text-muted-foreground mt-0.5 block">Elenco e equipa técnica</span>
-        </div>
-      </div>
+      {/* 4 Cards de Métricas Padronizados */}
+      <StudioMetrics
+        totalSets={stats.totalSets}
+        availableSets={stats.availableSets}
+        activeBookings={stats.activeBookings}
+        totalCapacity={stats.totalCapacity}
+      />
 
       {/* Grid de Espaços / Recursos */}
       <div className="space-y-3">
@@ -233,7 +160,7 @@ export function StudioPageContent() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setResourceType('')}
-                className="rounded-none text-xs text-muted-foreground hover:text-foreground h-10 px-2"
+                className="rounded-xs text-xs text-muted-foreground hover:text-foreground h-9 px-2"
               >
                 Limpar
               </Button>
@@ -245,7 +172,7 @@ export function StudioPageContent() {
                 setIsResourceModalOpen(true);
               }}
               size="sm"
-              className="rounded-none bg-primary text-primary-foreground hover:bg-primary/90 h-10 text-xs font-medium tracking-wide uppercase px-3.5 gap-1.5"
+              className="rounded-xs bg-primary text-primary-foreground hover:bg-primary/90 h-9 text-xs font-medium tracking-wide uppercase px-3.5 gap-1.5"
             >
               <Plus className="h-3.5 w-3.5" /> Novo Set / Espaço
             </Button>
@@ -254,110 +181,22 @@ export function StudioPageContent() {
 
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
           {loadingResources ? (
-            <div className="col-span-4 py-12 text-center text-xs text-muted-foreground border border-border/50 bg-card">
+            <div className="col-span-4 py-12 text-center text-xs text-muted-foreground border border-border/50 bg-card rounded-xs">
               A carregar espaços do estúdio...
             </div>
           ) : (
-            resources.map((res) => {
-              const meta = RESOURCE_TYPE_LABELS[res.type] || {
-                label: res.type,
-                icon: Building2,
-              };
-              const IconComp = meta.icon;
-
-              return (
-                <div
-                  key={res.id}
-                  className="rounded-none border border-border/70 bg-card p-5 transition-colors hover:border-foreground/30 flex flex-col justify-between"
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-none border border-border/60 bg-muted/40 text-foreground">
-                        <IconComp className="h-4 w-4" />
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <ItemStatusBadge status={res.status} />
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-7 w-7 p-0 rounded-none text-muted-foreground hover:text-foreground"
-                            >
-                              <MoreVertical className="h-3.5 w-3.5" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="rounded-none border-border">
-                            <DropdownMenuItem
-                              onClick={() => {
-                                setEditingResource(res);
-                                setIsResourceModalOpen(true);
-                              }}
-                              className="text-xs cursor-pointer gap-2"
-                            >
-                              <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
-                              Editar Set
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                              onClick={() => handleDeleteResource(res)}
-                              className="text-xs cursor-pointer text-destructive focus:text-destructive gap-2"
-                            >
-                              <Trash2 className="h-3.5 w-3.5 text-destructive" />
-                              Eliminar Set
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-sm font-semibold tracking-tight text-foreground leading-snug">
-                        {res.name}
-                      </h3>
-                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2 leading-relaxed min-h-[32px]">
-                        {res.description}
-                      </p>
-                    </div>
-
-                    {/* Especificações Técnicas */}
-                    <div className="border-t border-border/60 pt-3 space-y-1.5 text-xs text-muted-foreground">
-                      <div className="flex items-center justify-between">
-                        <span className="flex items-center gap-1.5">
-                          <Users className="h-3 w-3" /> Lotação
-                        </span>
-                        <span className="font-mono text-foreground font-medium">
-                          {res.capacity ? `${res.capacity} pax` : '—'}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="flex items-center gap-1.5">
-                          <Clock className="h-3 w-3" /> Tarifa Horária
-                        </span>
-                        <span className="font-mono text-foreground font-medium">
-                          {res.hourlyRate ? `${Number(res.hourlyRate).toLocaleString('pt-AO')} Kz` : '—'}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="flex items-center gap-1.5">
-                          <CalendarCheck className="h-3 w-3" /> Tarifa Diária
-                        </span>
-                        <span className="font-mono text-foreground font-semibold">
-                          {res.dailyRate ? `${Number(res.dailyRate).toLocaleString('pt-AO')} Kz` : '—'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <Button
-                    onClick={() => setSelectedResource(res)}
-                    className="mt-4 w-full rounded-none bg-primary text-primary-foreground hover:bg-primary/90 h-9 text-xs font-medium tracking-wide uppercase flex items-center justify-center gap-1.5 transition-colors"
-                  >
-                    <CalendarCheck className="h-3.5 w-3.5" /> Reservar Set
-                  </Button>
-                </div>
-              );
-            })
+            resources.map((res) => (
+              <StudioResourceCard
+                key={res.id}
+                resource={res}
+                onEdit={(item) => {
+                  setEditingResource(item);
+                  setIsResourceModalOpen(true);
+                }}
+                onDelete={handleDeleteResource}
+                onSelectToBook={(item) => setSelectedResource(item)}
+              />
+            ))
           )}
         </div>
       </div>
@@ -386,7 +225,7 @@ export function StudioPageContent() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setBookingStatus('')}
-                className="rounded-none text-xs text-muted-foreground hover:text-foreground h-10 px-2"
+                className="rounded-xs text-xs text-muted-foreground hover:text-foreground h-9 px-2"
               >
                 Limpar
               </Button>
@@ -394,7 +233,7 @@ export function StudioPageContent() {
           </div>
         </div>
 
-        <div className="rounded-none border border-border/70 bg-card overflow-hidden">
+        <div className="rounded-xs border border-border/70 bg-card overflow-hidden shadow-xs">
           {loadingBookings ? (
             <div className="py-12 text-center text-xs text-muted-foreground">
               A consultar disponibilidade da agenda...
@@ -409,55 +248,14 @@ export function StudioPageContent() {
             </div>
           ) : (
             <div className="divide-y divide-border/60">
-              {bookings.map((b) => {
-                const linkedResource = sourceResources.find((r) => r.id === b.resourceId);
-                const resourceMeta = linkedResource ? RESOURCE_TYPE_LABELS[linkedResource.type] : null;
-
-                return (
-                  <div
-                    key={b.id}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 hover:bg-muted/20 transition-colors"
-                  >
-                    <div className="flex items-start sm:items-center gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-none border border-border/60 bg-muted/30 text-foreground">
-                        <Building2 className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-semibold tracking-tight text-foreground">
-                            {b.resourceName || linkedResource?.name || 'Set de Gravação'}
-                          </span>
-                          {resourceMeta && (
-                            <Badge variant="outline" className="rounded-none border-border/60 text-[10px] px-1.5 py-0">
-                              {resourceMeta.label.split('/')[0].trim()}
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          {b.projectTitle ? `Projecto: ${b.projectTitle}` : 'Reserva Directa de Estúdio'} •{' '}
-                          <span className="font-mono text-foreground/80">
-                            {new Date(b.startTime).toLocaleDateString('pt-PT')} ({new Date(b.startTime).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })} - {new Date(b.endTime).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })})
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 self-end sm:self-center">
-                      <ItemStatusBadge status={b.status} />
-                      {b.status !== 'CANCELLED' && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => cancelBooking(b.id)}
-                          className="rounded-none text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 px-2.5 transition-colors"
-                        >
-                          Cancelar
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+              {bookings.map((b) => (
+                <StudioBookingRow
+                  key={b.id}
+                  booking={b}
+                  linkedResource={sourceResources.find((r) => r.id === b.resourceId)}
+                  onCancel={(id) => cancelBooking(id)}
+                />
+              ))}
             </div>
           )}
         </div>

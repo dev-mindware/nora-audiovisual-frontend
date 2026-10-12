@@ -64,8 +64,31 @@ export const budgetsService = {
     return res.data?.data || res.data;
   },
 
-  sendToClient: async (id: string): Promise<{ success: boolean; shareUrl?: string }> => {
+  sendToClient: async (
+    id: string,
+  ): Promise<{
+    success?: boolean;
+    portalUrl?: string;
+    publicPortalUrl?: string;
+    emailSent?: boolean;
+    recipientEmail?: string | null;
+  }> => {
     const res = await api.post(`/budgets/${id}/send`);
     return res.data?.data || res.data;
+  },
+
+  downloadPdf: async (id: string, customFilename?: string): Promise<void> => {
+    const res = await api.get(`/budgets/${id}/pdf/download`, {
+      responseType: 'blob',
+    });
+    const blob = new Blob([res.data], { type: 'application/pdf' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = customFilename || `Orcamento_${id.slice(0, 8).toUpperCase()}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
   },
 };

@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useBudgets } from '@/hooks/budgets';
 import { Budget } from '@/types';
 import { portalService } from '@/services/portal-service';
+import { budgetsService } from '@/services/budgets-service';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ItemStatusBadge } from '@/components';
@@ -16,6 +17,8 @@ import {
   Search,
   Building,
   Printer,
+  Download,
+  Loader2,
   AlertTriangle,
   Send,
   ShieldCheck,
@@ -76,8 +79,33 @@ export function PortalBudgetsContent() {
   const pendingCount = budgets.filter((b: Budget) => b.status === 'SENT').length;
   const approvedCount = budgets.filter((b: Budget) => b.status === 'APPROVED').length;
 
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleDownloadPdf = async () => {
+    if (!selectedBudget) return;
+    setIsDownloadingPdf(true);
+    const filename = `Orcamento_${selectedBudget.id.slice(0, 8).toUpperCase()}_v${selectedBudget.version || 1}.pdf`;
+    try {
+      if (selectedBudget.shareToken) {
+        await portalService.downloadBudgetPdf(selectedBudget.shareToken, filename);
+      } else {
+        await budgetsService.downloadPdf(selectedBudget.id, filename);
+      }
+      toast.success('Download do orçamento concluído!');
+    } catch (err: any) {
+      try {
+        await budgetsService.downloadPdf(selectedBudget.id, filename);
+        toast.success('Download do orçamento concluído!');
+      } catch (innerErr: any) {
+        toast.error(err?.response?.data?.message || 'Erro ao descarregar PDF da proposta.');
+      }
+    } finally {
+      setIsDownloadingPdf(false);
+    }
   };
 
   const handleAcceptBudget = async () => {
@@ -353,11 +381,26 @@ export function PortalBudgetsContent() {
                     <Button
                       size="sm"
                       variant="outline"
+                      onClick={handleDownloadPdf}
+                      disabled={isDownloadingPdf}
+                      className="rounded-none text-xs h-8 gap-1.5 border-border hover:bg-muted font-medium"
+                    >
+                      {isDownloadingPdf ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <Download className="h-3.5 w-3.5" />
+                      )}
+                      <span>Baixar PDF</span>
+                    </Button>
+
+                    <Button
+                      size="sm"
+                      variant="ghost"
                       onClick={handlePrint}
-                      className="rounded-none text-xs h-8 gap-1.5 border-border"
+                      className="rounded-none text-xs h-8 gap-1.5 text-muted-foreground hover:bg-muted"
                     >
                       <Printer className="h-3.5 w-3.5" />
-                      <span>Imprimir PDF</span>
+                      <span>Imprimir</span>
                     </Button>
 
                     {selectedBudget.status === 'SENT' && (

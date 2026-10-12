@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Budget, BudgetItem } from '@/types';
 import { portalService, PortalBudget } from '@/services/portal-service';
+import { budgetsService } from '@/services/budgets-service';
 import {
   Dialog,
   DialogContent,
@@ -19,6 +20,8 @@ import {
   CheckCircle2,
   Clock,
   Printer,
+  Download,
+  Loader2,
   ShieldCheck,
   Building,
   Calendar,
@@ -136,8 +139,35 @@ export function PortalBudgetDetailDialog({
     }
   };
 
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleDownloadPdf = async () => {
+    const targetBudget = budget || fullBudget;
+    if (!targetBudget) return;
+    setIsDownloadingPdf(true);
+    const filename = `Orcamento_${targetBudget.id.slice(0, 8).toUpperCase()}_v${targetBudget.version || 1}.pdf`;
+    try {
+      const shareToken = (targetBudget as any).shareToken;
+      if (shareToken) {
+        await portalService.downloadBudgetPdf(shareToken, filename);
+      } else {
+        await budgetsService.downloadPdf(targetBudget.id, filename);
+      }
+      toast.success('Download do orçamento concluído!');
+    } catch (err: any) {
+      try {
+        await budgetsService.downloadPdf(targetBudget.id, filename);
+        toast.success('Download do orçamento concluído!');
+      } catch (innerErr: any) {
+        toast.error('Erro ao descarregar PDF da proposta.');
+      }
+    } finally {
+      setIsDownloadingPdf(false);
+    }
   };
 
   const items = fullBudget?.items || (budget.items as any[]) || [];
@@ -176,11 +206,25 @@ export function PortalBudgetDetailDialog({
             <Button
               size="sm"
               variant="outline"
+              onClick={handleDownloadPdf}
+              disabled={isDownloadingPdf}
+              className="rounded-none gap-1.5 text-xs h-8 border-border hover:bg-muted font-medium"
+            >
+              {isDownloadingPdf ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <Download className="h-3.5 w-3.5" />
+              )}
+              Baixar PDF
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
               onClick={handlePrint}
-              className="rounded-none gap-1.5 text-xs h-8 border-border hover:bg-muted"
+              className="rounded-none gap-1.5 text-xs h-8 text-muted-foreground hover:bg-muted"
             >
               <Printer className="h-3.5 w-3.5" />
-              Imprimir / PDF
+              Imprimir
             </Button>
           </div>
         </div>
