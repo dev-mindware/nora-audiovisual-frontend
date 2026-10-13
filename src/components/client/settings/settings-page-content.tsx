@@ -129,7 +129,7 @@ export function SettingsPageContent() {
                 value="guides"
                 className="data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:shadow-none text-xs gap-1.5 py-1.5 px-3 rounded-xs font-medium"
               >
-                <Route className="h-3.5 w-3.5" /> Guias &amp; Tours
+                <Route className="h-3.5 w-3.5" /> Guias &amp; Primeiros Passos
               </TabsTrigger>
             )}
 

@@ -30,13 +30,13 @@ export function GettingStartedCard() {
 
   const required = data.items.filter((item) => !item.optional);
   const requiredDone = required.filter((item) => item.done).length;
-  if (requiredDone === required.length) return null;
+  const allDone = requiredDone === required.length;
 
   const percent = Math.round((requiredDone / required.length) * 100);
   const nextId = required.find((item) => !item.done)?.id;
 
   return (
-    <Card className="gap-0 p-4" data-tour="dashboard-checklist">
+    <Card className="gap-0 p-4" data-tour="settings-checklist">
       <div className="flex flex-wrap items-center justify-between gap-3 pb-3">
         <div className="flex items-center gap-2.5">
           <span className="flex size-8 items-center justify-center rounded-md bg-primary/10 text-primary">
@@ -45,7 +45,9 @@ export function GettingStartedCard() {
           <div>
             <h2 className="text-base font-semibold leading-tight">Primeiros passos</h2>
             <p className="text-xs text-muted-foreground">
-              {requiredDone} de {required.length} concluídos — a produtora fica pronta a receber pedidos.
+              {allDone
+                ? 'Tudo pronto: a produtora já pode receber pedidos e marcações.'
+                : `${requiredDone} de ${required.length} concluídos — a produtora fica pronta a receber pedidos.`}
             </p>
           </div>
         </div>

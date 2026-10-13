@@ -120,12 +120,6 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
     roles: EVERYONE,
     steps: [
       step(
-        "dashboard-checklist",
-        "Primeiros passos",
-        "Aqui vê o que falta para a produtora estar pronta a receber marcações e pedidos. Cada passo tem um guia que o leva lá e mostra o que preencher.",
-        { side: "bottom", optional: true },
-      ),
-      step(
         "dashboard-quick-actions",
         "Atalhos do seu dia a dia",
         "Os botões abrem diretamente o formulário certo: um clique em vez de procurar no menu.",
@@ -156,12 +150,12 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
     title: "Arranque da produtora",
     description: "A ordem recomendada para pôr a produtora a funcionar.",
     group: "setup",
-    route: "/dashboard",
+    route: "/settings?tab=guides",
     priority: 2,
     roles: OWNER_MANAGER,
     steps: [
       step(
-        "dashboard-checklist",
+        "settings-checklist",
         "Uma lista, por ordem",
         "Siga estes passos de cima para baixo. O progresso é calculado a partir do que já existe na produtora: quando cria um serviço, o item fica concluído sozinho.",
         { side: "bottom", optional: true },
@@ -173,10 +167,10 @@ export const onboardingTours: Record<OnboardingTourId, TourDefinition> = {
         { side: "right", align: "start" },
       ),
       step(
-        "dashboard-quick-actions",
-        "Ou vá direto ao assunto",
-        "Os atalhos abrem o formulário de que precisa sem passar pelos menus.",
-        { side: "left", optional: true },
+        "settings-guides",
+        "Repita um guia quando quiser",
+        "Aqui também controla se os guias aparecem sozinhos e pode repor os que já viu.",
+        { side: "top" },
       ),
     ],
   }),

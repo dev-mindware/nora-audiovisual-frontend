@@ -12,6 +12,7 @@ import {
   CardContent,
 } from "@/components";
 import { onboardingTours, type OnboardingTourId } from "@/constants/onboarding-tours";
+import { GettingStartedCard } from "@/components/client/settings/getting-started-card";
 import { useOnboardingScope } from "@/hooks/onboarding/use-onboarding-tour";
 import { useOnboardingPreferencesStore } from "@/stores";
 import { useOnboardingPreferencesPersistence } from "@/hooks/onboarding/use-onboarding-preferences";
@@ -57,6 +58,10 @@ export function OnboardingPreferences() {
 
   return (
     <div className="space-y-6" data-tour="settings-guides">
+      {(user?.role === "OWNER" || user?.role === "MANAGER" || user?.role === "ADMIN") && (
+        <GettingStartedCard />
+      )}
+
       <Card className="rounded-xs border border-border bg-card p-0 gap-0 shadow-none">
         <CardHeader className="p-5 border-b border-border">
           <CardTitle className="text-base font-semibold text-foreground">Guias Orientados</CardTitle>

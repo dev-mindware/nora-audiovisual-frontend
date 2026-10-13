@@ -13,7 +13,6 @@ import {
   MindgestBarChart,
   MindgestUrgentItems,
   MindgestQuickActions,
-  GettingStartedCard,
 } from '../widgets';
 
 export function ManagerDashboardView() {
@@ -68,8 +67,6 @@ export function ManagerDashboardView() {
       >
         <DashboardPeriodSelect isFetching={isFetching} />
       </TitleList>
-
-      <GettingStartedCard />
 
       <MindgestKpiGrid kpis={data.kpis} />
 
