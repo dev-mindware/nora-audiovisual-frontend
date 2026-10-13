@@ -32,6 +32,12 @@ const STATUS_BADGE: Record<string, { label: string; className: string }> = {
   AGUARDA_CLIENTE: { label: 'Aguardando Cliente', className: 'bg-purple-500/10 text-purple-600 dark:text-purple-400' },
   EM_CAMPO: { label: 'Em Campo', className: 'bg-blue-500/10 text-blue-600 dark:text-blue-400' },
   ACTIVE: { label: 'Ativo', className: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' },
+  ATENCAO: { label: 'Atenção', className: 'bg-red-500/10 text-red-600 dark:text-red-400' },
+  RASCUNHO: { label: 'Rascunho', className: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' },
+  NOVO: { label: 'Novo', className: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' },
+  CONFIRMAR: { label: 'Confirmar', className: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' },
+  PARTIALLY_PAID: { label: 'Parcial', className: 'bg-blue-500/10 text-blue-600 dark:text-blue-400' },
+  PENDING: { label: 'Pendente', className: 'bg-amber-500/10 text-amber-600 dark:text-amber-400' },
 };
 
 export function MindgestUrgentItems({
@@ -62,11 +68,8 @@ export function MindgestUrgentItems({
               className: 'bg-muted text-muted-foreground',
             };
 
-            return (
-              <li
-                key={item.id}
-                className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0"
-              >
+            const content = (
+              <>
                 <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
                   <Icon name={iconName} className="size-4" />
                 </span>
@@ -87,6 +90,21 @@ export function MindgestUrgentItems({
                 >
                   {badge.label}
                 </span>
+              </>
+            );
+
+            return (
+              <li key={item.id}>
+                {item.href ? (
+                  <Link
+                    href={item.href}
+                    className="flex items-center gap-3 py-2.5 rounded-md transition-colors hover:bg-muted/50 -mx-2 px-2"
+                  >
+                    {content}
+                  </Link>
+                ) : (
+                  <div className="flex items-center gap-3 py-2.5">{content}</div>
+                )}
               </li>
             );
           })}

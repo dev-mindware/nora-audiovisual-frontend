@@ -35,6 +35,90 @@ export interface CreateProjectPayload {
   responsibleUserId?: string;
 }
 
+// ---------------------------------------------------------------------------
+// Adaptador entre o modelo de Call Sheet da API (shootingDate, callTime, crew[]) e o da interface.
+// ---------------------------------------------------------------------------
+interface ApiCallSheet {
+  id: string;
+  projectId: string;
+  shootingDate: string;
+  callTime: string;
+  location: string;
+  generalNotes?: string | null;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  project?: { title?: string } | null;
+  crew?: Array<{
+    id: string;
+    roleName: string;
+    callTime: string;
+    contactPhone?: string | null;
+    notes?: string | null;
+  }>;
+}
+
+function fromApiCallSheet(raw: ApiCallSheet): CallSheet {
+  const firstLine = raw.generalNotes?.split('\n')[0]?.trim();
+  return {
+    id: raw.id,
+    projectId: raw.projectId,
+    projectTitle: raw.project?.title,
+    title: firstLine || `Rodagem de ${String(raw.shootingDate).slice(0, 10)}`,
+    shootDate: raw.shootingDate,
+    generalCallTime: raw.callTime,
+    location: raw.location,
+    weatherForecast: null,
+    nearestHospital: null,
+    status: raw.status === 'PUBLISHED' ? 'PUBLISHED' : raw.status === 'DRAFT' ? 'DRAFT' : 'ARCHIVED',
+    crewMembers: (raw.crew ?? []).map((c) => ({
+      id: c.id,
+      name: c.roleName,
+      role: c.roleName,
+      callTime: c.callTime,
+      phone: c.contactPhone ?? undefined,
+      notes: c.notes ?? undefined,
+    })),
+    createdAt: raw.createdAt,
+    updatedAt: raw.updatedAt,
+  };
+}
+
+function toApiCallSheet(
+  projectId: string,
+  data: {
+    title: string;
+    shootDate: string;
+    generalCallTime: string;
+    location: string;
+    weatherForecast?: string;
+    nearestHospital?: string;
+    crewMembers?: Array<{ name: string; role: string; callTime: string; phone?: string }>;
+  },
+) {
+  const notes = [
+    data.title,
+    data.weatherForecast ? `Meteorologia: ${data.weatherForecast}` : '',
+    data.nearestHospital ? `Hospital mais próximo: ${data.nearestHospital}` : '',
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  return {
+    projectId,
+    shootingDate: String(data.shootDate).slice(0, 10),
+    callTime: data.generalCallTime,
+    location: data.location,
+    generalNotes: notes,
+    crew: (data.crewMembers ?? []).map((m) => ({
+      roleName: m.role || m.name,
+      callTime: m.callTime || data.generalCallTime,
+      contactPhone: m.phone,
+      notes: m.name && m.name !== m.role ? m.name : undefined,
+    })),
+  };
+}
+
 export const projectsService = {
   getAll: async (filters: ProjectFilters = {}): Promise<{ data: Project[]; total?: number; meta?: any }> => {
     const res = await api.get('/projects', { params: filters });
@@ -133,12 +217,12 @@ export const projectsService = {
   listCallSheets: async (projectId: string): Promise<CallSheet[]> => {
     const res = await api.get(`/projects/${projectId}/call-sheets`);
     const data = res.data?.data || res.data;
-    return Array.isArray(data) ? data : [];
+    return Array.isArray(data) ? (data as ApiCallSheet[]).map(fromApiCallSheet) : [];
   },
 
   getCallSheet: async (callSheetId: string): Promise<CallSheet> => {
     const res = await api.get(`/call-sheets/${callSheetId}`);
-    return res.data?.data || res.data;
+    return fromApiCallSheet(res.data?.data || res.data);
   },
 
   createCallSheet: async (
@@ -153,18 +237,21 @@ export const projectsService = {
       crewMembers?: Array<{ name: string; role: string; callTime: string; phone?: string }>;
     }
   ): Promise<CallSheet> => {
-    const res = await api.post('/call-sheets', {
-      projectId,
-      ...data,
-    });
-    return res.data?.data || res.data;
+    const res = await api.post('/call-sheets', toApiCallSheet(projectId, data));
+    return fromApiCallSheet(res.data?.data || res.data);
+  },
+
+  /** Rascunho gerado a partir da equipa e do equipamento reservados no projecto (o produtor só revê e publica). */
+  generateCallSheetDraft: async (projectId: string, shootingDate?: string): Promise<CallSheet> => {
+    const res = await api.post(`/projects/${projectId}/call-sheets/draft`, shootingDate ? { shootingDate } : {});
+    return fromApiCallSheet(res.data?.data || res.data);
   },
 
   publishCallSheet: async (
     callSheetId: string,
     data?: { notifyCrew?: boolean; customMessage?: string }
   ): Promise<CallSheet> => {
-    const res = await api.post(`/call-sheets/${callSheetId}/publish`, data || {});
-    return res.data?.data || res.data;
+    const res = await api.post(`/call-sheets/${callSheetId}/publish`, { notifyCrew: data?.notifyCrew ?? true });
+    return fromApiCallSheet(res.data?.data || res.data);
   },
 };

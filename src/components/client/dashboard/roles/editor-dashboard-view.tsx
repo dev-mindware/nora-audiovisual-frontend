@@ -95,17 +95,17 @@ export function EditorDashboardView() {
       <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-3">
         <div>
           <MindgestUrgentItems
-            title="Cortes Aguardando Aprovação"
+            title="Precisa da sua atenção"
             icon="Video"
             items={data.urgentItems}
             href="/deliverables"
             actionLabel="Ver cortes"
-            emptyMessage="Nenhum entregável pendente de aprovação."
+            emptyMessage="Sem cortes à espera do cliente nem alterações por refazer."
           />
         </div>
         <div>
           <MindgestBarChart
-            title="Progresso das Ilhas de Edição"
+            title="Entregáveis por Estado"
             description="Alocação e status das estações de montagem e cor"
             icon="MonitorPlay"
             data={capacityData}

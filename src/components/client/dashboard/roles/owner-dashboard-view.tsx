@@ -89,7 +89,7 @@ export function OwnerDashboardView() {
         </div>
         <div>
           <MindgestDonutChart
-            title="Receita por Segmento"
+            title="Receita por Projecto"
             icon="ChartPie"
             slices={donutSlices}
             centerLabel="Total Kz"
@@ -102,12 +102,12 @@ export function OwnerDashboardView() {
       <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-3">
         <div>
           <MindgestUrgentItems
-            title="Orçamentos em Negociação"
+            title="Precisa da sua atenção"
             icon="FileSpreadsheet"
             items={data.urgentItems}
-            href="/commercial"
+            href="/budgets"
             actionLabel="Ver orçamentos"
-            emptyMessage="Nenhum orçamento pendente de aprovação."
+            emptyMessage="Tudo em dia: sem orçamentos à espera do cliente nem pagamentos por receber."
           />
         </div>
         <div>

@@ -54,6 +54,8 @@ export interface DashboardUrgentItem {
   status: string;
   date?: string;
   type?: 'project' | 'budget' | 'shoot' | 'payment' | 'deliverable' | 'gear';
+  /** Destino ao clicar: leva diretamente ao registo/página onde se resolve a pendência. */
+  href?: string;
 }
 
 export interface DashboardQuickAction {

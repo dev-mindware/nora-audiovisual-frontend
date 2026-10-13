@@ -1,5 +1,6 @@
 'use client';
 
+import { useOpenFromQuery } from '@/hooks/common/use-open-from-query';
 import { useState } from 'react';
 import { useProjects } from '@/hooks/projects';
 import { useDeliverablesList, usePublishDeliverable, useDeliverablesFilters, useDeliverableTypes } from '@/hooks/deliverables';
@@ -83,6 +84,7 @@ export function DeliverablesPageContent() {
   } = useDeliverablesFilters();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  useOpenFromQuery('new', { '1': () => setIsModalOpen(true) });
   const [isTypesModalOpen, setIsTypesModalOpen] = useState(false);
   const [activeReviewDeliverable, setActiveReviewDeliverable] = useState<Deliverable | null>(null);
   const [feedbackDeliverable, setFeedbackDeliverable] = useState<Deliverable | null>(null);

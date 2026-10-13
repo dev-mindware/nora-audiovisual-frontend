@@ -173,6 +173,9 @@ export function RecordPaymentModal({
             options={PAYMENT_STATUSES}
           />
         </div>
+        <p className="text-xs text-muted-foreground -mt-1">
+          Ao registar como pago, o evento fica disponível para as automações e, com o Mindgest ligado, o pedido de factura é criado automaticamente.
+        </p>
 
         {/* Valor com Formatação Monetária AOA */}
         <RHFInputCurrency

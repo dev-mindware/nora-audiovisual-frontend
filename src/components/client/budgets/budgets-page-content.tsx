@@ -1,5 +1,6 @@
 'use client';
 
+import { useOpenFromQuery } from '@/hooks/common/use-open-from-query';
 import { useMemo, useState } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import {
@@ -48,6 +49,7 @@ const SORT_OPTIONS: SortOption[] = [
 
 export function BudgetsPageContent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  useOpenFromQuery('new', { '1': () => setIsModalOpen(true) });
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
   const [selectedBudgetForInvoice, setSelectedBudgetForInvoice] = useState<Budget | null>(null);
 

@@ -41,6 +41,22 @@ export function useCreateWorkflow() {
   });
 }
 
+export function useInstallStarterTemplates() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => automateService.installStarterTemplates(),
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: AUTOMATE_QUERY_KEY });
+      SucessMessage(
+        result.installed > 0
+          ? `${result.installed} automações recomendadas instaladas.`
+          : 'As automações recomendadas já estavam instaladas.',
+      );
+    },
+    onError: (err) => ErrorMessage(getApiErrorMessage(err, 'Erro ao instalar as automações recomendadas.')),
+  });
+}
+
 export function useDeleteWorkflow() {
   const queryClient = useQueryClient();
   return useMutation({

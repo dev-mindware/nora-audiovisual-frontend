@@ -24,6 +24,7 @@ import {
   useWorkflowExecutions,
   useToggleWorkflow,
   useDeleteWorkflow,
+  useInstallStarterTemplates,
   useTestWorkflow,
   useExecuteWorkflow,
 } from '@/hooks/automate';
@@ -71,6 +72,7 @@ export function AutomatePageContent() {
   const { data: executions = [], isFetching, refetch } = useWorkflowExecutions();
   const { mutate: toggle, isPending: isToggling } = useToggleWorkflow();
   const { mutate: remove } = useDeleteWorkflow();
+  const { mutate: installTemplates, isPending: isInstalling } = useInstallStarterTemplates();
   const { mutateAsync: test, isPending: isTesting } = useTestWorkflow();
   const { mutate: execute, isPending: isExecuting } = useExecuteWorkflow();
 

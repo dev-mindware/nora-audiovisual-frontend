@@ -75,6 +75,12 @@ export const automateService = {
     return unwrap<WorkflowItem>(res);
   },
 
+  /** Instala as automações recomendadas (idempotente). */
+  installStarterTemplates: async (): Promise<{ installed: number; alreadyPresent: number }> => {
+    const res = await api.post('/automations/templates/install', {});
+    return unwrap<{ installed: number; alreadyPresent: number }>(res);
+  },
+
   deleteWorkflow: async (id: string) => {
     const res = await api.delete(`/automations/${id}`);
     return unwrap(res);

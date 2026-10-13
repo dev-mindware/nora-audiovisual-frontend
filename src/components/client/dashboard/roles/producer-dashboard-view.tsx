@@ -97,12 +97,12 @@ export function ProducerDashboardView() {
       <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-3">
         <div>
           <MindgestUrgentItems
-            title="Próximas Diárias & Rodagens"
+            title="Precisa da sua atenção"
             icon="Calendar"
             items={data.urgentItems}
-            href="/studio"
-            actionLabel="Ver agenda"
-            emptyMessage="Nenhuma diária marcada para breve."
+            href="/projects"
+            actionLabel="Ver projectos"
+            emptyMessage="Sem call sheets por publicar nem projectos novos para organizar."
           />
         </div>
         <div>

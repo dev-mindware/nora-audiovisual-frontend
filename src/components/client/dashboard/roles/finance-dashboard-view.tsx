@@ -97,12 +97,12 @@ export function FinanceDashboardView() {
       <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-3">
         <div>
           <MindgestUrgentItems
-            title="Faturas & Pagamentos Pendentes"
+            title="Precisa da sua atenção"
             icon="Receipt"
             items={data.urgentItems}
-            href="/invoicing"
-            actionLabel="Ver faturas"
-            emptyMessage="Nenhuma fatura em aberto no período."
+            href="/finance"
+            actionLabel="Ver financeiro"
+            emptyMessage="Tudo em dia: sem pagamentos por confirmar nem pedidos de factura com problema."
           />
         </div>
         <div>

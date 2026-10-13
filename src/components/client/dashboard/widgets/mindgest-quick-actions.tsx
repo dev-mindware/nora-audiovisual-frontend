@@ -25,7 +25,7 @@ export function MindgestQuickActions({
           Nenhuma ação rápida disponível.
         </p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 py-1">
+        <div className="grid grid-cols-1 gap-2 py-1">
           {actions.map((act) => {
             const iconName = (act.icon as keyof typeof icons) || 'ArrowRight';
             const isPrimary = act.variant === 'default';

@@ -1,5 +1,6 @@
 'use client';
 
+import { useOpenFromQuery } from '@/hooks/common/use-open-from-query';
 import { useState, useMemo } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import {
@@ -66,6 +67,10 @@ export function FinancePageContent() {
   const [activeTab, setActiveTab] = useState<'expenses' | 'payments' | 'cashflow'>('expenses');
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  useOpenFromQuery('new', {
+    payment: () => setIsPaymentModalOpen(true),
+    expense: () => setIsExpenseModalOpen(true),
+  });
 
   // Filters
   const [expenseStatusFilter, setExpenseStatusFilter] = useState<string>('ALL');

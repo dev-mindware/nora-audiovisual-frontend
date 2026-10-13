@@ -7,6 +7,7 @@ import {
   useProject,
   useProjectMembers,
   useProjectCallSheets,
+  useGenerateCallSheetDraft,
   useProjectKanban,
   useRemoveProjectMember,
 } from '@/hooks/projects';
@@ -85,6 +86,7 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
   const { data: project } = useProject(projectId);
   const { data: members = [] } = useProjectMembers(projectId);
   const { data: callSheets = [] } = useProjectCallSheets(projectId);
+  const { mutateAsync: generateDraft, isPending: isGeneratingDraft } = useGenerateCallSheetDraft(projectId);
   const { data: deliverables = [] } = useProjectDeliverables(projectId);
   const { data: kanbanData } = useProjectKanban(projectId);
   const { mutateAsync: removeMember } = useRemoveProjectMember(projectId);
@@ -365,12 +367,28 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
         <div className="flex flex-wrap items-center gap-2 shrink-0">
           <Button
             size="sm"
+            disabled={isGeneratingDraft}
+            onClick={async () => {
+              try {
+                const draft = await generateDraft(undefined);
+                setSelectedCallSheet(draft);
+                setIsCallSheetModalOpen(true);
+              } catch {
+                // toast tratado no hook
+              }
+            }}
+          >
+            <Plus className="mr-1.5 h-3.5 w-3.5" /> Gerar Call Sheet
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
             onClick={() => {
               setSelectedCallSheet(null);
               setIsCallSheetModalOpen(true);
             }}
           >
-            <Plus className="mr-1.5 h-3.5 w-3.5" /> Nova Call Sheet
+            Nova em branco
           </Button>
           <Button
             size="sm"

@@ -95,12 +95,12 @@ export function CrewDashboardView() {
       <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-3">
         <div>
           <MindgestUrgentItems
-            title="Material em Filmagem / Campo"
+            title="Precisa da sua atenção"
             icon="Camera"
             items={data.urgentItems}
             href="/equipment"
             actionLabel="Ver armazém"
-            emptyMessage="Nenhum equipamento em campo atualmente."
+            emptyMessage="Sem presenças por confirmar nem equipamento consigo neste momento."
           />
         </div>
         <div>

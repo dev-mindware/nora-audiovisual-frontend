@@ -1,5 +1,6 @@
 'use client';
 
+import { useOpenFromQuery } from '@/hooks/common/use-open-from-query';
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -58,6 +59,7 @@ const SORT_OPTIONS: SortOption[] = [
 export function ProjectsPageContent() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  useOpenFromQuery('new', { '1': () => setIsModalOpen(true) });
   const {
     filters,
     search,

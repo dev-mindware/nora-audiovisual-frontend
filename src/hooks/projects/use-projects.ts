@@ -170,6 +170,20 @@ export function useCreateCallSheet(projectId: string) {
   });
 }
 
+export function useGenerateCallSheetDraft(projectId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (shootingDate?: string) => projectsService.generateCallSheetDraft(projectId, shootingDate),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [...PROJECTS_QUERY_KEY, 'call-sheets', projectId] });
+      SucessMessage('Rascunho gerado com a equipa e o equipamento do projecto. Reveja e publique.');
+    },
+    onError: (err) => {
+      ErrorMessage(getApiErrorMessage(err, 'Falha ao gerar o rascunho da Call Sheet.'));
+    },
+  });
+}
+
 export function usePublishCallSheet(projectId: string) {
   const queryClient = useQueryClient();
   return useMutation({

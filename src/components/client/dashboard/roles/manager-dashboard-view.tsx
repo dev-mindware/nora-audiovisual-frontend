@@ -44,7 +44,7 @@ export function ManagerDashboardView() {
 
   const areaSeries = [
     { key: 'occupancy', label: 'Taxa de Ocupação (%)', color: 'var(--primary)' },
-    { key: 'revenue', label: 'Receita de Locação', color: '#10b981' },
+    { key: 'revenue', label: 'Receita (pagamentos recebidos)', color: '#10b981' },
   ];
 
   const donutSlices = (data.charts.distribution || []).map((d, idx) => ({
@@ -85,7 +85,7 @@ export function ManagerDashboardView() {
         </div>
         <div>
           <MindgestDonutChart
-            title="Sessões por Tipo"
+            title="Marcações por Estado"
             icon="ChartPie"
             slices={donutSlices}
             centerLabel="Sessões"
@@ -97,12 +97,12 @@ export function ManagerDashboardView() {
       <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-3">
         <div>
           <MindgestUrgentItems
-            title="Reservas da Semana"
+            title="Precisa da sua atenção"
             icon="Calendar"
             items={data.urgentItems}
-            href="/studio"
-            actionLabel="Ver estúdio"
-            emptyMessage="Nenhuma reserva agendada para os próximos dias."
+            href="/projects"
+            actionLabel="Ver projectos"
+            emptyMessage="Sem projectos novos por organizar nem rodagens em curso."
           />
         </div>
         <div>

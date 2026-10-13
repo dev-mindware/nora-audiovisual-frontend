@@ -67,7 +67,7 @@ export function MindgestBarChart({
         >
           <BarChart
             data={data}
-            margin={{ top: 10, right: 12, left: -10, bottom: 0 }}
+            margin={{ top: 10, right: 12, left: 0, bottom: 0 }}
           >
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis
@@ -79,9 +79,12 @@ export function MindgestBarChart({
             <YAxis
               tickLine={false}
               axisLine={false}
-              width={35}
+              width={40}
               tickMargin={4}
               allowDecimals={false}
+              tickFormatter={(v: number) =>
+                v >= 1_000_000 ? `${+(v / 1_000_000).toFixed(1)}M` : v >= 1_000 ? `${+(v / 1_000).toFixed(1)}k` : String(v)
+              }
             />
             <ChartTooltip
               cursor={{ fill: 'rgba(0,0,0,0.04)' }}
