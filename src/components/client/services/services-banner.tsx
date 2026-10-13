@@ -19,7 +19,7 @@ export function ServicesCatalogBanner({ orgSlug }: ServicesBannerProps) {
   };
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xs border border-primary/20 bg-primary/5">
+    <div data-tour="services-banner" className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xs border border-primary/20 bg-primary/5">
       <div className="flex items-center gap-2.5">
         <div className="p-2 rounded-xs bg-primary/10 text-primary shrink-0">
           <Globe className="h-4 w-4" />

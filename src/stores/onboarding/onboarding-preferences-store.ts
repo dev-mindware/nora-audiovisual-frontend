@@ -139,7 +139,7 @@ export const useOnboardingPreferencesStore =
           })),
       }),
       {
-        name: "mindgest-onboarding-preferences",
+        name: "nora-onboarding-preferences",
         version: 1,
       },
     ),

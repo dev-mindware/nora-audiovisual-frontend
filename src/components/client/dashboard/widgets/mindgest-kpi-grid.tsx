@@ -21,7 +21,7 @@ export function MindgestKpiGrid({ kpis }: MindgestKpiGridProps) {
   const entries = Object.entries(kpis || {});
 
   return (
-    <div className="grid grid-cols-2 gap-2.5 sm:gap-3 md:gap-4 lg:grid-cols-4">
+    <div data-tour="dashboard-kpis" className="grid grid-cols-2 gap-2.5 sm:gap-3 md:gap-4 lg:grid-cols-4">
       {entries.slice(0, 4).map(([key, item], idx) => {
         let formattedValue: string = item.value?.toString() ?? '0';
         if (item.format === 'currency') {

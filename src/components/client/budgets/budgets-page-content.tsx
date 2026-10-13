@@ -217,7 +217,7 @@ export function BudgetsPageContent() {
   };
 
   return (
-    <div className="mt-6 space-y-6">
+    <div className="mt-6 space-y-6" data-tour="budgets-table">
       {/* UniversalTable Unificada - Barra Única sem Repetições */}
       <UniversalTable<Budget>
         data={budgets}
@@ -263,6 +263,7 @@ export function BudgetsPageContent() {
         toolbar={{
           actions: (
             <Button
+              data-tour="budgets-create"
               onClick={() => setIsModalOpen(true)}
               size="sm"
               className="h-10 sm:h-9 min-h-[44px] sm:min-h-0 text-xs gap-1.5 shrink-0 rounded-none px-3.5"

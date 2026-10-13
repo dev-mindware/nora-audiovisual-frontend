@@ -10,6 +10,8 @@ interface OverviewSectionCardProps {
     href?: string;
     actionLabel?: string;
     className?: string;
+    /** Âncora dos guias (`data-tour`). */
+    dataTour?: string;
     children: React.ReactNode;
 }
 
@@ -23,10 +25,11 @@ export function OverviewSectionCard({
     href,
     actionLabel = "Ver todos",
     className,
+    dataTour,
     children,
 }: OverviewSectionCardProps) {
     return (
-        <Card className={cn("flex flex-col h-full gap-0 py-4", className)}>
+        <Card data-tour={dataTour} className={cn("flex flex-col h-full gap-0 py-4", className)}>
             <CardHeader className="flex flex-row items-center justify-between gap-2 px-4 pb-3">
                 <CardTitle className="flex items-center gap-2 text-base font-semibold">
                     <span className="flex size-8 items-center justify-center rounded-md bg-primary/10 text-primary">

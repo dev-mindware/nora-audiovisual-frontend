@@ -10,7 +10,8 @@ import {
 } from '@/hooks/studio';
 import { Button } from '@/components';
 import { FilterPopover } from '@/components/shared';
-import { StudioResource, StudioResourceType } from '@/types';
+import { StudioResource } from '@/types';
+import { useOpenFromQuery } from '@/hooks/common/use-open-from-query';
 import { StudioBookingModal } from './booking-modal';
 import { StudioResourceModal } from './studio-resource-modal';
 import { StudioResourceCard } from './studio-resource-card';
@@ -31,57 +32,16 @@ const BOOKING_STATUS_OPTIONS = [
   { value: 'CANCELLED', label: 'Cancelado' },
 ];
 
-const DEFAULT_RESOURCES: StudioResource[] = [
-  {
-    id: 'stage-1',
-    organizationId: 'demo',
-    name: 'Palco Central Nora (Soundstage)',
-    type: 'MAIN_STAGE' as StudioResourceType,
-    capacity: 35,
-    hourlyRate: 45000,
-    dailyRate: 350000,
-    status: 'AVAILABLE',
-    description: '300m² climatizado com grelha de iluminação DMX e isolamento acústico.',
-  },
-  {
-    id: 'cyclo-1',
-    organizationId: 'demo',
-    name: 'Ciclorama Verde / Branco 12m',
-    type: 'CYCLORAMA' as StudioResourceType,
-    capacity: 15,
-    hourlyRate: 30000,
-    dailyRate: 220000,
-    status: 'AVAILABLE',
-    description: 'Ciclorama em curva de 3 lados ideal para publicidade e efeitos VFX.',
-  },
-  {
-    id: 'booth-1',
-    organizationId: 'demo',
-    name: 'Cabine de Dobragem & ADR',
-    type: 'SOUND_BOOTH' as StudioResourceType,
-    capacity: 4,
-    hourlyRate: 18000,
-    dailyRate: 120000,
-    status: 'AVAILABLE',
-    description: 'Cabine com microfones Neumann e acoplamento direto à ilha ProTools.',
-  },
-  {
-    id: 'suite-1',
-    organizationId: 'demo',
-    name: 'Ilha Master de Gradação & Som',
-    type: 'EDIT_SUITE' as StudioResourceType,
-    capacity: 6,
-    hourlyRate: 25000,
-    dailyRate: 180000,
-    status: 'AVAILABLE',
-    description: 'Monitores calibrados OLED 4K com DaVinci Resolve Studio.',
-  },
-];
-
 export function StudioPageContent() {
   const [selectedResource, setSelectedResource] = useState<StudioResource | null>(null);
   const [isResourceModalOpen, setIsResourceModalOpen] = useState(false);
   const [editingResource, setEditingResource] = useState<StudioResource | null>(null);
+  useOpenFromQuery('new', {
+    '1': () => {
+      setEditingResource(null);
+      setIsResourceModalOpen(true);
+    },
+  });
 
   const {
     resourceType,
@@ -96,10 +56,7 @@ export function StudioPageContent() {
   const { mutate: cancelBooking } = useCancelStudioBooking();
   const { mutate: deleteResource } = useDeleteStudioResource();
 
-  const sourceResources = useMemo(() => {
-    if (dbResources && dbResources.length > 0) return dbResources;
-    return DEFAULT_RESOURCES;
-  }, [dbResources]);
+  const sourceResources = useMemo(() => dbResources ?? [], [dbResources]);
 
   const resources = useMemo(() => {
     if (!resourceType) return sourceResources;
@@ -114,7 +71,7 @@ export function StudioPageContent() {
 
   const stats = useMemo(() => {
     const totalSets = sourceResources.length;
-    const availableSets = sourceResources.filter((r) => r.status === 'AVAILABLE').length;
+    const availableSets = sourceResources.filter((r) => r.status === 'AVAILABLE' || (r.status as string) === 'ACTIVE').length;
     const activeBookings = (dbBookings || []).filter((b) => b.status === 'CONFIRMED').length;
     const totalCapacity = sourceResources.reduce((acc, r) => acc + (r.capacity || 0), 0);
     return { totalSets, availableSets, activeBookings, totalCapacity };
@@ -129,12 +86,14 @@ export function StudioPageContent() {
   return (
     <div className="space-y-6">
       {/* 4 Cards de Métricas Padronizados */}
+      <div data-tour="studio-metrics">
       <StudioMetrics
         totalSets={stats.totalSets}
         availableSets={stats.availableSets}
         activeBookings={stats.activeBookings}
         totalCapacity={stats.totalCapacity}
       />
+      </div>
 
       {/* Grid de Espaços / Recursos */}
       <div className="space-y-3">
@@ -147,7 +106,7 @@ export function StudioPageContent() {
               Configurações acústicas, cicloramas e equipamentos dedicados por set
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2" data-tour="studio-actions">
             <FilterPopover
               icon="Tag"
               label="Tipo de Espaço"
@@ -167,6 +126,7 @@ export function StudioPageContent() {
             )}
 
             <Button
+              data-tour="studio-create"
               onClick={() => {
                 setEditingResource(null);
                 setIsResourceModalOpen(true);
@@ -179,10 +139,27 @@ export function StudioPageContent() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4" data-tour="studio-resources">
           {loadingResources ? (
-            <div className="col-span-4 py-12 text-center text-xs text-muted-foreground border border-border/50 bg-card rounded-xs">
+            <div className="col-span-full py-12 text-center text-xs text-muted-foreground border border-border/50 bg-card rounded-xs">
               A carregar espaços do estúdio...
+            </div>
+          ) : resources.length === 0 ? (
+            <div className="col-span-full rounded-xs border border-dashed border-border bg-card py-12 text-center">
+              <p className="text-sm font-medium text-foreground">Ainda não tem espaços no estúdio</p>
+              <p className="mx-auto mt-1 max-w-md text-xs text-muted-foreground">
+                Crie o primeiro set e defina os dias e horas em que os clientes podem marcar sessões.
+              </p>
+              <Button
+                size="sm"
+                className="mt-4 h-9 gap-1.5 rounded-xs px-3.5 text-xs font-medium uppercase tracking-wide"
+                onClick={() => {
+                  setEditingResource(null);
+                  setIsResourceModalOpen(true);
+                }}
+              >
+                <Plus className="h-3.5 w-3.5" /> Criar o primeiro espaço
+              </Button>
             </div>
           ) : (
             resources.map((res) => (
@@ -233,7 +210,7 @@ export function StudioPageContent() {
           </div>
         </div>
 
-        <div className="rounded-xs border border-border/70 bg-card overflow-hidden shadow-xs">
+        <div className="rounded-xs border border-border/70 bg-card overflow-hidden shadow-xs" data-tour="studio-bookings">
           {loadingBookings ? (
             <div className="py-12 text-center text-xs text-muted-foreground">
               A consultar disponibilidade da agenda...

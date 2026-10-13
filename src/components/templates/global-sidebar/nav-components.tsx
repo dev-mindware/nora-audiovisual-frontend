@@ -18,6 +18,10 @@ import { useState, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { MenuItem } from "@/constants/menu-items";
 
+/** Âncora estável para os guias: "/studio" -> "nav-studio". */
+const navTourId = (url: string) =>
+  `nav-${url.replace(/^\//, "").replace(/[^a-z0-9]+/gi, "-") || "home"}`;
+
 export function NavMenu({ items }: { items: MenuItem[] }) {
   const pathname = usePathname();
   const { isMobile, setOpenMobile } = useSidebar();
@@ -110,6 +114,7 @@ export function NavMenu({ items }: { items: MenuItem[] }) {
                               >
                                 <Link
                                   href={sub.url}
+                                  data-tour={navTourId(sub.url)}
                                   onClick={handleMobileClick}
                                   className="flex items-center justify-between w-full gap-2"
                                 >
@@ -155,7 +160,7 @@ export function NavMenu({ items }: { items: MenuItem[] }) {
                           : "hover:bg-sidebar-accent "
                       )}
                     >
-                      <Link href={item.url}>
+                      <Link href={item.url} data-tour={navTourId(item.url)}>
                         {item.icon}
                         <span>{item.name}</span>
                       </Link>

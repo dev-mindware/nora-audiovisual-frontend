@@ -5,7 +5,7 @@ import { AutomatePageContent } from '@/components/client/automate/automate-page-
 export default function AutomatePage() {
   return (
     <Suspense>
-      <PageWrapper subRoute="Nora Automate" routeLabel="Nora Suite">
+      <PageWrapper subRoute="Nora Automate" routeLabel="Nora Suite" onboardingTourId="automate">
         <TitleList
           title="Nora Automate"
           suTitle="Automações comerciais, follow-up de orçamentos e notificações operacionais da produtora"

@@ -12,20 +12,15 @@ import {
   CardContent,
 } from "@/components";
 import { onboardingTours, type OnboardingTourId } from "@/constants/onboarding-tours";
-import { useAuth } from "@/hooks/auth";
+import { useOnboardingScope } from "@/hooks/onboarding/use-onboarding-tour";
 import { useOnboardingPreferencesStore } from "@/stores";
 import { useOnboardingPreferencesPersistence } from "@/hooks/onboarding/use-onboarding-preferences";
 
-function getOnboardingScope(userId?: string, companyId?: string) {
-  return [companyId || "company", userId || "user"].join(":");
-}
-
 export function OnboardingPreferences() {
-  const { user } = useAuth();
-  const scope = getOnboardingScope(user?.id, user?.company?.id);
+  const { user, organizationId, scope } = useOnboardingScope();
   const persistence = useOnboardingPreferencesPersistence(
     scope,
-    Boolean(user?.id && user?.company?.id),
+    Boolean(user?.id && organizationId),
   );
   const scopedPreferences = useOnboardingPreferencesStore(
     (state) => state.preferencesByScope[scope],
@@ -61,10 +56,10 @@ export function OnboardingPreferences() {
     .sort((a, b) => a.priority - b.priority || a.title.localeCompare(b.title));
 
   return (
-    <div className="space-y-6" data-tour="setup-guides-content">
+    <div className="space-y-6" data-tour="settings-guides">
       <Card className="rounded-xs border border-border bg-card p-0 gap-0 shadow-none">
         <CardHeader className="p-5 border-b border-border">
-          <CardTitle className="text-base font-semibold text-foreground">Guias &amp; Tours Orientados</CardTitle>
+          <CardTitle className="text-base font-semibold text-foreground">Guias Orientados</CardTitle>
           <CardDescription className="text-xs text-muted-foreground">
             Defina quando os tutoriais interativos devem aparecer e repita-os sempre que necessário.
           </CardDescription>
@@ -167,7 +162,7 @@ export function OnboardingPreferences() {
                     <div className="min-w-0">
                       <p className="truncate text-xs font-medium text-foreground">{tour.title}</p>
                       <p className="text-[10px] text-muted-foreground">
-                        {tour.status === "completed" ? "Concluído" : "Ignorado"} • {tour.group}
+                        {tour.status === "completed" ? "Concluído" : "Ignorado"}
                       </p>
                     </div>
 

@@ -5,7 +5,7 @@ import { DeliverablesPageContent } from '@/components/client';
 export default function DeliverablesPage() {
   return (
     <Suspense>
-      <PageWrapper subRoute="Entregáveis & Copiões" routeLabel="Pós-Produção">
+      <PageWrapper subRoute="Entregáveis & Copiões" routeLabel="Pós-Produção" onboardingTourId="deliverables">
         <TitleList
           title="Entregáveis & Copiões"
           suTitle="Gestão de versões de copião, aprovação do cliente e notas frame-a-frame"

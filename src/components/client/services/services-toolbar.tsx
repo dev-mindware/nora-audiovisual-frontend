@@ -89,6 +89,7 @@ export function ServicesToolbar({
         </div>
 
         <Button
+          data-tour="services-categories"
           variant="outline"
           size="sm"
           onClick={onOpenManageCategories}
@@ -99,6 +100,7 @@ export function ServicesToolbar({
         </Button>
 
         <Button
+          data-tour="services-create"
           onClick={onOpenCreate}
           size="sm"
           className="text-xs h-8 gap-1.5 rounded-xs bg-primary text-primary-foreground hover:bg-primary/90"

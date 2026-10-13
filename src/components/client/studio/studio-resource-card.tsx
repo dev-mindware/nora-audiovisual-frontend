@@ -13,7 +13,9 @@ import {
   Pencil,
   Trash2,
   MoreVertical,
+  AlertTriangle,
 } from 'lucide-react';
+import { hasOpeningHours, summarizeOpeningHours } from '@/lib/opening-hours';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -144,6 +146,24 @@ export function StudioResourceCard({
                 : '—'}
             </span>
           </div>
+        </div>
+
+        {/* Disponibilidade para marcações dos clientes */}
+        <div data-tour="studio-hours-summary">
+          {hasOpeningHours(resource.openingHours) ? (
+            <p className="flex items-start gap-1.5 text-[11px] text-muted-foreground">
+              <Clock className="mt-0.5 h-3 w-3 shrink-0" />
+              <span>{summarizeOpeningHours(resource.openingHours)}</span>
+            </p>
+          ) : (
+            <button
+              type="button"
+              onClick={() => onEdit(resource)}
+              className="flex items-center gap-1.5 text-[11px] font-medium text-amber-600 hover:underline dark:text-amber-400"
+            >
+              <AlertTriangle className="h-3 w-3" /> Sem horário definido — definir disponibilidade
+            </button>
+          )}
         </div>
       </div>
 

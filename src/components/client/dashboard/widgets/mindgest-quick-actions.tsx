@@ -19,7 +19,7 @@ export function MindgestQuickActions({
   actions,
 }: MindgestQuickActionsProps) {
   return (
-    <OverviewSectionCard title={title} icon={icon}>
+    <OverviewSectionCard title={title} icon={icon} dataTour="dashboard-quick-actions">
       {actions.length === 0 ? (
         <p className="py-6 text-center text-sm text-muted-foreground">
           Nenhuma ação rápida disponível.

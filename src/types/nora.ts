@@ -229,6 +229,11 @@ export type StudioResourceType =
   | 'CYCLORAMA'
   | 'EDIT_SUITE';
 
+export type WeekdayKey = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
+
+/** Janelas de funcionamento semanais ("HH:mm"); dia ausente ou vazio = fechado. */
+export type OpeningHours = Partial<Record<WeekdayKey, Array<[string, string]>>>;
+
 export interface StudioResource {
   id: string;
   organizationId: string;
@@ -240,6 +245,8 @@ export interface StudioResource {
   capacity?: number | null;
   description?: string | null;
   status: 'AVAILABLE' | 'BOOKED' | 'MAINTENANCE';
+  openingHours?: OpeningHours | null;
+  timezone?: string | null;
 }
 
 export interface StudioBooking {

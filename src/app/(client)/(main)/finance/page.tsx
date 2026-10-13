@@ -5,7 +5,7 @@ import { FinancePageContent } from '@/components/client';
 export default function FinancePage() {
   return (
     <Suspense>
-      <PageWrapper subRoute="Tesouraria & Despesas" routeLabel="Financeiro">
+      <PageWrapper subRoute="Tesouraria & Despesas" routeLabel="Financeiro" onboardingTourId="finance">
         <TitleList
           title="Finanças & Despesas"
           suTitle="Controlo de despesas de rodagem, recebimentos e fluxo de caixa da produtora"

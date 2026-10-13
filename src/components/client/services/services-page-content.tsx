@@ -9,6 +9,7 @@ import {
 } from '@/hooks/services';
 import { useCategories } from '@/hooks/categories';
 import { CatalogService } from '@/types';
+import { useOpenFromQuery } from '@/hooks/common/use-open-from-query';
 import { useTenantStore } from '@/stores/tenant/tenant-store';
 
 import { ServiceModal } from './service-modal';
@@ -30,6 +31,7 @@ export function ServicesPageContent() {
   const [selectedServiceToEdit, setSelectedServiceToEdit] =
     useState<CatalogService | null>(null);
 
+  useOpenFromQuery('new', { '1': () => { setSelectedServiceToEdit(null); setIsModalOpen(true); } });
   const { data: dbCategories = [] } = useCategories('SERVICE');
 
   const [search, setSearch] = useState('');
@@ -153,12 +155,14 @@ export function ServicesPageContent() {
       <ServicesCatalogBanner orgSlug={orgSlug} />
 
       {/* 4 Cards de Métricas */}
+      <div data-tour="services-metrics">
       <ServicesMetrics
         totalServices={totalServices}
         activeServices={activeServices}
         avgPrice={avgPrice}
         categoriesCount={categoriesCount}
       />
+      </div>
 
       {/* Toolbar Unificada com Pesquisa, Filtros e Ações */}
       <ServicesToolbar

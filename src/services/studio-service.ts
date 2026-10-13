@@ -1,5 +1,5 @@
 import { api } from './api';
-import { StudioResource, StudioBooking, StudioResourceType } from '@/types';
+import { StudioResource, StudioBooking, StudioResourceType, OpeningHours } from '@/types';
 
 export interface CreateStudioBookingPayload {
   resourceId: string;
@@ -16,6 +16,8 @@ export interface CreateStudioResourcePayload {
   dailyRate?: number;
   capacity?: number;
   description?: string;
+  openingHours?: OpeningHours;
+  timezone?: string;
 }
 
 export const studioService = {

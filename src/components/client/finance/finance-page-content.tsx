@@ -353,6 +353,7 @@ export function FinancePageContent() {
 
         <div className="flex items-center gap-2.5">
           <Button
+            data-tour="finance-payment"
             size="sm"
             variant="outline"
             onClick={() => setIsPaymentModalOpen(true)}
@@ -363,6 +364,7 @@ export function FinancePageContent() {
           </Button>
 
           <Button
+            data-tour="finance-expense"
             size="sm"
             onClick={() => setIsExpenseModalOpen(true)}
             className="rounded-none text-xs h-9 gap-1.5 font-medium"
@@ -404,7 +406,7 @@ export function FinancePageContent() {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-border text-xs font-medium">
+      <div className="flex border-b border-border text-xs font-medium" data-tour="finance-tabs">
         <button
           onClick={() => setActiveTab('expenses')}
           className={`px-4 py-2.5 border-b-2 transition-colors flex items-center gap-2 ${

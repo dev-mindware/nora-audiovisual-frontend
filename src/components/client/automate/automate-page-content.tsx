@@ -93,7 +93,7 @@ export function AutomatePageContent() {
   return (
     <div className="space-y-6">
       {/* 4 Cards KPI Grid (2x2 no mobile, 4 em desktop conforme nextjs-responsive-ui) */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4" data-tour="automate-metrics">
         <Card className="p-4 gap-1 rounded-none border-border shadow-xs">
           <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider flex items-center justify-between">
             Total de Fluxos
@@ -177,6 +177,7 @@ export function AutomatePageContent() {
         </div>
 
         <Button
+          data-tour="automate-create"
           onClick={() => {
             if (!canUseAutomate) {
               if (isExpired) {

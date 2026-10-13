@@ -13,6 +13,7 @@ import {
   MindgestBarChart,
   MindgestUrgentItems,
   MindgestQuickActions,
+  GettingStartedCard,
 } from '../widgets';
 
 export function OwnerDashboardView() {
@@ -71,6 +72,8 @@ export function OwnerDashboardView() {
       </TitleList>
 
       {/* 2. 4 Cartões KPI no Padrão Mindgest */}
+      <GettingStartedCard />
+
       <MindgestKpiGrid kpis={data.kpis} />
 
       {/* 4. Linha 1 de Gráficos (Evolução Financeira DRE + Donut de Linhas de Negócio) */}

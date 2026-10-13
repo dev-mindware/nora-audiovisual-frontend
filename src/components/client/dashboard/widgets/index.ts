@@ -9,3 +9,4 @@ export * from './mindgest-urgent-items';
 export * from './mindgest-quick-actions';
 export * from './mindgest-kpi-grid';
 export * from './dashboard-period-select';
+export * from './getting-started-card';

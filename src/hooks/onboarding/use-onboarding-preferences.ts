@@ -16,8 +16,8 @@ import {
 import { useOnboardingPreferencesStore } from "@/stores";
 
 const ONBOARDING_QUERY_KEY = ["onboarding-preferences"] as const;
-const PENDING_TOUR_UPDATES_KEY = "mindgest-pending-onboarding-tour-updates";
-const PENDING_TOUR_RESETS_KEY = "mindgest-pending-onboarding-tour-resets";
+const PENDING_TOUR_UPDATES_KEY = "nora-pending-onboarding-tour-updates";
+const PENDING_TOUR_RESETS_KEY = "nora-pending-onboarding-tour-resets";
 
 type PendingTourUpdate = {
   scope: string;

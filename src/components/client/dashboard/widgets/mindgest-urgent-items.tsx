@@ -50,6 +50,7 @@ export function MindgestUrgentItems({
 }: MindgestUrgentItemsProps) {
   return (
     <OverviewSectionCard
+      dataTour="dashboard-urgent"
       title={title}
       icon={icon}
       href={href}

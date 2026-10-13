@@ -5,7 +5,7 @@ import { ServicesPageContent } from '@/components/client';
 export default function ServicesPage() {
   return (
     <Suspense>
-      <PageWrapper subRoute="Serviços" routeLabel="Comercial">
+      <PageWrapper subRoute="Serviços" routeLabel="Comercial" onboardingTourId="services">
         <TitleList
           title="Catálogo de Serviços"
           suTitle="Pacotes padronizados, propostas automáticas e serviços disponíveis para solicitação no Portal"

@@ -206,6 +206,7 @@ export function ServiceModal({
             </Button>
             <ButtonSubmit
               form="catalog-service-form"
+              data-tour="service-save"
               size="sm"
               isLoading={isPending}
               className="text-xs h-9 px-4"
@@ -222,7 +223,7 @@ export function ServiceModal({
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             {/* Nome do Serviço */}
-            <div className="space-y-1 sm:col-span-2">
+            <div className="space-y-1 sm:col-span-2" data-tour="service-name">
               <label className="text-xs font-semibold text-foreground">
                 Nome do Pacote / Serviço <span className="text-destructive">*</span>
               </label>
@@ -235,7 +236,7 @@ export function ServiceModal({
             </div>
 
             {/* Categoria com botão + Nova Categoria */}
-            <div className="space-y-1">
+            <div className="space-y-1" data-tour="service-category">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-semibold text-foreground">
                   Categoria <span className="text-destructive">*</span>
@@ -282,7 +283,7 @@ export function ServiceModal({
             </div>
 
             {/* Preço Base com InputCurrency formatado */}
-            <div className="space-y-1">
+            <div className="space-y-1" data-tour="service-price">
               <RHFInputCurrency
                 name="price"
                 control={control}
@@ -293,7 +294,7 @@ export function ServiceModal({
             </div>
 
             {/* Duração Estimada com Input type="quantity" */}
-            <div className="space-y-1">
+            <div className="space-y-1" data-tour="service-duration">
               <Controller
                 name="durationHours"
                 control={control}
@@ -312,7 +313,7 @@ export function ServiceModal({
             </div>
 
             {/* Estado no Catálogo */}
-            <div className="space-y-1 flex flex-col justify-end">
+            <div className="space-y-1 flex flex-col justify-end" data-tour="service-visibility">
               <label className="text-xs font-semibold text-foreground">
                 Visibilidade no Catálogo
               </label>
@@ -407,7 +408,7 @@ export function ServiceModal({
           </div>
 
           {/* Entregáveis Inclusos */}
-          <div className="space-y-1.5 border-t border-border/60 pt-3">
+          <div className="space-y-1.5 border-t border-border/60 pt-3" data-tour="service-deliverables">
             <div className="flex items-center justify-between">
               <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                 <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />

@@ -5,7 +5,7 @@ import { StudioPageContent } from '@/components/client';
 export default function StudioPageContentPage() {
   return (
     <Suspense>
-      <PageWrapper subRoute="Estúdio">
+      <PageWrapper subRoute="Estúdio" onboardingTourId="studio-availability">
         <TitleList
           title="Estúdio & Sets de Filmagem"
           suTitle="Gestão de palcos de rodagem, cicloramas, cabines de som e agenda de ocupação"

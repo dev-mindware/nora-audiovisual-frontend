@@ -46,53 +46,6 @@ const RESOURCE_TYPE_LABELS: Record<StudioResourceType, { label: string; icon: ty
   },
 };
 
-const DEFAULT_RESOURCES: StudioResource[] = [
-  {
-    id: 'stage-1',
-    organizationId: 'demo',
-    name: 'Palco Central Nora (Soundstage)',
-    type: 'MAIN_STAGE' as StudioResourceType,
-    capacity: 35,
-    hourlyRate: 45000,
-    dailyRate: 350000,
-    status: 'AVAILABLE',
-    description: '300m² climatizado com grelha de iluminação DMX e isolamento acústico para cinema.',
-  },
-  {
-    id: 'cyclo-1',
-    organizationId: 'demo',
-    name: 'Ciclorama Verde / Branco 12m',
-    type: 'CYCLORAMA' as StudioResourceType,
-    capacity: 15,
-    hourlyRate: 30000,
-    dailyRate: 220000,
-    status: 'AVAILABLE',
-    description: 'Ciclorama em curva de 3 lados ideal para publicidade, chroma key e videoclipes.',
-  },
-  {
-    id: 'booth-1',
-    organizationId: 'demo',
-    name: 'Cabine de Dobragem & ADR',
-    type: 'SOUND_BOOTH' as StudioResourceType,
-    capacity: 4,
-    hourlyRate: 25000,
-    dailyRate: 180000,
-    status: 'AVAILABLE',
-    description: 'Cabine acústica flutuante tratada para gravação de voz-off, dobragens e foley.',
-  },
-  {
-    id: 'suite-1',
-    organizationId: 'demo',
-    name: 'Ilha Master DaVinci Resolve',
-    type: 'EDIT_SUITE' as StudioResourceType,
-    capacity: 6,
-    hourlyRate: 20000,
-    dailyRate: 150000,
-    status: 'AVAILABLE',
-    description: 'Monitorização Flanders Scientific 4K HDR e superfície de controlo para graduação de cor.',
-  },
-];
-
 export function PortalStudioPageContent() {
   const { user } = useAuthStore();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -105,7 +58,7 @@ export function PortalStudioPageContent() {
   const { mutateAsync: cancelBooking, isPending: isCancelling } = useCancelStudioBooking();
 
   const resources: StudioResource[] = useMemo(() => {
-    return resourcesData && resourcesData.length > 0 ? resourcesData : DEFAULT_RESOURCES;
+    return resourcesData ?? [];
   }, [resourcesData]);
 
   const allBookings: StudioBooking[] = useMemo(() => {

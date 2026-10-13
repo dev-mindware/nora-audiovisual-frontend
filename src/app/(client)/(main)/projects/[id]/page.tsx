@@ -15,6 +15,7 @@ export default async function ProjectDetailPage({ params }: ProjectDetailPagePro
         subRoute="Detalhe da Produção"
         routeLabel="Projectos"
         routePath="/projects"
+        onboardingTourId="project-detail"
       >
         <ProjectDetailPageContent projectId={id} />
       </PageWrapper>

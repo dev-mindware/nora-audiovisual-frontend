@@ -1,82 +1,35 @@
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { driver, type DriveStep, type Driver } from "driver.js";
 import {
   onboardingTours,
   toDriveStep,
+  isOnboardingTourId,
   type OnboardingDriveStep,
-  type OnboardingTourDemo,
   type OnboardingTourId,
   type OnboardingTourMode,
 } from "@/constants/onboarding-tours";
-import { useAuthStore, useModal, useOnboardingPreferencesStore } from "@/stores";
-import { PLAN_HIERARCHY, type User, type PlanType } from "@/types";
+import { useAuthStore, useOnboardingPreferencesStore } from "@/stores";
+import { useTenantStore } from "@/stores/tenant/tenant-store";
+import type { User } from "@/types";
 import { useOnboardingPreferencesPersistence } from "./use-onboarding-preferences";
 
-const ELEMENT_TIMEOUT_MS = 6000;
-const ELEMENT_POLL_INTERVAL_MS = 150;
-const STEP_TARGET_TIMEOUT_MS = 3000;
-const SKIPPED_STEP_TARGET_TIMEOUT_MS = 1000;
-const TYPING_DELAY_MS = 70;
-const MOBILE_UNSUPPORTED_STEP_MARKERS = [
-  "setup-workplace-tabs",
-  "pos-customer",
-  "pos-new-customer-phone",
-  "pos-payment-methods",
-];
-const CONDITIONAL_STEP_MARKERS = [
-  "reservations-events",
-  "reservations-empty-state",
-  "credit-note-client",
-  "credit-note-items",
-  "credit-note-totals",
-  "dashboard-stores-breakdown",
-];
+const POLL_INTERVAL_MS = 120;
+const STEP_TARGET_TIMEOUT_MS = 2500;
+// O popover do driver.js também tem role="dialog"; não conta como diálogo da aplicação.
+const DIALOG_SELECTOR = '[role="dialog"]:not(.driver-popover)';
 
-let activeDriver: Driver | null = null;
-let activeTypingInterval: number | null = null;
-let activeTypingTimeout: number | null = null;
-let activeTypedInput: HTMLInputElement | null = null;
-let activeDemoInputs: HTMLInputElement[] = [];
-let activeRetryIntervals: number[] = [];
-let activeDemoCleanup: (() => void) | null = null;
-let activeTourResult: "completed" | "skipped" | null = null;
-let activeOriginalUrl: string | null = null;
-let activeTourMode: OnboardingTourMode = "normal";
+type ActiveTour = {
+  driver: Driver;
+  result: "completed" | "skipped" | null;
+  lastStepIndex: number;
+  finish: (status: "completed" | "skipped", lastStepIndex: number) => void;
+};
+
+let active: ActiveTour | null = null;
 let isTransitioning = false;
-let lastActiveIndex: number | undefined = undefined;
-let activeCompletionHandler: ((lastStepIndex?: number) => void) | null = null;
-let activeCompletionPersisted = false;
-
-function completeActiveTour({
-  scope,
-  tourId,
-  mode,
-  tourVersion,
-  lastStepIndex,
-  markTourCompleted,
-  persistTour,
-}: {
-  scope: string;
-  tourId: OnboardingTourId;
-  mode: OnboardingTourMode;
-  tourVersion: number;
-  lastStepIndex?: number;
-  markTourCompleted: (scope: string, tourId: OnboardingTourId) => void;
-  persistTour: (
-    tourId: OnboardingTourId,
-    status: "completed",
-    mode: OnboardingTourMode,
-    tourVersion: number,
-    lastStepIndex?: number,
-  ) => void;
-}) {
-  if (activeCompletionPersisted) return;
-  activeCompletionPersisted = true;
-  markTourCompleted(scope, tourId);
-  persistTour(tourId, "completed", mode, tourVersion, lastStepIndex);
-}
 
 function prefersReducedMotion() {
   return (
@@ -85,303 +38,9 @@ function prefersReducedMotion() {
   );
 }
 
-function getScope(userId?: string, companyId?: string) {
-  return [companyId || "company", userId || "user"].join(":");
-}
-
-function setInputValue(input: HTMLInputElement, value: string) {
-  const nativeSetter = Object.getOwnPropertyDescriptor(
-    HTMLInputElement.prototype,
-    "value",
-  )?.set;
-
-  if (nativeSetter) {
-    nativeSetter.call(input, value);
-  } else {
-    input.value = value;
-  }
-
-  const inputEvent =
-    typeof InputEvent !== "undefined"
-      ? new InputEvent("input", {
-          bubbles: true,
-          inputType: "insertText",
-          data: value,
-        })
-      : new Event("input", { bubbles: true });
-
-  input.dispatchEvent(inputEvent);
-  input.dispatchEvent(new Event("change", { bubbles: true }));
-}
-
-function clearActiveTyping() {
-  if (activeTypingInterval !== null) {
-    window.clearInterval(activeTypingInterval);
-    activeTypingInterval = null;
-  }
-
-  if (activeTypingTimeout !== null) {
-    window.clearTimeout(activeTypingTimeout);
-    activeTypingTimeout = null;
-  }
-
-  if (activeTypedInput) {
-    setInputValue(activeTypedInput, "");
-    activeTypedInput.blur();
-    activeTypedInput = null;
-  }
-
-  activeRetryIntervals.forEach((interval) => window.clearInterval(interval));
-  activeRetryIntervals = [];
-
-  activeDemoInputs.forEach((input) => setInputValue(input, ""));
-  activeDemoInputs = [];
-}
-
-function cleanupActiveDemo() {
-  clearActiveTyping();
-
-  if (activeDemoCleanup) {
-    activeDemoCleanup();
-    activeDemoCleanup = null;
-  }
-
-  if (activeOriginalUrl && window.location.href !== activeOriginalUrl) {
-    window.history.replaceState(null, "", activeOriginalUrl);
-  }
-  activeOriginalUrl = null;
-}
-
-function simulateTyping(
-  input: HTMLInputElement,
-  text: string,
-  delayMs = TYPING_DELAY_MS,
-  onComplete?: () => void,
-) {
-  clearActiveTyping();
-
-  activeTypedInput = input;
-  input.focus({ preventScroll: true });
-  setInputValue(input, "");
-
-  let index = 0;
-  let currentText = "";
-
-  activeTypingInterval = window.setInterval(() => {
-    if (index >= text.length) {
-      if (activeTypingInterval !== null) {
-        window.clearInterval(activeTypingInterval);
-        activeTypingInterval = null;
-      }
-      onComplete?.();
-      return;
-    }
-
-    currentText += text[index];
-    setInputValue(input, currentText);
-    index += 1;
-  }, delayMs);
-}
-
-function scheduleTyping(
-  input: HTMLInputElement | null,
-  text: string,
-  delayMs = 300,
-  onComplete?: () => void,
-) {
-  clearActiveTyping();
-  if (!input || typeof window === "undefined") return;
-
-  activeTypingTimeout = window.setTimeout(() => {
-    activeTypingTimeout = null;
-    simulateTyping(input, text, TYPING_DELAY_MS, onComplete);
-  }, delayMs);
-}
-
-function setDemoInputValue(input: HTMLInputElement | null, value: string) {
-  if (!input) return;
-  setInputValue(input, value);
-  if (!activeDemoInputs.includes(input)) {
-    activeDemoInputs.push(input);
-  }
-}
-
-function rememberCurrentUrl() {
-  if (!activeOriginalUrl && typeof window !== "undefined") {
-    activeOriginalUrl = window.location.href;
-  }
-}
-
-function clickSafe(element: HTMLElement | null) {
-  if (!element) return false;
-  element.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
-  element.dispatchEvent(new MouseEvent("mouseup", { bubbles: true }));
-  element.click();
-  return true;
-}
-
-function typeIntoSelector(selector: string, value: string) {
-  rememberCurrentUrl();
-  const input = document.querySelector<HTMLInputElement>(selector);
-  setDemoInputValue(input, value);
-  return input;
-}
-
-function getFirstInput(root: ParentNode | null) {
-  return root?.querySelector<HTMLInputElement>("input:not([type='hidden'])") ?? null;
-}
-
-function getPosSearchInput() {
-  return document.querySelector<HTMLInputElement>(
-    '[data-tour="pos-product-search"]',
-  );
-}
-
-function clickOption(option: HTMLElement) {
-  clickSafe(option);
-}
-
-function getSelectOptions(root: ParentNode | null) {
-  const scopedOptions = Array.from(
-    root?.querySelectorAll<HTMLElement>(".react-select__option") ?? [],
-  );
-
-  if (scopedOptions.length > 0) {
-    return scopedOptions;
-  }
-
-  return Array.from(document.querySelectorAll<HTMLElement>(".react-select__option"));
-}
-
-function clickFirstExistingOption(root: ParentNode | null) {
-  const option = getSelectOptions(root).find((item) => {
-    const text = item.innerText.toLowerCase();
-    return (
-      text &&
-      !text.includes("criar") &&
-      !text.includes("adicionar") &&
-      !text.includes("nenhum") &&
-      !text.includes("a pesquisar") &&
-      !text.includes("digite")
-    );
-  });
-
-  if (option) {
-    clickOption(option);
-    return true;
-  }
-
-  return false;
-}
-
-function clickCreateOption(root: ParentNode | null, value: string) {
-  const normalizedValue = value.toLowerCase();
-  const option = getSelectOptions(root).find((item) => {
-    const text = item.innerText.toLowerCase();
-    return (
-      text.includes(normalizedValue) &&
-      (text.includes("criar") || text.includes("adicionar"))
-    );
-  });
-
-  if (option) {
-    clickOption(option);
-    return true;
-  }
-
-  return false;
-}
-
-function retrySelectAction(action: () => boolean, attempts = 8) {
-  let currentAttempt = 0;
-
-  const interval = window.setInterval(() => {
-    currentAttempt += 1;
-
-    if (action() || currentAttempt >= attempts) {
-      window.clearInterval(interval);
-      activeRetryIntervals = activeRetryIntervals.filter((item) => item !== interval);
-    }
-  }, 250);
-
-  activeRetryIntervals.push(interval);
-}
-
-function scheduleSelectDemo({
-  root,
-  searchText,
-  shouldCreate,
-  delayMs = 300,
-}: {
-  root: Element;
-  searchText: string;
-  shouldCreate?: boolean;
-  delayMs?: number;
-}) {
-  clearReactSelect(root);
-  scheduleTyping(getFirstInput(root), searchText, delayMs, () => {
-    retrySelectAction(() =>
-      shouldCreate
-        ? clickCreateOption(root, searchText)
-        : clickFirstExistingOption(root),
-    );
-  });
-}
-
-function clearReactSelect(root: ParentNode | null) {
-  root?.querySelector<HTMLElement>(".react-select__clear-indicator")?.click();
-
-  const input = getFirstInput(root);
-  if (input) {
-    setInputValue(input, "");
-  }
-}
-
-function openPosCustomerSection(root: Element) {
-  const toggleButton = root.querySelector<HTMLButtonElement>("button");
-  const isExpanded = Boolean(root.querySelector(".space-y-4"));
-
-  if (toggleButton && !isExpanded) {
-    toggleButton.click();
-  }
-}
-
-function clickSettingsTab(tabId: string) {
-  const tabTrigger = document.querySelector<HTMLElement>(`[data-tour="setup-tab-${tabId}"]`);
-  if (tabTrigger && tabTrigger.getAttribute("data-state") !== "active") {
-    clickSafe(tabTrigger);
-  }
-}
-
-function clickPosSettingsTab(tabId: string) {
-  const tabTrigger = document.querySelector<HTMLElement>(`[data-tour="pos-settings-tab-${tabId}"]`);
-  if (tabTrigger && tabTrigger.getAttribute("data-state") !== "active") {
-    clickSafe(tabTrigger);
-  }
-}
-
-async function openProductModalForTour() {
-  if (findVisibleElement('[data-tour="product-modal"]')) return;
-
-  useModal.getState().openModal("add-product");
-  const openedModal = await waitForElement('[data-tour="product-modal"]', 2500);
-  if (openedModal) return;
-
-  clickSafe(
-    document.querySelector<HTMLElement>('[data-tour="items-create"] button'),
-  );
-
-  const manualTrigger = await waitForElement(
-    '[data-tour="items-create-manual"]',
-    1000,
-  );
-  clickSafe(manualTrigger as HTMLElement | null);
-}
-
-function closeProductModalForTour() {
-  clickSafe(
-    document.querySelector<HTMLElement>('[data-tour="product-form-cancel"]'),
-  );
+/** Escopo das preferências: organização + utilizador (o mesmo utilizador pode ter várias produtoras). */
+function getScope(userId?: string, organizationId?: string) {
+  return [organizationId || "organization", userId || "user"].join(":");
 }
 
 function isElementVisible(element: Element) {
@@ -395,66 +54,116 @@ function isElementVisible(element: Element) {
 
 function findVisibleElement(selector: string) {
   return (
-    Array.from(document.querySelectorAll(selector)).find(isElementVisible) ??
-    null
+    Array.from(document.querySelectorAll(selector)).find(isElementVisible) ?? null
   );
 }
 
-function waitForElement(selector: string, timeoutMs = ELEMENT_TIMEOUT_MS) {
+function waitForElement(selector: string, timeoutMs: number) {
   return new Promise<Element | null>((resolve) => {
-    const firstMatch = findVisibleElement(selector);
-    if (firstMatch) {
-      resolve(firstMatch);
-      return;
-    }
-
     const startedAt = Date.now();
-    const interval = window.setInterval(() => {
+    const check = () => {
       const element = findVisibleElement(selector);
-      if (element) {
-        window.clearInterval(interval);
-        resolve(element);
-        return;
-      }
-
-      if (Date.now() - startedAt >= timeoutMs) {
-        window.clearInterval(interval);
-        resolve(null);
-      }
-    }, ELEMENT_POLL_INTERVAL_MS);
+      if (element) return resolve(element);
+      if (Date.now() - startedAt >= timeoutMs) return resolve(null);
+      window.setTimeout(check, POLL_INTERVAL_MS);
+    };
+    check();
   });
 }
 
-function resolveSteps(tourId: OnboardingTourId): DriveStep[] {
-  const tour = onboardingTours[tourId];
-  const isMobile =
-    typeof window !== "undefined" &&
-    window.matchMedia("(max-width: 767px)").matches;
+function hasOpenDialog() {
+  return Array.from(document.querySelectorAll(DIALOG_SELECTOR)).some(isElementVisible);
+}
 
-  return tour.steps
-    .map((step) => {
-      if (
-        isMobile &&
-        MOBILE_UNSUPPORTED_STEP_MARKERS.some((marker) =>
-          step.selector.includes(marker),
-        )
-      ) {
-        return null;
-      }
+async function closeOpenDialogs() {
+  if (!hasOpenDialog()) return;
+  document.dispatchEvent(
+    new KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
+  );
+  const startedAt = Date.now();
+  while (hasOpenDialog() && Date.now() - startedAt < 1500) {
+    await new Promise((resolve) => window.setTimeout(resolve, POLL_INTERVAL_MS));
+  }
+  // dá tempo à animação de saída do diálogo antes de medir o alvo seguinte
+  await new Promise((resolve) => window.setTimeout(resolve, 150));
+}
 
-      const driveStep = toDriveStep(step);
-      const visibleElement = findVisibleElement(step.selector);
-      if (
-        !visibleElement &&
-        CONDITIONAL_STEP_MARKERS.some((marker) =>
-          step.selector.includes(marker),
-        )
-      ) {
-        return null;
+function clickTourTarget(name: string) {
+  const element = findVisibleElement(`[data-tour="${name}"]`);
+  if (!element) return false;
+  (element as HTMLElement).click();
+  return true;
+}
+
+function stepSelector(step: DriveStep) {
+  return (
+    (step as OnboardingDriveStep).selector ||
+    (typeof step.element === "string" ? step.element : undefined)
+  );
+}
+
+/**
+ * Garante que o alvo do passo está visível: fecha diálogos que o tapam, ou abre o diálogo
+ * que o contém (o passo indica o botão, ou herda-o do passo anterior com `open`).
+ */
+async function prepareTarget(
+  steps: DriveStep[],
+  index: number,
+  timeoutMs = STEP_TARGET_TIMEOUT_MS,
+) {
+  const step = steps[index] as OnboardingDriveStep;
+  const selector = stepSelector(step);
+  if (!selector) return null;
+
+  let element = findVisibleElement(selector);
+
+  if (element && !element.closest(DIALOG_SELECTOR) && hasOpenDialog()) {
+    await closeOpenDialogs();
+    element = findVisibleElement(selector);
+  } else if (step.closeDialog) {
+    await closeOpenDialogs();
+    element = findVisibleElement(selector);
+  }
+
+  if (element) return element;
+
+  const opener =
+    step.open ??
+    [...steps.slice(0, index)]
+      .reverse()
+      .map((previous) => (previous as OnboardingDriveStep).open)
+      .find(Boolean);
+  if (opener && !hasOpenDialog()) clickTourTarget(opener);
+
+  return waitForElement(selector, timeoutMs);
+}
+
+/** Procura o próximo passo cujo alvo existe; passos sem alvo são saltados para o guia nunca encravar. */
+async function moveToPreparedStep(driverInstance: Driver, start: number, direction: 1 | -1) {
+  if (isTransitioning) return;
+  isTransitioning = true;
+
+  try {
+    const steps = driverInstance.getConfig().steps ?? [];
+    for (let index = start; index >= 0 && index < steps.length; index += direction) {
+      const target = await prepareTarget(steps, index);
+      if (target) {
+        steps[index].element = target;
+        // Dentro de diálogos com scroll interno, centra o alvo para o destaque não ficar cortado.
+        target.scrollIntoView({ block: "center", behavior: "instant" });
+        driverInstance.moveTo(index);
+        return;
       }
-      return visibleElement ? { ...driveStep, element: visibleElement } : driveStep;
-    })
-    .filter((step): step is DriveStep => Boolean(step));
+    }
+
+    if (direction === 1 && active) {
+      active.result = "completed";
+      active.lastStepIndex = steps.length - 1;
+      driverInstance.destroy();
+    }
+  } finally {
+    isTransitioning = false;
+  }
 }
 
 export function canUserAccessOnboardingTour(
@@ -464,393 +173,28 @@ export function canUserAccessOnboardingTour(
   const tour = onboardingTours[tourId];
   if (!tour || !user) return false;
   if (user.role === "ADMIN") return true;
-  if (!tour.roles.includes(user.role)) return false;
-
-  const currentPlan = (user.company?.subscription?.plan?.name as PlanType) ?? "Base";
-  const currentPlanLevel = PLAN_HIERARCHY[currentPlan] ?? 0;
-  const requiredPlanLevel = PLAN_HIERARCHY[tour.minPlan] ?? 0;
-
-  return currentPlanLevel >= requiredPlanLevel;
+  return tour.roles.includes(user.role);
 }
 
-type DemoHandler = (element: Element) => void;
-
-const demoHandlers: Partial<Record<OnboardingTourDemo, DemoHandler>> = {
-  "documents-filters": (element) => {
-    rememberCurrentUrl();
-    typeIntoSelector('[data-tour="documents-filter-search"] input', "Consumidor");
-    typeIntoSelector('[data-tour="documents-filter-client"] input', "Cliente exemplo");
-    typeIntoSelector('[data-tour="documents-filter-number"] input', "FT");
-    clickSafe(
-      element.querySelector<HTMLElement>('[data-tour="documents-filter-status"] button'),
-    );
-    activeDemoCleanup = () =>
-      clickSafe(document.querySelector<HTMLElement>('[data-tour="documents-filter-clear"]'));
-  },
-  "normal-client-existing": (element) => {
-    scheduleSelectDemo({
-      root: element,
-      searchText: "Consumidor",
-    });
-  },
-  "normal-client-new": (element) => {
-    scheduleSelectDemo({
-      root: element,
-      searchText: "Cliente de Demonstração",
-      shouldCreate: true,
-    });
-  },
-  "normal-client-details": (element) => {
-    setDemoInputValue(
-      element.querySelector<HTMLInputElement>('input[name="client.taxNumber"]'),
-      "500000000",
-    );
-    setDemoInputValue(
-      element.querySelector<HTMLInputElement>('input[name="client.phone"]'),
-      "923000000",
-    );
-    setDemoInputValue(
-      element.querySelector<HTMLInputElement>('input[name="client.address"]'),
-      "Luanda, Angola",
-    );
-  },
-  "normal-product-existing": (element) => {
-    scheduleSelectDemo({
-      root: element,
-      searchText: "Bebida",
-    });
-  },
-  "normal-product-new": (element) => {
-    scheduleSelectDemo({
-      root: element,
-      searchText: "Serviço de Demonstração",
-      shouldCreate: true,
-    });
-  },
-  "normal-product-details": () => {
-    setDemoInputValue(
-      document.querySelector<HTMLInputElement>(
-        '[data-tour="normal-invoice-item-quantity"] input',
-      ),
-      "1",
-    );
-    setDemoInputValue(
-      document.querySelector<HTMLInputElement>(
-        '[data-tour="normal-invoice-item-price"] input',
-      ),
-      "15000",
-    );
-  },
-  "product-form-basics": () => {
-    typeIntoSelector('[data-tour="product-form-name"] input', "Produto de Demonstração");
-    typeIntoSelector('[data-tour="product-form-price"] input', "15000");
-    typeIntoSelector('[data-tour="product-form-cost"] input', "10000");
-  },
-  "product-form-stock": () => {
-    typeIntoSelector('[data-tour="product-form-quantity"] input', "5");
-    typeIntoSelector('[data-tour="product-form-barcode"] input', "7891234567890");
-    typeIntoSelector('[data-tour="product-form-min-stock"] input', "2");
-    typeIntoSelector('[data-tour="product-form-max-stock"] input', "20");
-  },
-  "pos-management-filters": (element) => {
-    rememberCurrentUrl();
-    typeIntoSelector('[data-tour="pos-management-filter-search"] input', "caixa");
-    clickSafe(
-      element.querySelector<HTMLElement>('[data-tour="pos-management-filter-status"] button'),
-    );
-    activeDemoCleanup = () =>
-      clickSafe(document.querySelector<HTMLElement>('[data-tour="pos-management-filter-clear"]'));
-  },
-  "pos-management-view": () => {
-    const gridButton = document.querySelector<HTMLElement>(
-      '[data-tour="pos-management-view-grid"]',
-    );
-    clickSafe(
-      document.querySelector<HTMLElement>('[data-tour="pos-management-view-table"]'),
-    );
-    activeDemoCleanup = () => clickSafe(gridButton);
-  },
-  "reservations-calendar-view": () => {
-    const monthButton = document.querySelector<HTMLElement>(
-      '[data-tour="reservations-view-month"]',
-    );
-    clickSafe(document.querySelector<HTMLElement>('[data-tour="reservations-view-week"]'));
-    clickSafe(document.querySelector<HTMLElement>('[data-tour="reservations-today"]'));
-    activeDemoCleanup = () => clickSafe(monthButton);
-  },
-  "pos-products-search": () => {
-    scheduleTyping(getPosSearchInput(), "Bebida");
-  },
-  "pos-client-existing": (element) => {
-    openPosCustomerSection(element);
-    activeTypingTimeout = window.setTimeout(() => {
-      activeTypingTimeout = null;
-      const input = getFirstInput(element);
-      if (!input) return;
-
-      simulateTyping(input, "Consumidor", TYPING_DELAY_MS, () => {
-        retrySelectAction(() => clickFirstExistingOption(element));
-      });
-    }, 400);
-  },
-  "pos-client-new": (element) => {
-    const clientName = "Cliente POS de Demonstração";
-    openPosCustomerSection(element);
-    clearReactSelect(element);
-    activeTypingTimeout = window.setTimeout(() => {
-      activeTypingTimeout = null;
-      const input = getFirstInput(element);
-      if (!input) return;
-
-      simulateTyping(input, clientName, TYPING_DELAY_MS, () => {
-        retrySelectAction(() => clickCreateOption(element, clientName));
-      });
-    }, 400);
-  },
-  "pos-client-details": (element) => {
-    setDemoInputValue(getFirstInput(element), "923000000");
-  },
-};
-
-async function prepareTarget(selector: string, timeoutMs = STEP_TARGET_TIMEOUT_MS) {
-  let targetElement = findVisibleElement(selector);
-  if (targetElement) return targetElement;
-
-  if (selector.includes("setup-company-profile")) {
-    clickSettingsTab("profile");
-  }
-
-  if (selector.includes("setup-banks-content")) {
-    clickSettingsTab("banks");
-  }
-
-  if (selector.includes("setup-agt-content")) {
-    clickSettingsTab("agt");
-  }
-
-  if (selector.includes("setup-guides-content")) {
-    clickSettingsTab("guides");
-  }
-
-  if (
-    selector.includes("pos-settings-workspace") ||
-    selector.includes("pos-settings-virtual-keyboard") ||
-    selector.includes("pos-settings-external-scanner")
-  ) {
-    clickPosSettingsTab("workspace");
-  }
-
-  if (selector.includes("pos-settings-content-appearance")) {
-    clickPosSettingsTab("appearance");
-  }
-
-  if (selector.includes("product-")) {
-    await openProductModalForTour();
-  }
-
-  if (selector.includes("items-list")) {
-    closeProductModalForTour();
-  }
-
-  if (selector.includes("normal-invoice") && !selector.includes("document-type")) {
-    const invoiceTabTrigger = document.querySelector<HTMLButtonElement>(
-      'button[value="invoice"], button[data-value="invoice"]'
-    );
-    if (invoiceTabTrigger && invoiceTabTrigger.getAttribute("data-state") !== "active") {
-      invoiceTabTrigger.click();
-    }
-  }
-
-  if (
-    selector.includes("pos-") &&
-    (selector.includes("pos-cart") ||
-      selector.includes("pos-payment-summary") ||
-      selector.includes("pos-customer") ||
-      selector.includes("pos-new-customer-phone") ||
-      selector.includes("pos-payment-methods") ||
-      selector.includes("pos-payment-cash-received") ||
-      selector.includes("pos-payment-change") ||
-      selector.includes("pos-submit"))
-  ) {
-    const cartButton = document.querySelector<HTMLButtonElement>('button[data-tour="pos-cart"]');
-    if (
-      cartButton &&
-      cartButton.getAttribute("data-state") !== "active" &&
-      cartButton.getAttribute("aria-selected") !== "true"
-    ) {
-      cartButton.click();
-    }
-  }
-
-  if (
-    selector.includes("pos-payment-cash-received") ||
-    selector.includes("pos-payment-change")
-  ) {
-    const cashMethodButton = document.querySelector<HTMLButtonElement>(
-      'button[data-tour="pos-payment-method-cash"]'
-    );
-    if (cashMethodButton && cashMethodButton.classList.contains("text-muted-foreground")) {
-      cashMethodButton.click();
-    }
-  }
-
-  if (
-    selector.includes("pos-") &&
-    (selector.includes("pos-categories") ||
-      selector.includes("pos-products") ||
-      selector.includes("pos-product-add"))
-  ) {
-    document.querySelector<HTMLButtonElement>('[data-tour="pos-back-to-menu"]')?.click();
-  }
-
-  targetElement = await waitForElement(selector, timeoutMs);
-
-  if (selector.includes("pos-new-customer-phone")) {
-    const customerSection = document.querySelector('[data-tour="pos-customer"]');
-    if (customerSection) {
-      openPosCustomerSection(customerSection);
-      targetElement = await waitForElement(selector, 1000);
-    }
-  }
-
-  return targetElement;
-}
-
-async function handleNextClick(
-  element: Element | undefined,
-  step: DriveStep,
-  { driver }: { driver: Driver },
-) {
-  // getActiveIndex() pode retornar null/undefined em certas versões do Driver.js
-  // Usamos o comprimento dos steps para garantir que detectamos o último passo
-  const steps = driver.getConfig().steps ?? [];
-  const currentIndex = driver.getActiveIndex() ?? steps.length - 1;
-  const isLastStep = currentIndex >= steps.length - 1;
-
-  cleanupActiveDemo();
-
-  if (isLastStep) {
-    // Botão "Concluir": encerra o tour explicitamente como completo
-    if (!isTransitioning) {
-      activeTourResult = "completed";
-      activeCompletionHandler?.(steps.length - 1);
-      driver.destroy();
-    }
-    return;
-  }
-
-  await moveToPreparedStep(driver, currentIndex + 1, 1);
-}
-
-async function handlePrevClick(
-  element: Element | undefined,
-  step: DriveStep,
-  { driver }: { driver: Driver },
-) {
-  const currentIndex = driver.getActiveIndex() ?? 0;
-  cleanupActiveDemo();
-  await moveToPreparedStep(driver, currentIndex - 1, -1);
-}
-
-async function moveToPreparedStep(
-  driver: Driver,
-  startIndex: number,
-  direction: 1 | -1,
-) {
-  if (isTransitioning) return;
-  isTransitioning = true;
-
-  try {
-    const steps = driver.getConfig().steps ?? [];
-    let targetIndex = startIndex;
-
-    while (targetIndex >= 0 && targetIndex < steps.length) {
-      try {
-        const targetStep = steps[targetIndex];
-        const selector =
-          (targetStep as OnboardingDriveStep).selector ||
-          (typeof targetStep.element === "string" ? targetStep.element : undefined);
-
-        if (!selector) {
-          driver.moveTo(targetIndex);
-          return;
-        }
-
-        const preparedTarget = await prepareTarget(
-          selector,
-          targetIndex === startIndex
-            ? STEP_TARGET_TIMEOUT_MS
-            : SKIPPED_STEP_TARGET_TIMEOUT_MS,
-        );
-        if (preparedTarget) {
-          targetStep.element = preparedTarget;
-          driver.moveTo(targetIndex);
-          return;
-        }
-
-        // Se não conseguiu preparar, verifica se é um passo condicional
-        const isConditional = CONDITIONAL_STEP_MARKERS.some((marker) =>
-          selector.includes(marker),
-        );
-        if (!isConditional) {
-          if (process.env.NODE_ENV !== "production") {
-            console.warn(`Passo obrigatório não encontrado: ${selector}. Mantendo no passo atual.`);
-          }
-          return; // Não avança nem pula
-        }
-      } catch (error) {
-        if (process.env.NODE_ENV !== "production") {
-          console.warn("Não foi possível preparar o próximo passo do guia.", error);
-        }
-      }
-
-      targetIndex += direction;
-    }
-
-    if (direction === 1) {
-      activeTourResult = "completed";
-      driver.destroy();
-    }
-  } finally {
-    isTransitioning = false;
-  }
-}
-
-function handleHighlighted(element: Element | undefined, step: DriveStep) {
-  cleanupActiveDemo();
-  if (activeDriver) {
-    try {
-      lastActiveIndex = activeDriver.getActiveIndex();
-    } catch (e) {
-      // ignore
-    }
-  }
-  if (!element) return;
-  if (activeTourMode !== "demo") return;
-
-  const demo = (step as OnboardingDriveStep).demo;
-  if (!demo) return;
-
-  demoHandlers[demo]?.(element);
+/** Escopo (utilizador + organização ativa) partilhado pelo motor e pelas definições. */
+export function useOnboardingScope() {
+  const user = useAuthStore((state) => state.user);
+  const tenantOrganizationId = useTenantStore(
+    (state) => state.activeOrganization?.id,
+  );
+  const organizationId = tenantOrganizationId ?? user?.activeOrganization?.id;
+  return { user, organizationId, scope: getScope(user?.id, organizationId) };
 }
 
 export function useOnboardingTour(tourId: OnboardingTourId) {
-  const user = useAuthStore((state) => state.user);
-  const userId = user?.id;
-  const companyId = user?.company?.id;
-  const scope = getScope(userId, companyId);
+  const { user, organizationId, scope } = useOnboardingScope();
   const canAccessTour = canUserAccessOnboardingTour(tourId, user);
   const { persistTour, isHydrating: isHydratingPreferences } =
-    useOnboardingPreferencesPersistence(
-    scope,
-    Boolean(userId && companyId),
-  );
-  const getPreferences = useOnboardingPreferencesStore(
-    (state) => state.getPreferences,
-  );
-  const markTourCompleted = useOnboardingPreferencesStore(
-    (state) => state.markTourCompleted,
-  );
+    useOnboardingPreferencesPersistence(scope, Boolean(user?.id && organizationId));
+
+  const getPreferences = useOnboardingPreferencesStore((state) => state.getPreferences);
+  const markTourCompleted = useOnboardingPreferencesStore((state) => state.markTourCompleted);
+  const markTourSkipped = useOnboardingPreferencesStore((state) => state.markTourSkipped);
   const scopedPreferences = useOnboardingPreferencesStore(
     (state) => state.preferencesByScope[scope],
   );
@@ -858,150 +202,105 @@ export function useOnboardingTour(tourId: OnboardingTourId) {
   const tourButtonEnabled = scopedPreferences?.tourButtonEnabled ?? true;
   const seenStatus = scopedPreferences?.seenTours?.[tourId];
 
-  const hasSeenTour = useCallback(() => {
-    return Boolean(getPreferences(scope).seenTours[tourId]);
-  }, [getPreferences, scope, tourId]);
+  const hasSeenTour = useCallback(
+    () => Boolean(getPreferences(scope).seenTours[tourId]),
+    [getPreferences, scope, tourId],
+  );
 
-  const markTourAsSeen = useCallback(() => {
-    markTourCompleted(scope, tourId);
-  }, [markTourCompleted, scope, tourId]);
+  const markTourAsSeen = useCallback(
+    () => markTourCompleted(scope, tourId),
+    [markTourCompleted, scope, tourId],
+  );
 
-  const startTour = useCallback(async (mode: OnboardingTourMode = "normal") => {
-    if (typeof window === "undefined") return false;
-    if (!canUserAccessOnboardingTour(tourId, user)) return false;
-    // Garantir que estado residual de tours anteriores está limpo
-    activeTourResult = null;
-    activeTourMode = mode;
-    isTransitioning = false;
-    lastActiveIndex = undefined;
-    activeCompletionHandler = null;
-    activeCompletionPersisted = false;
+  const startTour = useCallback(
+    async (mode: OnboardingTourMode = "normal") => {
+      if (typeof window === "undefined") return false;
+      if (!canUserAccessOnboardingTour(tourId, user)) return false;
 
-    const steps = resolveSteps(tourId);
-    if (steps.length === 0) return false;
+      const tour = onboardingTours[tourId];
+      const steps: DriveStep[] = tour.steps.map(toDriveStep);
 
-    let initialStepIndex = 0;
-    while (initialStepIndex < steps.length) {
-      const firstStep = steps[initialStepIndex];
-      const firstSelector =
-        (firstStep as OnboardingDriveStep).selector ||
-        (typeof firstStep.element === "string" ? firstStep.element : undefined);
-
-      if (!firstSelector) break;
-
-      const preparedTarget = await prepareTarget(firstSelector);
-      if (preparedTarget) {
-        firstStep.element = preparedTarget;
-        break;
+      // O primeiro passo com alvo disponível define onde o guia começa.
+      let firstIndex = 0;
+      let firstTarget: Element | null = null;
+      for (; firstIndex < steps.length; firstIndex += 1) {
+        firstTarget = await prepareTarget(steps, firstIndex, 1500);
+        if (firstTarget) break;
       }
+      if (!firstTarget) return false;
+      steps[firstIndex].element = firstTarget;
 
-      // Se não encontrou o primeiro passo, verifica se ele é condicional
-      const isConditional = CONDITIONAL_STEP_MARKERS.some((marker) =>
-        firstSelector.includes(marker),
-      );
-      if (!isConditional) {
-        if (process.env.NODE_ENV !== "production") {
-          console.warn(`Passo inicial obrigatório não encontrado: ${firstSelector}. Falhando ao iniciar tour.`);
-        }
-        return false;
-      }
+      active?.driver.destroy();
 
-      initialStepIndex += 1;
-    }
+      persistTour(tourId, "in_progress", mode, tour.version, firstIndex);
 
-    if (initialStepIndex >= steps.length) return false;
+      const finish = (status: "completed" | "skipped", lastStepIndex: number) => {
+        if (status === "completed") markTourCompleted(scope, tourId);
+        else markTourSkipped(scope, tourId);
+        persistTour(tourId, status, mode, tour.version, lastStepIndex);
+      };
 
-    persistTour(
-      tourId,
-      "in_progress",
-      mode,
-      onboardingTours[tourId].version,
-      initialStepIndex,
-    );
-
-    activeDriver?.destroy();
-
-    activeCompletionHandler = (lastStepIndex?: number) =>
-      completeActiveTour({
-        scope,
-        tourId,
-        mode: activeTourMode,
-        tourVersion: onboardingTours[tourId].version,
-        lastStepIndex,
-        markTourCompleted,
-        persistTour,
+      const driverInstance = driver({
+        steps,
+        animate: !prefersReducedMotion(),
+        allowClose: true,
+        allowKeyboardControl: true,
+        disableActiveInteraction: true,
+        overlayClickBehavior: () => undefined,
+        overlayOpacity: 0.55,
+        stagePadding: 8,
+        stageRadius: 12,
+        popoverClass: "mindgest-tour-popover",
+        showButtons: ["next", "previous", "close"],
+        showProgress: true,
+        progressText: "{{current}} de {{total}}",
+        nextBtnText: "Seguinte",
+        prevBtnText: "Anterior",
+        doneBtnText: "Concluir",
+        onNextClick: async (_element, _step, { driver: d }) => {
+          const total = d.getConfig().steps?.length ?? 0;
+          const index = d.getActiveIndex() ?? total - 1;
+          if (index >= total - 1) {
+            if (active) active.result = "completed";
+            d.destroy();
+            return;
+          }
+          await moveToPreparedStep(d, index + 1, 1);
+        },
+        onPrevClick: async (_element, _step, { driver: d }) => {
+          await moveToPreparedStep(d, (d.getActiveIndex() ?? 0) - 1, -1);
+        },
+        onCloseClick: (_element, _step, { driver: d }) => {
+          if (active) active.result = "skipped";
+          d.destroy();
+        },
+        onPopoverRender: (popover) => {
+          popover.closeButton.innerText = "Pular";
+          popover.closeButton.setAttribute("aria-label", "Ignorar guia");
+          // Diálogos Radix fecham em cliques/foco fora de si: o popover do guia vive fora deles.
+          for (const type of ["pointerdown", "mousedown", "focusin"]) {
+            popover.wrapper.addEventListener(type, (event) => event.stopPropagation());
+          }
+        },
+        onHighlighted: () => {
+          if (active) active.lastStepIndex = driverInstance.getActiveIndex() ?? 0;
+        },
+        onDestroyed: () => {
+          const current = active;
+          active = null;
+          isTransitioning = false;
+          if (!current) return;
+          // Esc ou fecho por outra via conta como "ignorado": o utilizador pode repetir quando quiser.
+          current.finish(current.result ?? "skipped", current.lastStepIndex);
+        },
       });
 
-    activeDriver = driver({
-      steps,
-      animate: !prefersReducedMotion(),
-      allowClose: true,
-      allowKeyboardControl: true,
-      disableActiveInteraction: true,
-      overlayClickBehavior: "close",
-      overlayOpacity: 0.55,
-      stagePadding: 8,
-      stageRadius: 12,
-      popoverClass: "mindgest-tour-popover",
-      showButtons: ["next", "previous", "close"],
-      showProgress: true,
-      progressText: "{{current}} de {{total}}",
-      nextBtnText: "Seguinte",
-      prevBtnText: "Anterior",
-      doneBtnText: "Concluir",
-      onNextClick: handleNextClick,
-      onPrevClick: handlePrevClick,
-      onCloseClick: (_, __, { driver }) => {
-        activeTourResult = "skipped";
-        activeCompletionHandler?.(lastActiveIndex);
-        driver.destroy();
-      },
-      onPopoverRender: (popover) => {
-        popover.closeButton.innerText = "Pular";
-        popover.closeButton.setAttribute("aria-label", "Ignorar guia");
-      },
-      onHighlighted: handleHighlighted,
-      onDeselected: cleanupActiveDemo,
-      onDestroyed: () => {
-        cleanupActiveDemo();
-        isTransitioning = false;
-
-        const result = activeTourResult;
-        const tourPreferences = getPreferences(scope);
-
-        if (process.env.NODE_ENV !== "production") {
-          console.log(`[Tour onDestroyed] tourId=${tourId} result=${result}`);
-        }
-
-        if (result === "completed") {
-          activeCompletionHandler?.(steps.length - 1);
-        } else if (result === "skipped") {
-          activeCompletionHandler?.(lastActiveIndex);
-        } else if (tourPreferences.seenTours[tourId] !== "completed") {
-          activeCompletionHandler?.(lastActiveIndex);
-        }
-
-        activeDriver = null;
-        activeTourResult = null;
-        activeTourMode = "normal";
-        lastActiveIndex = undefined;
-        activeCompletionHandler = null;
-        activeCompletionPersisted = false;
-      },
-    });
-
-    activeDriver.drive(initialStepIndex);
-    lastActiveIndex = initialStepIndex;
-    return true;
-  }, [
-    getPreferences,
-    markTourCompleted,
-    markTourAsSeen,
-    persistTour,
-    scope,
-    tourId,
-    user,
-  ]);
+      active = { driver: driverInstance, result: null, lastStepIndex: firstIndex, finish };
+      driverInstance.drive(firstIndex);
+      return true;
+    },
+    [markTourCompleted, markTourSkipped, persistTour, scope, tourId, user],
+  );
 
   return {
     startTour,
@@ -1020,17 +319,10 @@ export function useCanAccessOnboardingTour(tourId: OnboardingTourId) {
   return canUserAccessOnboardingTour(tourId, user);
 }
 
-export function useAutoOnboardingTour(
-  tourId: OnboardingTourId,
-  enabled = true,
-) {
-  const { startTour, hasSeenTour, isHydratingPreferences } =
+/** Arranca o guia na primeira visita à página (se o utilizador não os tiver desligado). */
+export function useAutoOnboardingTour(tourId: OnboardingTourId, enabled = true) {
+  const { startTour, hasSeenTour, isHydratingPreferences, autoStartEnabled, canAccessTour } =
     useOnboardingTour(tourId);
-  const user = useAuthStore((state) => state.user);
-  const scope = getScope(user?.id, user?.company?.id);
-  const autoStartEnabled = useOnboardingPreferencesStore(
-    (state) => state.preferencesByScope[scope]?.autoStartEnabled ?? true,
-  );
   const autoStartRef = useRef(false);
 
   useEffect(() => {
@@ -1038,34 +330,30 @@ export function useAutoOnboardingTour(
       !enabled ||
       isHydratingPreferences ||
       !autoStartEnabled ||
-      !canUserAccessOnboardingTour(tourId, user) ||
+      !canAccessTour ||
       autoStartRef.current ||
       hasSeenTour()
     ) {
       return;
     }
-    if (typeof window === "undefined") return;
 
     let cancelled = false;
     let attempt = 0;
     const timeouts: number[] = [];
 
     const tryStartTour = () => {
-      const timeout = window.setTimeout(async () => {
-        if (cancelled || autoStartRef.current || hasSeenTour()) return;
-
-        attempt += 1;
-        const started = await startTour("normal");
-        if (started) {
-          autoStartRef.current = true;
-          return;
-        }
-
-        if (attempt < 4) {
-          tryStartTour();
-        }
-      }, attempt === 0 ? 700 : 1000);
-
+      const timeout = window.setTimeout(
+        async () => {
+          if (cancelled || autoStartRef.current || hasSeenTour()) return;
+          attempt += 1;
+          if (await startTour("normal")) {
+            autoStartRef.current = true;
+            return;
+          }
+          if (attempt < 4) tryStartTour();
+        },
+        attempt === 0 ? 900 : 1200,
+      );
       timeouts.push(timeout);
     };
 
@@ -1075,13 +363,41 @@ export function useAutoOnboardingTour(
       cancelled = true;
       timeouts.forEach((timeout) => window.clearTimeout(timeout));
     };
-  }, [
-    autoStartEnabled,
-    enabled,
-    hasSeenTour,
-    isHydratingPreferences,
-    startTour,
-    tourId,
-    user,
-  ]);
+  }, [autoStartEnabled, canAccessTour, enabled, hasSeenTour, isHydratingPreferences, startTour]);
+}
+
+/**
+ * `?tour=services` inicia o guia pedido mesmo que já tenha sido visto; é o que os atalhos
+ * de "Primeiros passos" usam. O parâmetro é removido para um refresh não o repetir.
+ */
+export function useTourFromQuery(tourId: OnboardingTourId) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const { startTour, canAccessTour, isHydratingPreferences } = useOnboardingTour(tourId);
+  const requested = searchParams.get("tour");
+  const handled = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (
+      !requested ||
+      requested !== tourId ||
+      !isOnboardingTourId(requested) ||
+      !canAccessTour ||
+      isHydratingPreferences ||
+      handled.current === requested
+    ) {
+      return;
+    }
+    handled.current = requested;
+
+    const next = new URLSearchParams(searchParams.toString());
+    next.delete("tour");
+    const query = next.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+
+    // Sem cleanup: a remoção do parâmetro re-executa este efeito e cancelaria o arranque.
+    window.setTimeout(() => void startTour("normal"), 600);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [requested, canAccessTour, isHydratingPreferences]);
 }

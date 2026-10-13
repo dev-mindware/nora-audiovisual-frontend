@@ -20,7 +20,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { InputCurrency } from '@/components/ui/input-currency';
-import { StudioResource } from '@/types';
+import { StudioResource, OpeningHours } from '@/types';
+import { OpeningHoursEditor } from './opening-hours-editor';
+import { businessHoursPreset, findInvalidWindow, sanitizeOpeningHours } from '@/lib/opening-hours';
 import { useCreateStudioResource, useUpdateStudioResource } from '@/hooks/studio';
 import { Building2, Users, Clock, CalendarCheck, MapPin, Plus, Check } from 'lucide-react';
 
@@ -47,9 +49,6 @@ export function StudioResourceModal({
   onClose,
   resource,
 }: StudioResourceModalProps) {
-  const isEditing = Boolean(resource?.id && !resource.id.startsWith('stage-') && !resource.id.startsWith('cyclo-') && !resource.id.startsWith('booth-') && !resource.id.startsWith('suite-'));
-  const isDemo = Boolean(resource?.id && (resource.id.startsWith('stage-') || resource.id.startsWith('cyclo-') || resource.id.startsWith('booth-') || resource.id.startsWith('suite-')));
-
   const [name, setName] = useState('');
   const [type, setType] = useState<string>('MAIN_STAGE');
   const [capacity, setCapacity] = useState<number>(10);
@@ -58,6 +57,7 @@ export function StudioResourceModal({
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState<string>('AVAILABLE');
+  const [openingHours, setOpeningHours] = useState<OpeningHours>(businessHoursPreset());
 
   // Custom types and statuses state
   const [customTypes, setCustomTypes] = useState<{ value: string; label: string }[]>([]);
@@ -80,7 +80,8 @@ export function StudioResourceModal({
       setDailyRate(Number(resource.dailyRate) || 0);
       setLocation((resource as any).location || '');
       setDescription(resource.description || '');
-      setStatus(resource.status === 'MAINTENANCE' ? 'MAINTENANCE' : resource.status || 'AVAILABLE');
+      setStatus(resource.status === 'MAINTENANCE' ? 'MAINTENANCE' : 'AVAILABLE');
+      setOpeningHours(resource.openingHours ?? businessHoursPreset());
     } else if (isOpen) {
       setName('');
       setType('MAIN_STAGE');
@@ -90,6 +91,7 @@ export function StudioResourceModal({
       setLocation('');
       setDescription('');
       setStatus('AVAILABLE');
+      setOpeningHours(businessHoursPreset());
       setIsAddingCustomType(false);
       setIsAddingCustomStatus(false);
     }
@@ -127,6 +129,7 @@ export function StudioResourceModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
+    if (findInvalidWindow(openingHours)) return;
 
     const payload = {
       name: name.trim(),
@@ -137,9 +140,10 @@ export function StudioResourceModal({
       location: location.trim() || undefined,
       description: description.trim() || undefined,
       status: status === 'AVAILABLE' ? 'ACTIVE' : status,
+      openingHours: sanitizeOpeningHours(openingHours),
     };
 
-    if (resource?.id && !isDemo) {
+    if (resource?.id) {
       updateResource(
         { id: resource.id, data: payload as any },
         {
@@ -161,12 +165,12 @@ export function StudioResourceModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-xl rounded-xs border-border bg-card p-5 max-h-[85vh] overflow-hidden flex flex-col">
+      <DialogContent data-tour="studio-modal" className="max-w-xl rounded-xs border-border bg-card p-5 max-h-[85vh] overflow-hidden flex flex-col">
         <DialogHeader className="pb-1">
           <div className="flex items-center gap-2 text-primary">
             <Building2 className="h-5 w-5" />
             <DialogTitle className="text-base font-semibold uppercase tracking-wider text-foreground">
-              {resource ? (isDemo ? 'Personalizar Set (Salvar no Estúdio)' : 'Editar Set / Espaço') : 'Novo Set / Espaço de Gravação'}
+              {resource ? 'Editar Set / Espaço' : 'Novo Set / Espaço de Gravação'}
             </DialogTitle>
           </div>
           <DialogDescription className="text-xs text-muted-foreground">
@@ -176,7 +180,7 @@ export function StudioResourceModal({
 
         <form onSubmit={handleSubmit} className="space-y-3.5 pt-1 overflow-y-auto pr-0.5">
           {/* Nome do Set */}
-          <div className="space-y-1">
+          <div className="space-y-1" data-tour="studio-name">
             <Label className="text-xs font-semibold text-foreground">Nome do Set / Espaço *</Label>
             <Input
               value={name}
@@ -253,7 +257,7 @@ export function StudioResourceModal({
           </div>
 
           {/* Tarifas Horária e Diária formatadas */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" data-tour="studio-rates">
             <div className="space-y-1">
               <InputCurrency
                 label="Tarifa Horária (Kz)"
@@ -342,6 +346,8 @@ export function StudioResourceModal({
             </div>
           </div>
 
+          <OpeningHoursEditor value={openingHours} onChange={setOpeningHours} />
+
           {/* Descrição Técnica */}
           <div className="space-y-1">
             <Label className="text-xs font-semibold text-foreground">Especificações Técnicas & Isolamento</Label>
@@ -367,10 +373,11 @@ export function StudioResourceModal({
             </Button>
             <Button
               type="submit"
+              data-tour="studio-save"
               disabled={isSaving}
               className="rounded-xs bg-primary text-primary-foreground hover:bg-primary/90 text-xs h-9 font-medium tracking-wide px-4"
             >
-              {isSaving ? 'A guardar...' : resource ? (isDemo ? 'Guardar como Novo Set' : 'Actualizar Set') : 'Criar Set'}
+              {isSaving ? 'A guardar...' : resource ? 'Actualizar Set' : 'Criar Set'}
             </Button>
           </div>
         </form>

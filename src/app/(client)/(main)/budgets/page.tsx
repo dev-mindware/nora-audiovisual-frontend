@@ -5,7 +5,7 @@ import { BudgetsPageContent } from '@/components/client';
 export default function BudgetsPage() {
   return (
     <Suspense>
-      <PageWrapper subRoute="Orçamentos" routeLabel="Comercial">
+      <PageWrapper subRoute="Orçamentos" routeLabel="Comercial" onboardingTourId="budgets">
         <TitleList
           title="Orçamentos & Faturação"
           suTitle="Propostas e orçamentos estruturados de produção audiovisual"

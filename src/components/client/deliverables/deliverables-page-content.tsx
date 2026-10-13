@@ -238,7 +238,7 @@ export function DeliverablesPageContent() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-tour="deliverables-page">
       {/* Barra de Filtros Minimalista */}
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-wrap items-center gap-2">
@@ -334,6 +334,7 @@ export function DeliverablesPageContent() {
           </Button>
 
           <Button
+            data-tour="deliverables-create"
             onClick={() => setIsModalOpen(true)}
             size="sm"
             className="rounded-none bg-primary text-primary-foreground hover:bg-primary/90 h-11 sm:h-10 text-xs font-medium tracking-wide uppercase px-4 min-h-[44px] sm:min-h-0"

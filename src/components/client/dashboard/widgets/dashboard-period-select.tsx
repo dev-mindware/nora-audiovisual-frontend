@@ -42,7 +42,7 @@ export function DashboardPeriodSelect({ isFetching = false }: DashboardPeriodSel
   }, []);
 
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-1.5" data-tour="dashboard-period">
       <Select
         value={activeRange}
         onValueChange={(val) => setRange(val as DashboardRange)}

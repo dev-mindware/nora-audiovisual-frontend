@@ -24,7 +24,7 @@ export function ServicesGrid({
 }: ServicesGridProps) {
   if (services.length === 0 && !isLoading) {
     return (
-      <div className="py-14 text-center border border-dashed border-border rounded-xs bg-muted/10 p-8">
+      <div data-tour="services-list" className="py-14 text-center border border-dashed border-border rounded-xs bg-muted/10 p-8">
         <Briefcase className="h-9 w-9 text-muted-foreground mx-auto mb-2.5 opacity-50" />
         <h3 className="text-sm font-semibold text-foreground">
           Nenhum serviço encontrado no catálogo
@@ -44,7 +44,7 @@ export function ServicesGrid({
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div data-tour="services-list" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {services.map((service) => (
         <ServiceCard
           key={service.id}

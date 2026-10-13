@@ -1042,6 +1042,11 @@ body {
 }
 
 /* Onboarding tours */
+/* Diálogos Radix desativam eventos no body; o popover do guia tem de continuar clicável. */
+.driver-popover {
+  pointer-events: auto !important;
+}
+
 .driver-popover.mindgest-tour-popover {
   max-width: min(360px, calc(100vw - 32px));
   border: 1px solid color-mix(in srgb, var(--primary) 18%, var(--border));

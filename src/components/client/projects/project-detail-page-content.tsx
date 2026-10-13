@@ -339,7 +339,7 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
   return (
     <div className="space-y-6">
       {/* Cabeçalho Padronizado da Produção */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between w-full">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between w-full" data-tour="project-header">
         <div className="space-y-1.5 min-w-0">
           <div className="flex flex-wrap items-center gap-2.5">
             <h1 className="text-2xl font-semibold tracking-tight text-foreground">
@@ -366,6 +366,7 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
         {/* Botões de Ação Padronizados */}
         <div className="flex flex-wrap items-center gap-2 shrink-0">
           <Button
+            data-tour="project-call-sheet"
             size="sm"
             disabled={isGeneratingDraft}
             onClick={async () => {
@@ -391,6 +392,7 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
             Nova em branco
           </Button>
           <Button
+            data-tour="project-crew"
             size="sm"
             variant="outline"
             onClick={() => setIsMemberModalOpen(true)}
@@ -398,6 +400,7 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
             <Users className="mr-1.5 h-3.5 w-3.5 text-primary" /> Escalar Membro
           </Button>
           <Button
+            data-tour="project-deliverable"
             size="sm"
             variant="outline"
             onClick={() => setIsDeliverableModalOpen(true)}
@@ -409,7 +412,7 @@ export function ProjectDetailPageContent({ projectId }: ProjectDetailPageContent
 
       {/* Tabs Padrões Radix / shadcn */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full space-y-6">
-        <div className="border-b border-border pb-1 overflow-x-auto">
+        <div className="border-b border-border pb-1 overflow-x-auto" data-tour="project-tabs">
           <TabsList className="bg-transparent h-auto p-0 gap-1.5 flex flex-nowrap justify-start border-none">
             <TabsTrigger
               value="overview"
