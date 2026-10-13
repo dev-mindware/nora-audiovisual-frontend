@@ -731,7 +731,7 @@ export function CheckoutPageContent() {
                       Resumo da Subscrição
                     </CardDescription>
                     <CardTitle className="mt-1 text-base font-semibold text-foreground">
-                      Plano {selectedPlan?.name}
+                      {selectedPlan?.name}
                     </CardTitle>
                   </div>
                   <Badge variant="outline">
@@ -742,7 +742,7 @@ export function CheckoutPageContent() {
                 <CardContent className="p-5 sm:p-6 space-y-3 text-sm">
                   <div className="flex items-center justify-between gap-4">
                     <span className="text-muted-foreground text-xs">
-                      Plano {selectedPlan?.name}
+                      {selectedPlan?.name}
                     </span>
                     <span className="font-semibold text-foreground text-sm">{formatKz(planPrice)}</span>
                   </div>

@@ -95,6 +95,9 @@ export function useNoraSubscriptions() {
 
   return {
     plans: plansQuery.data || [],
+    plansError: plansQuery.isError || addOnsQuery.isError,
+    refetchCatalog: () => Promise.all([plansQuery.refetch(), addOnsQuery.refetch()]),
+    isLoadingCatalog: plansQuery.isLoading || addOnsQuery.isLoading,
     addOns: addOnsQuery.data || [],
     subscription: currentSubscriptionQuery.data,
     isLoading: plansQuery.isLoading || currentSubscriptionQuery.isLoading,
