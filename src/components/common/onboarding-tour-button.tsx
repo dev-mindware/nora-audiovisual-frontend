@@ -4,7 +4,9 @@ import { Icon } from "@/components/common/icon";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { useEffect } from "react";
 import {
+  abortActiveTour,
   useAutoOnboardingTour,
   useOnboardingTour,
   useTourFromQuery,
@@ -29,6 +31,9 @@ export function OnboardingTourButton({
   // `?tour=<id>` (atalhos de "Primeiros passos") tem prioridade sobre o arranque automático.
   useAutoOnboardingTour(tourId, autoStart && !requestedByLink);
   useTourFromQuery(tourId);
+
+  // Sair da página a meio de um guia não o conta como ignorado.
+  useEffect(() => () => abortActiveTour(), []);
 
   if (!canAccessTour || !tourButtonEnabled) return null;
 

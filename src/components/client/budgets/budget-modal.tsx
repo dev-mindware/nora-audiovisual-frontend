@@ -177,6 +177,7 @@ export function BudgetModal({ isOpen, onClose }: BudgetModalProps) {
           </Button>
           <ButtonSubmit
             form="budget-form"
+            data-tour="budget-save"
             isLoading={isPending}
             className="min-h-[44px] sm:min-h-0"
           >
@@ -187,6 +188,7 @@ export function BudgetModal({ isOpen, onClose }: BudgetModalProps) {
     >
       <form id="budget-form" onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div data-tour="budget-client">
           <Controller
             control={control}
             name="clientId"
@@ -208,7 +210,9 @@ export function BudgetModal({ isOpen, onClose }: BudgetModalProps) {
               />
             )}
           />
+          </div>
 
+          <div data-tour="budget-project">
           <Controller
             control={control}
             name="projectId"
@@ -229,10 +233,11 @@ export function BudgetModal({ isOpen, onClose }: BudgetModalProps) {
               />
             )}
           />
+          </div>
         </div>
 
         {/* Rubricas / Itens do Orçamento */}
-        <div className="space-y-3">
+        <div className="space-y-3" data-tour="budget-items">
           <div className="flex items-center justify-between">
             <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Rubricas de Produção
@@ -327,7 +332,7 @@ export function BudgetModal({ isOpen, onClose }: BudgetModalProps) {
         </div>
 
         {/* Resumo Financeiro */}
-        <div className="rounded-xl border border-border/80 bg-muted/30 p-4 space-y-2 text-xs">
+        <div className="rounded-xl border border-border/80 bg-muted/30 p-4 space-y-2 text-xs" data-tour="budget-summary">
           <div className="flex justify-between text-muted-foreground">
             <span>Subtotal de Rubricas:</span>
             <span className="font-semibold text-foreground">{subtotal.toLocaleString('pt-AO')} Kz</span>

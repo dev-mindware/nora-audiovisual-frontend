@@ -135,6 +135,7 @@ export function MemberModal({ isOpen, onClose, projectId }: MemberModalProps) {
           </Button>
           <ButtonSubmit
             form="member-form"
+            data-tour="member-save"
             isLoading={isPending}
             className="min-h-[44px] sm:min-h-0"
           >
@@ -144,6 +145,7 @@ export function MemberModal({ isOpen, onClose, projectId }: MemberModalProps) {
       }
     >
       <form id="member-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div data-tour="member-user">
         <Controller
           control={control}
           name="userId"
@@ -165,13 +167,16 @@ export function MemberModal({ isOpen, onClose, projectId }: MemberModalProps) {
             />
           )}
         />
+        </div>
 
+        <div data-tour="member-role">
         <RHFSelect
           control={control}
           name="projectRole"
           label="Função Técnica Audiovisual *"
           options={AUDIOVISUAL_ROLES}
         />
+        </div>
 
         <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-400 flex items-start gap-2">
           <Sparkles className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />

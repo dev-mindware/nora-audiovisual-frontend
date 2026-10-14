@@ -290,6 +290,7 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
 
               <ButtonSubmit
                 form="project-form"
+                data-tour="project-save"
                 size="sm"
                 isLoading={isPending}
                 className="col-span-2 sm:col-auto sm:w-auto h-10 sm:h-9 px-5 text-xs font-semibold"
@@ -318,15 +319,17 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
             </div>
           )}
 
+          <div data-tour="project-title">
           <Input
             label="Título da Produção *"
             placeholder="Ex: Comercial de Verão 2026 / Videoclipe"
             {...register('title')}
             error={errors.title?.message}
           />
+          </div>
 
           {/* Campo de Cliente com Botão "+ Registar Cliente" Integrado */}
-          <div className="space-y-1.5">
+          <div className="space-y-1.5" data-tour="project-client">
             <div className="flex items-center justify-between">
               <label className="text-xs font-semibold text-foreground">
                 Cliente / Agência <span className="text-destructive">*</span>
@@ -386,7 +389,7 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
           </div>
 
           {/* Serviço do Catálogo com Geração Automática de Proposta */}
-          <div className="space-y-1.5">
+          <div className="space-y-1.5" data-tour="project-service">
             <RHFSelect
               control={control}
               name="serviceId"
@@ -427,7 +430,7 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" data-tour="project-stage">
             <RHFSelect
               control={control}
               name="productionStage"
@@ -454,7 +457,7 @@ export function ProjectModal({ isOpen, onClose }: ProjectModalProps) {
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" data-tour="project-dates">
             <Input
               type="date"
               label="Início Previsto"

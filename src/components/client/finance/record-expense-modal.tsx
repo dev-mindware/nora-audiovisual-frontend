@@ -190,6 +190,7 @@ export function RecordExpenseModal({
             </Button>
             <ButtonSubmit
               form="record-expense-form"
+              data-tour="expense-save"
               size="sm"
               isLoading={isPending}
               disabled={isUploadingReceipt}
@@ -207,6 +208,7 @@ export function RecordExpenseModal({
         >
           {/* Projecto */}
           {!defaultProjectId && (
+            <div data-tour="expense-project">
             <Controller
               name="projectId"
               control={control}
@@ -233,10 +235,11 @@ export function RecordExpenseModal({
                 </div>
               )}
             />
+            </div>
           )}
 
           {/* Categoria & Data */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-end">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-end" data-tour="expense-category">
             <div>
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-medium text-foreground">Categoria da Despesa *</span>
@@ -267,6 +270,7 @@ export function RecordExpenseModal({
           </div>
 
           {/* Valor com Formatação Monetária AOA */}
+          <div data-tour="expense-amount">
           <RHFInputCurrency
             control={control}
             name="amount"
@@ -276,6 +280,7 @@ export function RecordExpenseModal({
             startIcon="DollarSign"
             className="rounded-xs"
           />
+          </div>
 
           {/* Descrição */}
           <Input
@@ -289,7 +294,7 @@ export function RecordExpenseModal({
           />
 
           {/* Upload de Comprovativo Real no Cloudflare R2 (sem URL de texto) */}
-          <div className="space-y-1.5 pt-1">
+          <div className="space-y-1.5 pt-1" data-tour="expense-proof">
             <label className="text-xs font-medium text-foreground block">
               Comprovativo / Fatura (Upload Seguro R2)
             </label>

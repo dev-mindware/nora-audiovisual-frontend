@@ -18,18 +18,31 @@ import { useOnboardingPreferencesPersistence } from "./use-onboarding-preference
 
 const POLL_INTERVAL_MS = 120;
 const STEP_TARGET_TIMEOUT_MS = 2500;
+const SKIPPED_STEP_TIMEOUT_MS = 500;
 // O popover do driver.js também tem role="dialog"; não conta como diálogo da aplicação.
 const DIALOG_SELECTOR = '[role="dialog"]:not(.driver-popover)';
 
 type ActiveTour = {
   driver: Driver;
-  result: "completed" | "skipped" | null;
+  /** `aborted`: o utilizador saiu da página; o guia fica "em curso" e volta a ser oferecido. */
+  result: "completed" | "skipped" | "aborted" | null;
   lastStepIndex: number;
   finish: (status: "completed" | "skipped", lastStepIndex: number) => void;
 };
 
 let active: ActiveTour | null = null;
 let isTransitioning = false;
+
+/** Termina o guia activo sem o marcar como visto (ex.: navegação para outra página). */
+export function abortActiveTour() {
+  if (!active) return;
+  active.result = "aborted";
+  active.driver.destroy();
+}
+
+export function isTourActive() {
+  return active !== null;
+}
 
 function prefersReducedMotion() {
   return (
@@ -146,7 +159,12 @@ async function moveToPreparedStep(driverInstance: Driver, start: number, directi
   try {
     const steps = driverInstance.getConfig().steps ?? [];
     for (let index = start; index >= 0 && index < steps.length; index += direction) {
-      const target = await prepareTarget(steps, index);
+      // Só o passo pedido espera pelo alvo; os seguintes, se faltar o alvo, são saltados depressa.
+      const target = await prepareTarget(
+        steps,
+        index,
+        index === start ? STEP_TARGET_TIMEOUT_MS : SKIPPED_STEP_TIMEOUT_MS,
+      );
       if (target) {
         steps[index].element = target;
         // Dentro de diálogos com scroll interno, centra o alvo para o destaque não ficar cortado.
@@ -289,7 +307,7 @@ export function useOnboardingTour(tourId: OnboardingTourId) {
           const current = active;
           active = null;
           isTransitioning = false;
-          if (!current) return;
+          if (!current || current.result === "aborted") return;
           // Esc ou fecho por outra via conta como "ignorado": o utilizador pode repetir quando quiser.
           current.finish(current.result ?? "skipped", current.lastStepIndex);
         },
@@ -345,6 +363,12 @@ export function useAutoOnboardingTour(tourId: OnboardingTourId, enabled = true) 
       const timeout = window.setTimeout(
         async () => {
           if (cancelled || autoStartRef.current || hasSeenTour()) return;
+          // Nunca sobrepor outro guia nem um formulário que o utilizador já abriu.
+          if (isTourActive() || hasOpenDialog()) {
+            if (attempt < 8) tryStartTour();
+            attempt += 1;
+            return;
+          }
           attempt += 1;
           if (await startTour("normal")) {
             autoStartRef.current = true;

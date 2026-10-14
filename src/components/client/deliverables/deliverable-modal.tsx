@@ -109,6 +109,7 @@ export function DeliverableModal({ isOpen, onClose, defaultProjectId }: Delivera
           </Button>
           <ButtonSubmit
             form="deliverable-form"
+            data-tour="deliverable-save"
             isLoading={isPending}
             className="min-h-[44px] sm:min-h-0"
           >
@@ -118,6 +119,7 @@ export function DeliverableModal({ isOpen, onClose, defaultProjectId }: Delivera
       }
     >
       <form id="deliverable-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div data-tour="deliverable-project">
         <Controller
           control={control}
           name="projectId"
@@ -139,14 +141,18 @@ export function DeliverableModal({ isOpen, onClose, defaultProjectId }: Delivera
             />
           )}
         />
+        </div>
 
+        <div data-tour="deliverable-title">
         <Input
           label="Título do Entregável *"
           placeholder="Ex: Corte do Director v2 / Ensaio Fotográfico Final"
           {...register('title')}
           error={errors.title?.message}
         />
+        </div>
 
+        <div data-tour="deliverable-type">
         <RHFSelect
           control={control}
           name="type"
@@ -156,8 +162,9 @@ export function DeliverableModal({ isOpen, onClose, defaultProjectId }: Delivera
             value: t.code,
           }))}
         />
+        </div>
 
-        <div className="space-y-1">
+        <div className="space-y-1" data-tour="deliverable-media">
           <Input
             label="Ligação / URL do Ficheiro de Vídeo ou Média"
             placeholder="Ex: https://storage.../corte-v1.mp4"
@@ -196,7 +203,7 @@ export function DeliverableModal({ isOpen, onClose, defaultProjectId }: Delivera
           </div>
         )}
 
-        <div className="flex items-center justify-between p-3 border border-border bg-muted/20">
+        <div className="flex items-center justify-between p-3 border border-border bg-muted/20" data-tour="deliverable-watermark">
           <div className="space-y-0.5">
             <label htmlFor="hasWatermark" className="text-xs font-medium text-foreground block cursor-pointer">
               Aplicar Marca d'Água de Prova Técnica

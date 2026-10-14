@@ -230,7 +230,7 @@ export function BudgetDrawer({ isOpen, onClose }: BudgetDrawerProps) {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Cliente com botão + Novo Cliente */}
-                  <div className="space-y-1.5">
+                  <div className="space-y-1.5" data-tour="budget-client">
                     <div className="flex items-center justify-between">
                       <label className="text-xs font-semibold text-foreground">
                         Cliente / Agência <span className="text-destructive">*</span>
@@ -266,7 +266,7 @@ export function BudgetDrawer({ isOpen, onClose }: BudgetDrawerProps) {
                   </div>
 
                   {/* Projeto */}
-                  <div className="space-y-1.5">
+                  <div className="space-y-1.5" data-tour="budget-project">
                     <label className="text-xs font-semibold text-foreground">
                       Projecto Associado (Opcional)
                     </label>
@@ -294,7 +294,7 @@ export function BudgetDrawer({ isOpen, onClose }: BudgetDrawerProps) {
               </div>
 
               {/* Seção 2: Itens Orçados */}
-              <div className="p-4 rounded-xs border border-border bg-background space-y-4">
+              <div className="p-4 rounded-xs border border-border bg-background space-y-4" data-tour="budget-items">
                 <div className="flex items-center justify-between border-b border-border/60 pb-2">
                   <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     <Layers className="h-4 w-4 text-primary" />
@@ -451,7 +451,7 @@ export function BudgetDrawer({ isOpen, onClose }: BudgetDrawerProps) {
               </div>
 
               {/* Seção 3: Resumo Financeiro & Desconto */}
-              <div className="p-4 rounded-xs border border-border bg-background space-y-4">
+              <div className="p-4 rounded-xs border border-border bg-background space-y-4" data-tour="budget-summary">
                 <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground border-b border-border/60 pb-2">
                   <Calculator className="h-4 w-4 text-primary" />
                   3. Fechamento Financeiro & Condições
@@ -524,6 +524,7 @@ export function BudgetDrawer({ isOpen, onClose }: BudgetDrawerProps) {
             </Button>
             <ButtonSubmit
               form="budget-drawer-form"
+              data-tour="budget-save"
               size="sm"
               isLoading={isPending}
               className="text-xs h-9 px-5 rounded-xs"

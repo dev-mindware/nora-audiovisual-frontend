@@ -128,7 +128,7 @@ export function WorkflowModal({ isOpen, onClose }: WorkflowModalProps) {
           <Button type="button" variant="outline" onClick={handleCancel}>
             Cancelar
           </Button>
-          <ButtonSubmit form="workflow-form" isLoading={isPending} disabled={!canCreate}>
+          <ButtonSubmit form="workflow-form" data-tour="workflow-save" isLoading={isPending} disabled={!canCreate}>
             Criar fluxo
           </ButtonSubmit>
         </>
@@ -142,27 +142,35 @@ export function WorkflowModal({ isOpen, onClose }: WorkflowModalProps) {
         </div>
       )}
       <form id="workflow-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div data-tour="workflow-name">
         <Input
           label="Nome do fluxo *"
           placeholder="Ex: Avisar financeiro quando o orçamento for aprovado"
           {...register('name')}
           error={errors.name?.message}
         />
+        </div>
 
         <Textarea label="Descrição" placeholder="Opcional" {...register('description')} error={errors.description?.message} />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <RHFSelect control={control} name="triggerType" label="Quando dispara" options={TRIGGER_OPTIONS} />
-          <RHFSelect control={control} name="actionType" label="O que faz" options={ACTION_OPTIONS} />
+          <div data-tour="workflow-trigger">
+            <RHFSelect control={control} name="triggerType" label="Quando dispara" options={TRIGGER_OPTIONS} />
+          </div>
+          <div data-tour="workflow-action">
+            <RHFSelect control={control} name="actionType" label="O que faz" options={ACTION_OPTIONS} />
+          </div>
         </div>
 
         {actionType !== 'WEBHOOK' && (
+          <div data-tour="workflow-content">
           <Input
             label={actionType === 'SEND_EMAIL' ? 'Assunto *' : 'Título *'}
             placeholder="Pode usar dados do evento: {{payload.total}}"
             {...register('title')}
             error={errors.title?.message}
           />
+          </div>
         )}
 
         {(actionType === 'SEND_NOTIFICATION' || actionType === 'SEND_EMAIL') && (
@@ -178,7 +186,7 @@ export function WorkflowModal({ isOpen, onClose }: WorkflowModalProps) {
         )}
 
         {needsRecipients && (
-          <div className="space-y-2">
+          <div className="space-y-2" data-tour="workflow-recipients">
             <p className="text-sm font-medium text-foreground">Destinatários (perfis) *</p>
             <Controller
               control={control}

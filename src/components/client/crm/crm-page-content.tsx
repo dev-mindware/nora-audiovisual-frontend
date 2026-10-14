@@ -224,7 +224,7 @@ export function CrmPageContent() {
   };
 
   return (
-    <div className="mt-6 space-y-6">
+    <div className="mt-6 space-y-6" data-tour="crm-table">
       {/* UniversalTable Unificada - Barra Única sem Repetições */}
       <UniversalTable<ClientRow>
         data={clients}
@@ -279,6 +279,7 @@ export function CrmPageContent() {
         toolbar={{
           actions: (
             <Button
+              data-tour="crm-create"
               onClick={handleCreate}
               size="sm"
               className="h-10 sm:h-9 min-h-[44px] sm:min-h-0 text-xs gap-1.5 shrink-0 rounded-none px-3.5"

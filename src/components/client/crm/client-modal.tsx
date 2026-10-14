@@ -93,6 +93,7 @@ export function ClientModal({ isOpen, onClose, clientToEdit, onSuccess }: Client
           </Button>
           <ButtonSubmit
             form="crm-client-form"
+            data-tour="client-save"
             size="sm"
             isLoading={isSubmitting || saveMutation.isPending}
             className="min-h-[44px] sm:min-h-0"
@@ -108,7 +109,7 @@ export function ClientModal({ isOpen, onClose, clientToEdit, onSuccess }: Client
         className="space-y-4 py-2"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-1.5 md:col-span-2">
+          <div className="space-y-1.5 md:col-span-2" data-tour="client-name">
             <Input
               label="Nome Comercial / Razão Social *"
               placeholder="Ex: Unitel Angola ou Banza Filmes"
@@ -125,7 +126,7 @@ export function ClientModal({ isOpen, onClose, clientToEdit, onSuccess }: Client
             />
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-1.5" data-tour="client-taxid">
             <Input
               label="NIF / Identificação Fiscal"
               placeholder="Ex: 5418000000"
@@ -133,7 +134,7 @@ export function ClientModal({ isOpen, onClose, clientToEdit, onSuccess }: Client
             />
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-1.5" data-tour="client-email">
             <Input
               type="email"
               label="Email de Contacto"

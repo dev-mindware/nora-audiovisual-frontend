@@ -120,6 +120,7 @@ export function RecordPaymentModal({
           </Button>
           <ButtonSubmit
             form="record-payment-form"
+            data-tour="payment-save"
             size="sm"
             isLoading={isPending}
             className="min-h-[44px] sm:min-h-0"
@@ -136,6 +137,7 @@ export function RecordPaymentModal({
       >
         {/* Projecto */}
         {!defaultProjectId && (
+          <div data-tour="payment-project">
           <Controller
             name="projectId"
             control={control}
@@ -155,10 +157,11 @@ export function RecordPaymentModal({
               />
             )}
           />
+          </div>
         )}
 
         {/* Método e Estado */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" data-tour="payment-method">
           <RHFSelect
             name="method"
             control={control}
@@ -173,11 +176,12 @@ export function RecordPaymentModal({
             options={PAYMENT_STATUSES}
           />
         </div>
-        <p className="text-xs text-muted-foreground -mt-1">
+        <p className="text-xs text-muted-foreground -mt-1" data-tour="payment-invoice-note">
           Ao registar como pago, o evento fica disponível para as automações e, com o Mindgest ligado, o pedido de factura é criado automaticamente.
         </p>
 
         {/* Valor com Formatação Monetária AOA */}
+        <div data-tour="payment-amount">
         <RHFInputCurrency
           control={control}
           name="amount"
@@ -187,9 +191,10 @@ export function RecordPaymentModal({
           startIcon="DollarSign"
           className="rounded-xs"
         />
+        </div>
 
         {/* Referência / Comprovativo Bancário */}
-        <div className="space-y-1.5">
+        <div className="space-y-1.5" data-tour="payment-reference">
           <Input
             label="Referência Bancária / N.º Operação (Opcional)"
             placeholder="Ex: REF-MCX-9823472 ou N.º de Talão"

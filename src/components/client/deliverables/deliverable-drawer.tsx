@@ -241,7 +241,7 @@ export function DeliverableDrawer({
             <form id="deliverable-drawer-form" onSubmit={handleSubmit} className="space-y-5">
               {/* Projeto e Título */}
               <div className="p-4 rounded-xs border border-border bg-background space-y-3.5">
-                <div className="space-y-1">
+                <div className="space-y-1" data-tour="deliverable-project">
                   <label className="text-xs font-semibold text-foreground">
                     Projecto Audiovisual <span className="text-destructive">*</span>
                   </label>
@@ -261,7 +261,7 @@ export function DeliverableDrawer({
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                  <div className="space-y-1">
+                  <div className="space-y-1" data-tour="deliverable-title">
                     <label className="text-xs font-semibold text-foreground">
                       Título do Entregável / Pacote <span className="text-destructive">*</span>
                     </label>
@@ -274,7 +274,7 @@ export function DeliverableDrawer({
                     />
                   </div>
 
-                  <div className="space-y-1">
+                  <div className="space-y-1" data-tour="deliverable-type">
                     <label className="text-xs font-semibold text-foreground">
                       Tipo de Entregável
                     </label>
@@ -352,7 +352,7 @@ export function DeliverableDrawer({
               )}
 
               {/* Upload e Pré-visualização Dinâmica de Mídias */}
-              <div className="p-4 rounded-xs border border-border bg-background space-y-4">
+              <div className="p-4 rounded-xs border border-border bg-background space-y-4" data-tour="deliverable-media">
                 <div className="flex items-center justify-between border-b border-border/60 pb-2">
                   <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     <Film className="h-4 w-4 text-primary" />
@@ -505,7 +505,7 @@ export function DeliverableDrawer({
               </div>
 
               {/* Marca d'água e Notas */}
-              <div className="p-4 rounded-xs border border-border bg-background space-y-3">
+              <div className="p-4 rounded-xs border border-border bg-background space-y-3" data-tour="deliverable-watermark">
                 <div className="flex items-center justify-between p-2.5 border border-border/80 bg-muted/20 rounded-xs">
                   <div className="space-y-0.5">
                     <label htmlFor="drawerHasWatermark" className="text-xs font-semibold text-foreground cursor-pointer">
@@ -566,6 +566,7 @@ export function DeliverableDrawer({
               </Button>
               <ButtonSubmit
                 form="deliverable-drawer-form"
+                data-tour="deliverable-save"
                 size="sm"
                 isLoading={isUploading}
                 className="text-xs h-9 px-5 rounded-xs"

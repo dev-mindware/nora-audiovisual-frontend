@@ -221,7 +221,7 @@ export function ProjectsPageContent() {
   };
 
   return (
-    <div className="mt-6 space-y-6">
+    <div className="mt-6 space-y-6" data-tour="projects-table">
       {/* UniversalTable Unificada - Barra Única sem Repetições */}
       <UniversalTable<Project>
         data={projects}
@@ -276,6 +276,7 @@ export function ProjectsPageContent() {
         toolbar={{
           actions: (
             <Button
+              data-tour="projects-create"
               onClick={() => setIsModalOpen(true)}
               size="sm"
               className="h-10 sm:h-9 min-h-[44px] sm:min-h-0 text-xs gap-1.5 shrink-0 rounded-none px-3.5"
